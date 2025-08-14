@@ -8,7 +8,7 @@
 ## Important Notes
 
 * **Do not share or publish your code.**
-  
+
   Public forks and redistribution of this repository are strictly prohibited by the project license.
   Any unauthorized disclosure, including public forks, will result in **severe penalties**, including **zero credit for all projects**.
 
@@ -32,9 +32,9 @@ For detailed instructions and documentation, refer to the [KeOS Manual](https://
 
 ## Getting Started
 ```bash
-$ curl https://sh.rustup.rs | sh
-$ sudo apt install -yy qemu grub xorriso mtools
-$ git clone https://github.com/casys-kaist/KeOS.git
+$ mkdir keos
+$ cd keos
+$ curl https://raw.githubusercontent.com/casys-kaist/KeOS/refs/heads/main/install.sh | sh
 ```
 
 ## Related Projects
