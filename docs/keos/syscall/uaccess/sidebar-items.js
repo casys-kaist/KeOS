@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["UserCString","UserPtrRO","UserPtrWO","UserU8SliceRO","UserU8SliceWO"]};

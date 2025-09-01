@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Creates a new process by duplicating the current process using copy-on-write."><title>fork in keos_project3::fork - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project3" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc fn"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project3/index.html">keos_<wbr>project3</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">fork</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#syscall-api" title="Syscall API">Syscall API</a><ul><li><a href="#behavior" title="Behavior">Behavior</a></li><li><a href="#memory-management" title="Memory Management">Memory Management</a></li><li><a href="#file-descriptors" title="File Descriptors">File Descriptors</a></li><li><a href="#abi-and-register-state" title="ABI and Register State">ABI and Register State</a></li><li><a href="#parameters" title="Parameters">Parameters</a></li><li><a href="#returns" title="Returns">Returns</a></li></ul></li></ul></section><div id="rustdoc-modnav"><h2><a href="index.html">In keos_<wbr>project3::<wbr>fork</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project3</a>::<wbr><a href="index.html">fork</a></div><h1>Function <span class="fn">fork</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project3/fork.rs.html#200-213">Source</a> </span></div><pre class="rust item-decl"><code>pub fn fork(
+    file_struct: &amp;mut <a class="struct" href="../../keos_project1/file_struct/struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct">FileStruct</a>,
+    mm_struct: &amp;mut <a class="struct" href="../../keos_project2/mm_struct/struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;<a class="struct" href="../lazy_pager/struct.LazyPager.html" title="struct keos_project3::lazy_pager::LazyPager">LazyPager</a>&gt;,
+    abi: &amp;<a class="struct" href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'_&gt;,
+    create_task: impl FnOnce(<a class="struct" href="../../keos_project1/file_struct/struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct">FileStruct</a>, <a class="struct" href="../../keos_project2/mm_struct/struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;<a class="struct" href="../lazy_pager/struct.LazyPager.html" title="struct keos_project3::lazy_pager::LazyPager">LazyPager</a>&gt;) -&gt; <a class="struct" href="../../keos/thread/struct.ThreadBuilder.html" title="struct keos::thread::ThreadBuilder">ThreadBuilder</a>,
+) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Creates a new process by duplicating the current process using
+copy-on-write.</p>
+<p><code>fork</code> is a system call that creates a child process that is
+identical to the calling (parent) process. The child inherits the parent’s
+memory layout, file descriptors, and register state. After the fork, both
+processes continue execution independently from the point of the call.</p>
+<p>This implementation uses <strong>copy-on-write (COW)</strong> to avoid eagerly copying
+the entire address space. Memory pages are initially shared between the
+parent and child and marked as read-only. When either process attempts to
+write to a shared page, a page fault occurs and
+<a href="../lazy_pager/struct.LazyPager.html#method.do_copy_on_write" title="method keos_project3::lazy_pager::LazyPager::do_copy_on_write"><code>LazyPager::do_copy_on_write</code></a> handles creating a private writable copy of
+the page.</p>
+<h2 id="syscall-api"><a class="doc-anchor" href="#syscall-api">§</a>Syscall API</h2><div class="example-wrap"><pre class="language-c"><code>int fork(void);</code></pre></div><h4 id="behavior"><a class="doc-anchor" href="#behavior">§</a>Behavior</h4>
+<ul>
+<li>The parent receives the child’s PID as the return value.</li>
+<li>The child receives <code>0</code> as the return value.</li>
+<li>On failure, the parent receives <code>Err(KernelError)</code> and no new process is
+created.</li>
+</ul>
+<h4 id="memory-management"><a class="doc-anchor" href="#memory-management">§</a>Memory Management</h4>
+<ul>
+<li>Invokes <a href="../lazy_pager/struct.LazyPager.html#method.write_protect_ptes" title="associated function keos_project3::lazy_pager::LazyPager::write_protect_ptes"><code>LazyPager::write_protect_ptes</code></a> to mark shared pages as
+read-only.</li>
+<li>Creates a new address space and page table for the child.</li>
+<li>Invalidates stale TLB entries to enforce new memory protection rules.</li>
+</ul>
+<h4 id="file-descriptors"><a class="doc-anchor" href="#file-descriptors">§</a>File Descriptors</h4>
+<ul>
+<li>Duplicates the parent’s file descriptor table.</li>
+<li>File objects are shared and reference-counted across parent and child,
+consistent with the UNIX file model.</li>
+</ul>
+<h4 id="abi-and-register-state"><a class="doc-anchor" href="#abi-and-register-state">§</a>ABI and Register State</h4>
+<ul>
+<li>Copies the parent’s ABI state into the child.</li>
+<li>Adjusts the child’s register state to reflect a return value of <code>0</code>.</li>
+</ul>
+<h4 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h4>
+<ul>
+<li><code>file_struct</code>: The parent’s file descriptor table to be duplicated.</li>
+<li><code>mm_struct</code>: The parent’s memory layout (address space).</li>
+<li><code>abi</code>: The parent’s syscall ABI and register snapshot.</li>
+<li><code>create_task</code>: A closure for creating and spawning the new process.</li>
+</ul>
+<h4 id="returns"><a class="doc-anchor" href="#returns">§</a>Returns</h4>
+<ul>
+<li><code>Ok(pid)</code>: The parent receives the child process ID.</li>
+<li><code>Err(KernelError)</code>: If the fork operation fails due to memory or resource
+constraints.</li>
+</ul>
+</div></details></section></div></main></body></html>

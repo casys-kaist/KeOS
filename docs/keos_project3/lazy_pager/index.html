@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Lazy Paging"><title>keos_project3::lazy_pager - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project3" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project3/index.html">keos_<wbr>project3</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module lazy_<wbr>pager</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#lazy-paging" title="Lazy Paging">Lazy Paging</a><ul><li><a href="#page-fault-in-keos" title="Page Fault in KeOS">Page Fault in KeOS</a></li><li><a href="#vmareastruct" title="`VmAreaStruct`"><code>VmAreaStruct</code></a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#traits" title="Traits">Traits</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project3</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project3</a></div><h1>Module <span>lazy_pager</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project3/lazy_pager.rs.html#1-385">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="lazy-paging"><a class="doc-anchor" href="#lazy-paging">§</a>Lazy Paging</h2>
+<p>The lazy paging or demand paging is an another policy for the
+paging, which used by modern operating systems. Unlink the <a href="../../project2/mmap/struct.EagerPager.html"><code>EagerPager</code></a>
+that you implemented in project 2, the <a href="struct.LazyPager.html" title="struct keos_project3::lazy_pager::LazyPager"><code>LazyPager</code></a> defers physical page
+allocation until a page fault occurs. This method optimizes memory usage by
+mapping memory pages <strong>on demand</strong>, rather than preallocating them.</p>
+<p>Instead of allocating physical memory during the <code>mmap</code> call, the OS records
+<strong>metadata</strong> about the mapping and waits to allocate physical memory until
+the first <strong>page fault</strong> on that region. When a page fault occurs, the
+kernel allocates and maps the required physical page.
+In other words, <strong>page table entries are created only when accessed</strong>.</p>
+<h3 id="page-fault-in-keos"><a class="doc-anchor" href="#page-fault-in-keos">§</a>Page Fault in KeOS</h3>
+<p>The main function responsible for handling page faults lies in
+<a href="../../keos/task/trait.Task.html#method.page_fault" title="method keos::task::Task::page_fault"><code>Task::page_fault</code></a>. This resolves the page fault reason into
+<a href="struct.PageFaultReason.html" title="struct keos_project3::lazy_pager::PageFaultReason"><code>PageFaultReason</code></a> by reading the <code>cr2</code>, which contains faulting address,
+and decoding the error code on the interrupt stack.</p>
+<p>It then delegates the page fault handling into the
+<a href="struct.LazyPager.html#method.handle_page_fault" title="method keos_project3::lazy_pager::LazyPager::handle_page_fault"><code>LazyPager::handle_page_fault</code></a>. This method is responsible to look up the
+lazy mapping metadata recorded during the <code>mmap</code> and determine whether the
+fault is bogus fault or not. If the address is valid, it should allocate a
+new physical page and maps the page into page table. Otherwise, killing the
+current process by returning the <a href="../../keos/enum.KernelError.html" title="enum keos::KernelError"><code>KernelError</code></a>.</p>
+<h3 id="vmareastruct"><a class="doc-anchor" href="#vmareastruct">§</a><a href="struct.VmAreaStruct.html" title="struct keos_project3::lazy_pager::VmAreaStruct"><code>VmAreaStruct</code></a></h3>
+<p>The <a href="struct.VmAreaStruct.html" title="struct keos_project3::lazy_pager::VmAreaStruct"><code>VmAreaStruct</code></a> represents a range of virtual addresses that share the
+same memory permissions, similar to the Linux kernel’s <code>struct vm_area_struct</code>. It serves as the core metadata structure for memory-mapped
+regions created via <code>mmap</code>, capturing the virtual range and the method
+for populating that region’s contents on access.</p>
+<p>Each <a href="struct.VmAreaStruct.html" title="struct keos_project3::lazy_pager::VmAreaStruct"><code>VmAreaStruct</code></a> is associated with an implementation of the
+<a href="trait.MmLoader.html" title="trait keos_project3::lazy_pager::MmLoader"><code>MmLoader</code></a> trait, which defines how the contents of a page should be
+supplied when the region is accessed. This trait-based abstraction
+enables the kernel to support multiple types of memory mappings in a uniform
+way. For instance, file-backed mappings use a <a href="struct.FileBackedLoader.html" title="struct keos_project3::lazy_pager::FileBackedLoader"><code>FileBackedLoader</code></a>, which
+reads contents from a file, while anonymous mappings use an <a href="struct.AnonLoader.html" title="struct keos_project3::lazy_pager::AnonLoader"><code>AnonLoader</code></a>,
+which typically supplies zero-filled pages. Each loader implementation can
+maintain its own internal state, supporting extensibility and encapsulates
+the complexity of mapping behavior within each loader.</p>
+<p>The <a href="trait.MmLoader.html" title="trait keos_project3::lazy_pager::MmLoader"><code>MmLoader</code></a> trait provides a single method, <code>load</code>, which is called
+during demand paging when a page fault occurs at an address within the
+associated <a href="struct.VmAreaStruct.html" title="struct keos_project3::lazy_pager::VmAreaStruct"><code>VmAreaStruct</code></a>. The method must return a fully initialized
+<a href="../../keos/mm/struct.Page.html" title="struct keos::mm::Page"><code>Page</code></a> object corresponding to that virtual address. The returned page is
+then mapped into the page table by the pager.</p>
+<p>This loader-based architecture provides a clean separation of concerns:
+<a href="struct.VmAreaStruct.html" title="struct keos_project3::lazy_pager::VmAreaStruct"><code>VmAreaStruct</code></a> tracks regions and permissions, while <a href="trait.MmLoader.html" title="trait keos_project3::lazy_pager::MmLoader"><code>MmLoader</code></a>
+encapsulates how pages are provisioned. This allows KeOS to support flexible
+and efficient memory models while maintaining clean abstractions.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.LazyPager.html" title="struct keos_project3::lazy_pager::LazyPager"><code>LazyPager</code></a></li>
+<li><a href="struct.LazyPager.html#method.new" title="associated function keos_project3::lazy_pager::LazyPager::new"><code>LazyPager::new</code></a></li>
+<li><a href="struct.LazyPager.html#method.mmap" title="method keos_project3::lazy_pager::LazyPager::mmap"><code>LazyPager::mmap</code></a></li>
+<li><a href="struct.LazyPager.html#method.munmap" title="method keos_project3::lazy_pager::LazyPager::munmap"><code>LazyPager::munmap</code></a></li>
+<li><a href="struct.LazyPager.html#method.get_user_page" title="method keos_project3::lazy_pager::LazyPager::get_user_page"><code>LazyPager::get_user_page</code></a></li>
+<li><a href="struct.LazyPager.html#method.access_ok" title="method keos_project3::lazy_pager::LazyPager::access_ok"><code>LazyPager::access_ok</code></a></li>
+<li><a href="struct.PageFaultReason.html#method.is_demand_paging_fault" title="method keos_project3::lazy_pager::PageFaultReason::is_demand_paging_fault"><code>PageFaultReason::is_demand_paging_fault</code></a></li>
+<li><a href="struct.LazyPager.html#method.do_lazy_load" title="method keos_project3::lazy_pager::LazyPager::do_lazy_load"><code>LazyPager::do_lazy_load</code></a></li>
+<li><a href="struct.VmAreaStruct.html" title="struct keos_project3::lazy_pager::VmAreaStruct"><code>VmAreaStruct</code></a></li>
+<li><a href="struct.FileBackedLoader.html" title="struct keos_project3::lazy_pager::FileBackedLoader"><code>FileBackedLoader</code></a></li>
+<li><a href="struct.FileBackedLoader.html#method.load" title="method keos_project3::lazy_pager::FileBackedLoader::load"><code>FileBackedLoader::load</code></a></li>
+</ul>
+<p>After implement the functionalities, move on to the next <a href="../fork/index.html" title="mod keos_project3::fork"><code>section</code></a>.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.AnonLoader.html" title="struct keos_project3::lazy_pager::AnonLoader">Anon<wbr>Loader</a></dt><dd>A loader for anonymous memory regions.</dd><dt><a class="struct" href="struct.FileBackedLoader.html" title="struct keos_project3::lazy_pager::FileBackedLoader">File<wbr>Backed<wbr>Loader</a></dt><dd>A loader for file-backed memory regions.</dd><dt><a class="struct" href="struct.LazyPager.html" title="struct keos_project3::lazy_pager::LazyPager">Lazy<wbr>Pager</a></dt><dd>The <a href="struct.LazyPager.html" title="struct keos_project3::lazy_pager::LazyPager"><code>LazyPager</code></a> structure implements lazy paging, where memory pages are
+mapped only when accessed (on page fault), instead of during <code>mmap</code> calls.</dd><dt><a class="struct" href="struct.PageFaultReason.html" title="struct keos_project3::lazy_pager::PageFaultReason">Page<wbr>Fault<wbr>Reason</a></dt><dd>Represents the reason for a page fault in a virtual memory system.</dd><dt><a class="struct" href="struct.VmAreaStruct.html" title="struct keos_project3::lazy_pager::VmAreaStruct">VmArea<wbr>Struct</a></dt><dd>Represents a memory-mapped region within a process’s virtual address space,
+corresponding to the Linux kernel’s <code>struct vm_area_struct</code>.</dd></dl><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><dl class="item-table"><dt><a class="trait" href="trait.MmLoader.html" title="trait keos_project3::lazy_pager::MmLoader">MmLoader</a></dt><dd>A trait for loading the contents of a virtual memory page on demand.</dd></dl></section></div></main></body></html>

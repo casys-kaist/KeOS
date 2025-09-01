@@ -1,0 +1,512 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `keos-project5/src/ffs/fs_objects.rs`."><title>fs_objects.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos_project5" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">keos_project5/ffs/</div>fs_objects.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! ## File system objects.
+<a href=#2 id=2 data-nosnippet>2</a>//!
+<a href=#3 id=3 data-nosnippet>3</a>//! Every on-disk object is represented by an **inode**. This inode is
+<a href=#4 id=4 data-nosnippet>4</a>//! diverge into multiple file types like a **regular file** or a **directory**
+<a href=#5 id=5 data-nosnippet>5</a>//! based on the [`Inode::ftype`] field. In this project, you will support only
+<a href=#6 id=6 data-nosnippet>6</a>//! two primary types of file:
+<a href=#7 id=7 data-nosnippet>7</a>//! - [`RegularFile`]: A **regular file** is the most common file type. It
+<a href=#8 id=8 data-nosnippet>8</a>//!   represents a sequence of bytes, typically used to store application data,
+<a href=#9 id=9 data-nosnippet>9</a>//!   logs, executables, or any other form of persistent information. The
+<a href=#10 id=10 data-nosnippet>10</a>//!   operating system exposes system calls such as `read()`, and `write()` to
+<a href=#11 id=11 data-nosnippet>11</a>//!   allow user programs to interact with regular files. Inodes for regular
+<a href=#12 id=12 data-nosnippet>12</a>//!   files point to data blocks on disk that store the actual file content.
+<a href=#13 id=13 data-nosnippet>13</a>//! - [`Directory`]: A **directory** is a special type of file that acts as a
+<a href=#14 id=14 data-nosnippet>14</a>//!   container for other files. Internally, a directory consists of a list of
+<a href=#15 id=15 data-nosnippet>15</a>//!   entries that map human-readable file names to inode numbers. This mapping
+<a href=#16 id=16 data-nosnippet>16</a>//!   allows the kernel to resolve file paths and traverse the hierarchical file
+<a href=#17 id=17 data-nosnippet>17</a>//!   system structure. Directory inodes point to data blocks containing
+<a href=#18 id=18 data-nosnippet>18</a>//!   serialized directory entries rather than arbitrary user data.
+<a href=#19 id=19 data-nosnippet>19</a>//!
+<a href=#20 id=20 data-nosnippet>20</a>//! ## Directory Internals
+<a href=#21 id=21 data-nosnippet>21</a>//! A directory is represented as a collection of directory entries
+<a href=#22 id=22 data-nosnippet>22</a>//! stored within the **data blocks** of the directory inode. Each directory
+<a href=#23 id=23 data-nosnippet>23</a>//! block contains an array of [`DirectoryBlockEntry`] structures, which provide
+<a href=#24 id=24 data-nosnippet>24</a>//! the mapping between human-readable names and their corresponding inode
+<a href=#25 id=25 data-nosnippet>25</a>//! numbers. All directory operations, such as adding, removing, or searching
+<a href=#26 id=26 data-nosnippet>26</a>//! for files and subdirectories, are performed by manipulating this collection
+<a href=#27 id=27 data-nosnippet>27</a>//! of entries. The directory **MUST** start with two entries: "." and "..",
+<a href=#28 id=28 data-nosnippet>28</a>//! which points to itself and the parent directory respectively.
+<a href=#29 id=29 data-nosnippet>29</a>//!
+<a href=#30 id=30 data-nosnippet>30</a>//! ## Implementation Requirements
+<a href=#31 id=31 data-nosnippet>31</a>//! You need to implement the followings:
+<a href=#32 id=32 data-nosnippet>32</a>//! - [`RegularFile::read`]
+<a href=#33 id=33 data-nosnippet>33</a>//! - [`RegularFile::write`]
+<a href=#34 id=34 data-nosnippet>34</a>//! - [`Directory::read_dir`]
+<a href=#35 id=35 data-nosnippet>35</a>//! - [`Directory::find`]
+<a href=#36 id=36 data-nosnippet>36</a>//! - [`Directory::open_entry`]
+<a href=#37 id=37 data-nosnippet>37</a>//! - [`Directory::create_entry`]
+<a href=#38 id=38 data-nosnippet>38</a>//!
+<a href=#39 id=39 data-nosnippet>39</a>//! At this point, you have implemented the core abstractions for managing
+<a href=#40 id=40 data-nosnippet>40</a>//! inodes in the filesystem, supporting both regular files and directories.
+<a href=#41 id=41 data-nosnippet>41</a>//! These abstractions provide safe and structured access to both on-disk and
+<a href=#42 id=42 data-nosnippet>42</a>//! in-memory inode data, allowing higher-level components to interact with
+<a href=#43 id=43 data-nosnippet>43</a>//! files without dealing directly with low-level disk structures.
+<a href=#44 id=44 data-nosnippet>44</a>//!
+<a href=#45 id=45 data-nosnippet>45</a>//! This module gives you insight into the internal foundations of the file
+<a href=#46 id=46 data-nosnippet>46</a>//! abstraction in the filesystem. The next [`section`] will focus on
+<a href=#47 id=47 data-nosnippet>47</a>//! **maintaining crash consistency in the filesystem**..
+<a href=#48 id=48 data-nosnippet>48</a>//!
+<a href=#49 id=49 data-nosnippet>49</a>//! [`section`]: mod@crate::ffs::journal
+<a href=#50 id=50 data-nosnippet>50</a></span><span class="attr">#[cfg(doc)]
+<a href=#51 id=51 data-nosnippet>51</a></span><span class="kw">use </span><span class="kw">crate</span>::ffs::inode::Inode;
+<a href=#52 id=52 data-nosnippet>52</a><span class="kw">use </span><span class="kw">crate</span>::ffs::{
+<a href=#53 id=53 data-nosnippet>53</a>    FastFileSystemInner, FileBlockNumber, InodeNumber,
+<a href=#54 id=54 data-nosnippet>54</a>    access_control::{MetaData, TrackedInode},
+<a href=#55 id=55 data-nosnippet>55</a>    disk_layout::{DirectoryBlock, DirectoryBlockEntry},
+<a href=#56 id=56 data-nosnippet>56</a>    journal::RunningTransaction,
+<a href=#57 id=57 data-nosnippet>57</a>    types::FileType,
+<a href=#58 id=58 data-nosnippet>58</a>};
+<a href=#59 id=59 data-nosnippet>59</a><span class="kw">use </span>alloc::{
+<a href=#60 id=60 data-nosnippet>60</a>    string::String,
+<a href=#61 id=61 data-nosnippet>61</a>    sync::{Arc, Weak},
+<a href=#62 id=62 data-nosnippet>62</a>    vec::Vec,
+<a href=#63 id=63 data-nosnippet>63</a>};
+<a href=#64 id=64 data-nosnippet>64</a><span class="attr">#[cfg(doc)]
+<a href=#65 id=65 data-nosnippet>65</a></span><span class="kw">use </span>keos::fs::traits::{Directory <span class="kw">as </span>_Directory, RegularFile <span class="kw">as </span>_RegularFile};
+<a href=#66 id=66 data-nosnippet>66</a><span class="kw">use </span>keos::{KernelError, sync::atomic::AtomicBool};
+<a href=#67 id=67 data-nosnippet>67</a>
+<a href=#68 id=68 data-nosnippet>68</a><span class="doccomment">/// A handle to a regular file in the filesystem.
+<a href=#69 id=69 data-nosnippet>69</a>///
+<a href=#70 id=70 data-nosnippet>70</a>/// This struct represents a low-level kernel handle to a regular file,
+<a href=#71 id=71 data-nosnippet>71</a>/// associated with a specific [`TrackedInode`] and the backing
+<a href=#72 id=72 data-nosnippet>72</a>/// [`FastFileSystemInner`] instance.
+<a href=#73 id=73 data-nosnippet>73</a></span><span class="kw">pub struct </span>RegularFile {
+<a href=#74 id=74 data-nosnippet>74</a>    <span class="doccomment">/// Weak reference to the [`FastFileSystemInner`].
+<a href=#75 id=75 data-nosnippet>75</a>    </span>ffs: Weak&lt;FastFileSystemInner&gt;,
+<a href=#76 id=76 data-nosnippet>76</a>    <span class="doccomment">/// The inode associated with this file.
+<a href=#77 id=77 data-nosnippet>77</a>    </span>inode: TrackedInode,
+<a href=#78 id=78 data-nosnippet>78</a>}
+<a href=#79 id=79 data-nosnippet>79</a>
+<a href=#80 id=80 data-nosnippet>80</a><span class="kw">impl </span>RegularFile {
+<a href=#81 id=81 data-nosnippet>81</a>    <span class="doccomment">/// Creates a new [`RegularFile`] from a given inode and filesystem
+<a href=#82 id=82 data-nosnippet>82</a>    /// reference.
+<a href=#83 id=83 data-nosnippet>83</a>    ///
+<a href=#84 id=84 data-nosnippet>84</a>    /// Returns `None` if the provided inode does not represent a regular file.
+<a href=#85 id=85 data-nosnippet>85</a>    ///
+<a href=#86 id=86 data-nosnippet>86</a>    /// # Parameters
+<a href=#87 id=87 data-nosnippet>87</a>    /// - `inode`: A tracked reference to the file’s inode.
+<a href=#88 id=88 data-nosnippet>88</a>    /// - `ffs`: A weak reference to the filesystem context.
+<a href=#89 id=89 data-nosnippet>89</a>    ///
+<a href=#90 id=90 data-nosnippet>90</a>    /// # Returns
+<a href=#91 id=91 data-nosnippet>91</a>    /// - `Some(RegularFile)` if the inode is valid and represents a regular
+<a href=#92 id=92 data-nosnippet>92</a>    ///   file.
+<a href=#93 id=93 data-nosnippet>93</a>    /// - `None` if the inode is invalid or not a regular file.
+<a href=#94 id=94 data-nosnippet>94</a>    </span><span class="kw">pub fn </span>new(inode: TrackedInode, ffs: Weak&lt;FastFileSystemInner&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+<a href=#95 id=95 data-nosnippet>95</a>        <span class="kw">if </span>inode.read().ftype == FileType::RegularFile {
+<a href=#96 id=96 data-nosnippet>96</a>            <span class="prelude-val">Some</span>(<span class="self">Self </span>{ inode, ffs })
+<a href=#97 id=97 data-nosnippet>97</a>        } <span class="kw">else </span>{
+<a href=#98 id=98 data-nosnippet>98</a>            <span class="prelude-val">None
+<a href=#99 id=99 data-nosnippet>99</a>        </span>}
+<a href=#100 id=100 data-nosnippet>100</a>    }
+<a href=#101 id=101 data-nosnippet>101</a>}
+<a href=#102 id=102 data-nosnippet>102</a>
+<a href=#103 id=103 data-nosnippet>103</a><span class="kw">impl </span>keos::fs::traits::RegularFile <span class="kw">for </span>RegularFile {
+<a href=#104 id=104 data-nosnippet>104</a>    <span class="doccomment">/// Inode number of the file.
+<a href=#105 id=105 data-nosnippet>105</a>    </span><span class="kw">fn </span>ino(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; InodeNumber {
+<a href=#106 id=106 data-nosnippet>106</a>        <span class="self">self</span>.inode.read().ino
+<a href=#107 id=107 data-nosnippet>107</a>    }
+<a href=#108 id=108 data-nosnippet>108</a>
+<a href=#109 id=109 data-nosnippet>109</a>    <span class="doccomment">/// Returns the size of the file in bytes.
+<a href=#110 id=110 data-nosnippet>110</a>    </span><span class="kw">fn </span>size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+<a href=#111 id=111 data-nosnippet>111</a>        <span class="self">self</span>.inode.read().size
+<a href=#112 id=112 data-nosnippet>112</a>    }
+<a href=#113 id=113 data-nosnippet>113</a>
+<a href=#114 id=114 data-nosnippet>114</a>    <span class="doccomment">/// Reads data from the file into the provided buffer.
+<a href=#115 id=115 data-nosnippet>115</a>    ///
+<a href=#116 id=116 data-nosnippet>116</a>    /// # Parameters
+<a href=#117 id=117 data-nosnippet>117</a>    /// - `ofs`: The `FileBlockNumber` which to read.
+<a href=#118 id=118 data-nosnippet>118</a>    /// - `buf`: A mutable array where the file content will be stored.
+<a href=#119 id=119 data-nosnippet>119</a>    ///
+<a href=#120 id=120 data-nosnippet>120</a>    /// # Returns
+<a href=#121 id=121 data-nosnippet>121</a>    /// - `Ok(true)`: If the read success.
+<a href=#122 id=122 data-nosnippet>122</a>    /// - `Ok(false)`: If the read failed.
+<a href=#123 id=123 data-nosnippet>123</a>    /// - `Err(Error)`: An error occured while the read operation.
+<a href=#124 id=124 data-nosnippet>124</a>    </span><span class="kw">fn </span>read(<span class="kw-2">&amp;</span><span class="self">self</span>, fba: FileBlockNumber, buf: <span class="kw-2">&amp;mut </span>[u8; <span class="number">4096</span>]) -&gt; <span class="prelude-ty">Result</span>&lt;bool, keos::KernelError&gt; {
+<a href=#125 id=125 data-nosnippet>125</a>        <span class="kw">let </span>ffs = <span class="self">self</span>.ffs.upgrade().unwrap();
+<a href=#126 id=126 data-nosnippet>126</a>        <span class="kw">let </span>inode = <span class="self">self</span>.inode.read();
+<a href=#127 id=127 data-nosnippet>127</a>        <span class="kw">match </span>inode.get(<span class="kw-2">&amp;</span>ffs, fba)<span class="question-mark">? </span>{
+<a href=#128 id=128 data-nosnippet>128</a>            <span class="prelude-val">Some</span>(lba) =&gt; {
+<a href=#129 id=129 data-nosnippet>129</a>                <span class="macro">todo!</span>();
+<a href=#130 id=130 data-nosnippet>130</a>            }
+<a href=#131 id=131 data-nosnippet>131</a>            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>),
+<a href=#132 id=132 data-nosnippet>132</a>        }
+<a href=#133 id=133 data-nosnippet>133</a>    }
+<a href=#134 id=134 data-nosnippet>134</a>
+<a href=#135 id=135 data-nosnippet>135</a>    <span class="doccomment">/// Writes a 4096-byte data into the specified file block.
+<a href=#136 id=136 data-nosnippet>136</a>    ///
+<a href=#137 id=137 data-nosnippet>137</a>    /// This method writes the contents of `buf` to the file block indicated by
+<a href=#138 id=138 data-nosnippet>138</a>    /// `fba`. If the target block lies beyond the current end of the file,
+<a href=#139 id=139 data-nosnippet>139</a>    /// the file may be extended up to `new_size` bytes to accommodate the
+<a href=#140 id=140 data-nosnippet>140</a>    /// write.
+<a href=#141 id=141 data-nosnippet>141</a>    ///
+<a href=#142 id=142 data-nosnippet>142</a>    /// However, if the target block lies beyond the current file size **and**
+<a href=#143 id=143 data-nosnippet>143</a>    /// `new_size` is insufficient to reach it, the write will fail.
+<a href=#144 id=144 data-nosnippet>144</a>    ///
+<a href=#145 id=145 data-nosnippet>145</a>    /// # Parameters
+<a href=#146 id=146 data-nosnippet>146</a>    /// - `fba`: The `FileBlockNumber` indicating the block to write to.
+<a href=#147 id=147 data-nosnippet>147</a>    /// - `buf`: A buffer containing exactly 4096 bytes of data to write.
+<a href=#148 id=148 data-nosnippet>148</a>    /// - `new_size`: The desired minimum file size (in bytes) after the write.
+<a href=#149 id=149 data-nosnippet>149</a>    ///   If this value is less than or equal to the current file size, no
+<a href=#150 id=150 data-nosnippet>150</a>    ///   growth occurs.
+<a href=#151 id=151 data-nosnippet>151</a>    ///
+<a href=#152 id=152 data-nosnippet>152</a>    /// # Returns
+<a href=#153 id=153 data-nosnippet>153</a>    /// - `Ok(())` if the write is successful.
+<a href=#154 id=154 data-nosnippet>154</a>    /// - `Err(KernelError)` if the operation fails (e.g., out-of-bounds write,
+<a href=#155 id=155 data-nosnippet>155</a>    ///   I/O error).
+<a href=#156 id=156 data-nosnippet>156</a>    </span><span class="kw">fn </span>write(
+<a href=#157 id=157 data-nosnippet>157</a>        <span class="kw-2">&amp;</span><span class="self">self</span>,
+<a href=#158 id=158 data-nosnippet>158</a>        fba: FileBlockNumber,
+<a href=#159 id=159 data-nosnippet>159</a>        buf: <span class="kw-2">&amp;</span>[u8; <span class="number">4096</span>],
+<a href=#160 id=160 data-nosnippet>160</a>        min_size: usize,
+<a href=#161 id=161 data-nosnippet>161</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), keos::KernelError&gt; {
+<a href=#162 id=162 data-nosnippet>162</a>        <span class="kw">let </span>ffs = <span class="self">self</span>.ffs.upgrade().unwrap();
+<a href=#163 id=163 data-nosnippet>163</a>        <span class="kw">let </span>tx = ffs.open_transaction(<span class="string">"RegularFile::write"</span>);
+<a href=#164 id=164 data-nosnippet>164</a>        <span class="self">self</span>.inode.write_with(<span class="kw-2">&amp;</span>tx, |<span class="kw-2">mut </span>inode| {
+<a href=#165 id=165 data-nosnippet>165</a>            <span class="comment">// Hint: Must conduct the following step
+<a href=#166 id=166 data-nosnippet>166</a>            // 1: Grow.
+<a href=#167 id=167 data-nosnippet>167</a>            // 2: Update the field `size`.
+<a href=#168 id=168 data-nosnippet>168</a>            // 3: Write to the data block.
+<a href=#169 id=169 data-nosnippet>169</a>            // 4: Submit change of the inode.
+<a href=#170 id=170 data-nosnippet>170</a>            </span><span class="macro">todo!</span>();
+<a href=#171 id=171 data-nosnippet>171</a>        })<span class="question-mark">?</span>;
+<a href=#172 id=172 data-nosnippet>172</a>        tx.commit()<span class="question-mark">?</span>;
+<a href=#173 id=173 data-nosnippet>173</a>
+<a href=#174 id=174 data-nosnippet>174</a>        <span class="prelude-val">Ok</span>(())
+<a href=#175 id=175 data-nosnippet>175</a>    }
+<a href=#176 id=176 data-nosnippet>176</a>
+<a href=#177 id=177 data-nosnippet>177</a>    <span class="kw">fn </span>writeback(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), keos::KernelError&gt; {
+<a href=#178 id=178 data-nosnippet>178</a>        <span class="prelude-val">Ok</span>(())
+<a href=#179 id=179 data-nosnippet>179</a>    }
+<a href=#180 id=180 data-nosnippet>180</a>}
+<a href=#181 id=181 data-nosnippet>181</a>
+<a href=#182 id=182 data-nosnippet>182</a><span class="doccomment">/// Represents a directory, which contains multiple directory entries.
+<a href=#183 id=183 data-nosnippet>183</a>///
+<a href=#184 id=184 data-nosnippet>184</a>/// This structure provides access to the directory's inode, which stores
+<a href=#185 id=185 data-nosnippet>185</a>/// information about the directory's metadata and contents.
+<a href=#186 id=186 data-nosnippet>186</a></span><span class="kw">pub struct </span>Directory {
+<a href=#187 id=187 data-nosnippet>187</a>    <span class="doccomment">/// Weak reference to the file system reference.
+<a href=#188 id=188 data-nosnippet>188</a>    </span><span class="kw">pub </span>ffs: Weak&lt;FastFileSystemInner&gt;,
+<a href=#189 id=189 data-nosnippet>189</a>    <span class="doccomment">/// The inode associated with this directory.
+<a href=#190 id=190 data-nosnippet>190</a>    </span><span class="kw">pub </span>inode: TrackedInode,
+<a href=#191 id=191 data-nosnippet>191</a>    <span class="doccomment">/// Whether the directory is removed,
+<a href=#192 id=192 data-nosnippet>192</a>    </span><span class="kw">pub </span>removed: AtomicBool,
+<a href=#193 id=193 data-nosnippet>193</a>}
+<a href=#194 id=194 data-nosnippet>194</a>
+<a href=#195 id=195 data-nosnippet>195</a><span class="kw">impl </span>Directory {
+<a href=#196 id=196 data-nosnippet>196</a>    <span class="doccomment">/// Creates a new `Directory` from the given inode.
+<a href=#197 id=197 data-nosnippet>197</a>    ///
+<a href=#198 id=198 data-nosnippet>198</a>    /// # Arguments
+<a href=#199 id=199 data-nosnippet>199</a>    /// - `inode`: The tracked inode representing this directory.
+<a href=#200 id=200 data-nosnippet>200</a>    /// - `ffs`: A weak reference to the owning `FastFileSystemInner`.
+<a href=#201 id=201 data-nosnippet>201</a>    ///
+<a href=#202 id=202 data-nosnippet>202</a>    /// # Returns
+<a href=#203 id=203 data-nosnippet>203</a>    /// - `Some(Directory)`: if the provided inode is valid and represents a
+<a href=#204 id=204 data-nosnippet>204</a>    ///   directory.
+<a href=#205 id=205 data-nosnippet>205</a>    /// - `None`: if the inode is not of type `File::Directory`.
+<a href=#206 id=206 data-nosnippet>206</a>    </span><span class="kw">pub fn </span>new(inode: TrackedInode, ffs: Weak&lt;FastFileSystemInner&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+<a href=#207 id=207 data-nosnippet>207</a>        <span class="kw">if </span>inode.read().ftype == FileType::Directory {
+<a href=#208 id=208 data-nosnippet>208</a>            <span class="prelude-val">Some</span>(<span class="self">Self </span>{
+<a href=#209 id=209 data-nosnippet>209</a>                inode,
+<a href=#210 id=210 data-nosnippet>210</a>                ffs,
+<a href=#211 id=211 data-nosnippet>211</a>                removed: AtomicBool::new(<span class="bool-val">false</span>),
+<a href=#212 id=212 data-nosnippet>212</a>            })
+<a href=#213 id=213 data-nosnippet>213</a>        } <span class="kw">else </span>{
+<a href=#214 id=214 data-nosnippet>214</a>            <span class="prelude-val">None
+<a href=#215 id=215 data-nosnippet>215</a>        </span>}
+<a href=#216 id=216 data-nosnippet>216</a>    }
+<a href=#217 id=217 data-nosnippet>217</a>
+<a href=#218 id=218 data-nosnippet>218</a>    <span class="doccomment">/// Reads the contents of the directory.
+<a href=#219 id=219 data-nosnippet>219</a>    ///
+<a href=#220 id=220 data-nosnippet>220</a>    /// This function lists all the entries within the directory as a [`Vec`].
+<a href=#221 id=221 data-nosnippet>221</a>    ///
+<a href=#222 id=222 data-nosnippet>222</a>    /// A single entry is a tuple that consists of inode number and file name,
+<a href=#223 id=223 data-nosnippet>223</a>    /// that is `(InodeNumber, String)`.
+<a href=#224 id=224 data-nosnippet>224</a>    ///
+<a href=#225 id=225 data-nosnippet>225</a>    /// # Returns
+<a href=#226 id=226 data-nosnippet>226</a>    /// - `Ok(())`: If the directory was successfully read.
+<a href=#227 id=227 data-nosnippet>227</a>    /// - `Err(Error)`: An error if the read operation fails.
+<a href=#228 id=228 data-nosnippet>228</a>    </span><span class="kw">pub fn </span>read_dir(
+<a href=#229 id=229 data-nosnippet>229</a>        <span class="kw-2">&amp;</span><span class="self">self</span>,
+<a href=#230 id=230 data-nosnippet>230</a>        ffs: <span class="kw-2">&amp;</span>FastFileSystemInner,
+<a href=#231 id=231 data-nosnippet>231</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(InodeNumber, String)&gt;, keos::KernelError&gt; {
+<a href=#232 id=232 data-nosnippet>232</a>        <span class="kw">let </span><span class="kw-2">mut </span>output = Vec::new();
+<a href=#233 id=233 data-nosnippet>233</a>        <span class="kw">let </span>inode = <span class="self">self</span>.inode.read();
+<a href=#234 id=234 data-nosnippet>234</a>        <span class="kw">for </span>fba <span class="kw">in </span>(<span class="number">0</span>..inode.size.div_ceil(<span class="number">4096</span>)).map(FileBlockNumber) {
+<a href=#235 id=235 data-nosnippet>235</a>            <span class="macro">todo!</span>()
+<a href=#236 id=236 data-nosnippet>236</a>        }
+<a href=#237 id=237 data-nosnippet>237</a>        <span class="prelude-val">Ok</span>(output)
+<a href=#238 id=238 data-nosnippet>238</a>    }
+<a href=#239 id=239 data-nosnippet>239</a>
+<a href=#240 id=240 data-nosnippet>240</a>    <span class="doccomment">/// Finds the inode number corresponding to a directory entry by name.
+<a href=#241 id=241 data-nosnippet>241</a>    ///
+<a href=#242 id=242 data-nosnippet>242</a>    /// # Arguments
+<a href=#243 id=243 data-nosnippet>243</a>    /// - `ffs`: Reference to the file system’s internal structure.
+<a href=#244 id=244 data-nosnippet>244</a>    /// - `entry`: The name of the directory entry to search for.
+<a href=#245 id=245 data-nosnippet>245</a>    ///
+<a href=#246 id=246 data-nosnippet>246</a>    /// # Returns
+<a href=#247 id=247 data-nosnippet>247</a>    /// - `Ok(inode_number)`: if the entry is found in the directory.
+<a href=#248 id=248 data-nosnippet>248</a>    /// - `Err(KernelError)`: if the entry is not found or other errors occurs.
+<a href=#249 id=249 data-nosnippet>249</a>    </span><span class="kw">pub fn </span>find(<span class="kw-2">&amp;</span><span class="self">self</span>, ffs: <span class="kw-2">&amp;</span>FastFileSystemInner, entry: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;InodeNumber, KernelError&gt; {
+<a href=#250 id=250 data-nosnippet>250</a>        <span class="macro">todo!</span>()
+<a href=#251 id=251 data-nosnippet>251</a>    }
+<a href=#252 id=252 data-nosnippet>252</a>
+<a href=#253 id=253 data-nosnippet>253</a>    <span class="doccomment">/// Adds a new entry to the directory.
+<a href=#254 id=254 data-nosnippet>254</a>    ///
+<a href=#255 id=255 data-nosnippet>255</a>    /// # Arguments
+<a href=#256 id=256 data-nosnippet>256</a>    /// - `ffs`: Reference to the file system’s internal structure.
+<a href=#257 id=257 data-nosnippet>257</a>    /// - `entry`: The name of the new directory entry.
+<a href=#258 id=258 data-nosnippet>258</a>    /// - `is_dir`: Whether the entry is a subdirectory (`true`) or a regular
+<a href=#259 id=259 data-nosnippet>259</a>    ///   file (`false`).
+<a href=#260 id=260 data-nosnippet>260</a>    /// - `tx`: A running transaction used to persist metadata changes.
+<a href=#261 id=261 data-nosnippet>261</a>    ///
+<a href=#262 id=262 data-nosnippet>262</a>    /// # Returns
+<a href=#263 id=263 data-nosnippet>263</a>    /// - `Ok(())`: if the entry is successfully added.
+<a href=#264 id=264 data-nosnippet>264</a>    /// - `Err(KernelError)`: if an error occurs (e.g., entry already exists or
+<a href=#265 id=265 data-nosnippet>265</a>    ///   out of space).
+<a href=#266 id=266 data-nosnippet>266</a>    </span><span class="kw">pub fn </span>add_entry(
+<a href=#267 id=267 data-nosnippet>267</a>        <span class="kw-2">&amp;</span><span class="self">self</span>,
+<a href=#268 id=268 data-nosnippet>268</a>        ffs: <span class="kw-2">&amp;</span>Arc&lt;FastFileSystemInner&gt;,
+<a href=#269 id=269 data-nosnippet>269</a>        entry: <span class="kw-2">&amp;</span>str,
+<a href=#270 id=270 data-nosnippet>270</a>        ino: InodeNumber,
+<a href=#271 id=271 data-nosnippet>271</a>        tx: <span class="kw-2">&amp;</span>RunningTransaction,
+<a href=#272 id=272 data-nosnippet>272</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), KernelError&gt; {
+<a href=#273 id=273 data-nosnippet>273</a>        <span class="kw">if </span><span class="self">self</span>.removed.load() {
+<a href=#274 id=274 data-nosnippet>274</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(KernelError::NoSuchEntry);
+<a href=#275 id=275 data-nosnippet>275</a>        }
+<a href=#276 id=276 data-nosnippet>276</a>        <span class="kw">let </span>en = DirectoryBlockEntry::from_ino_name(ino, entry).ok_or(KernelError::NameTooLong)<span class="question-mark">?</span>;
+<a href=#277 id=277 data-nosnippet>277</a>        <span class="comment">// Read path
+<a href=#278 id=278 data-nosnippet>278</a>        </span>{
+<a href=#279 id=279 data-nosnippet>279</a>            <span class="kw">let </span>inode = <span class="self">self</span>.inode.read();
+<a href=#280 id=280 data-nosnippet>280</a>            <span class="comment">// Find reusable entry.
+<a href=#281 id=281 data-nosnippet>281</a>            </span><span class="kw">for </span>fba <span class="kw">in </span>(<span class="number">0</span>..inode.size.div_ceil(<span class="number">4096</span>)).map(FileBlockNumber) {
+<a href=#282 id=282 data-nosnippet>282</a>                <span class="kw">let </span>lba = inode.get(ffs, fba)<span class="question-mark">?</span>;
+<a href=#283 id=283 data-nosnippet>283</a>                <span class="kw">let </span>blk = DirectoryBlock::load(ffs, lba.unwrap())<span class="question-mark">?</span>;
+<a href=#284 id=284 data-nosnippet>284</a>                <span class="kw">let </span><span class="kw-2">mut </span>fit = <span class="prelude-val">None</span>;
+<a href=#285 id=285 data-nosnippet>285</a>                {
+<a href=#286 id=286 data-nosnippet>286</a>                    <span class="kw">let </span>guard = blk.read();
+<a href=#287 id=287 data-nosnippet>287</a>                    <span class="kw">for </span>(i, en) <span class="kw">in </span>guard.iter().enumerate() {
+<a href=#288 id=288 data-nosnippet>288</a>                        <span class="kw">if </span>en.inode.is_none() {
+<a href=#289 id=289 data-nosnippet>289</a>                            fit = <span class="prelude-val">Some</span>(i);
+<a href=#290 id=290 data-nosnippet>290</a>                            <span class="kw">break</span>;
+<a href=#291 id=291 data-nosnippet>291</a>                        }
+<a href=#292 id=292 data-nosnippet>292</a>                    }
+<a href=#293 id=293 data-nosnippet>293</a>                }
+<a href=#294 id=294 data-nosnippet>294</a>                <span class="kw">if let </span><span class="prelude-val">Some</span>(fit) = fit {
+<a href=#295 id=295 data-nosnippet>295</a>                    <span class="kw">let </span><span class="kw-2">mut </span>guard = blk.write(tx);
+<a href=#296 id=296 data-nosnippet>296</a>                    guard[fit] = en;
+<a href=#297 id=297 data-nosnippet>297</a>                    guard.submit();
+<a href=#298 id=298 data-nosnippet>298</a>                    drop(inode);
+<a href=#299 id=299 data-nosnippet>299</a>                    <span class="kw">return </span>ffs.get_inode(ino).unwrap().write_with(tx, |<span class="kw-2">mut </span>inode| {
+<a href=#300 id=300 data-nosnippet>300</a>                        inode.link_count += <span class="number">1</span>;
+<a href=#301 id=301 data-nosnippet>301</a>                        inode.submit();
+<a href=#302 id=302 data-nosnippet>302</a>                        <span class="prelude-val">Ok</span>(())
+<a href=#303 id=303 data-nosnippet>303</a>                    });
+<a href=#304 id=304 data-nosnippet>304</a>                }
+<a href=#305 id=305 data-nosnippet>305</a>            }
+<a href=#306 id=306 data-nosnippet>306</a>        }
+<a href=#307 id=307 data-nosnippet>307</a>
+<a href=#308 id=308 data-nosnippet>308</a>        <span class="self">self</span>.inode.write_with(tx, |<span class="kw-2">mut </span>inode| {
+<a href=#309 id=309 data-nosnippet>309</a>            <span class="comment">// Grow the directory if no available space.
+<a href=#310 id=310 data-nosnippet>310</a>            </span><span class="kw">let </span>until = FileBlockNumber(inode.size.div_ceil(<span class="number">0x1000</span>));
+<a href=#311 id=311 data-nosnippet>311</a>            inode.grow(ffs, until, tx)<span class="question-mark">?</span>;
+<a href=#312 id=312 data-nosnippet>312</a>            inode.size += <span class="number">0x1000</span>;
+<a href=#313 id=313 data-nosnippet>313</a>
+<a href=#314 id=314 data-nosnippet>314</a>            <span class="comment">// Fill the entry.
+<a href=#315 id=315 data-nosnippet>315</a>            </span><span class="kw">let </span>lba = inode.get(ffs, until)<span class="question-mark">?</span>;
+<a href=#316 id=316 data-nosnippet>316</a>            <span class="kw">let </span>blk = DirectoryBlock::load(ffs, lba.unwrap())<span class="question-mark">?</span>;
+<a href=#317 id=317 data-nosnippet>317</a>            <span class="kw">let </span><span class="kw-2">mut </span>guard = blk.write(tx);
+<a href=#318 id=318 data-nosnippet>318</a>            guard[<span class="number">0</span>] = en;
+<a href=#319 id=319 data-nosnippet>319</a>            guard.submit();
+<a href=#320 id=320 data-nosnippet>320</a>            inode.submit();
+<a href=#321 id=321 data-nosnippet>321</a>            ffs.get_inode(ino).unwrap().write_with(tx, |<span class="kw-2">mut </span>inode| {
+<a href=#322 id=322 data-nosnippet>322</a>                inode.link_count += <span class="number">1</span>;
+<a href=#323 id=323 data-nosnippet>323</a>                inode.submit();
+<a href=#324 id=324 data-nosnippet>324</a>                <span class="prelude-val">Ok</span>(())
+<a href=#325 id=325 data-nosnippet>325</a>            })
+<a href=#326 id=326 data-nosnippet>326</a>        })
+<a href=#327 id=327 data-nosnippet>327</a>    }
+<a href=#328 id=328 data-nosnippet>328</a>
+<a href=#329 id=329 data-nosnippet>329</a>    <span class="doccomment">/// Takes an existing entry out of the directory.
+<a href=#330 id=330 data-nosnippet>330</a>    ///
+<a href=#331 id=331 data-nosnippet>331</a>    /// # Arguments
+<a href=#332 id=332 data-nosnippet>332</a>    /// - `ffs`: Reference to the file system’s internal structure.
+<a href=#333 id=333 data-nosnippet>333</a>    /// - `entry`: The name of the entry to remove.
+<a href=#334 id=334 data-nosnippet>334</a>    /// - `tx`: A running transaction used to persist metadata changes.
+<a href=#335 id=335 data-nosnippet>335</a>    ///
+<a href=#336 id=336 data-nosnippet>336</a>    /// # Returns
+<a href=#337 id=337 data-nosnippet>337</a>    /// - `Ok(())`: if the entry is successfully removed.
+<a href=#338 id=338 data-nosnippet>338</a>    /// - `Err(KernelError)`: if the entry does not exist or an I/O error
+<a href=#339 id=339 data-nosnippet>339</a>    ///   occurs.
+<a href=#340 id=340 data-nosnippet>340</a>    </span><span class="kw">pub fn </span>take_entry(
+<a href=#341 id=341 data-nosnippet>341</a>        <span class="kw-2">&amp;</span><span class="self">self</span>,
+<a href=#342 id=342 data-nosnippet>342</a>        ffs: <span class="kw-2">&amp;</span>Arc&lt;FastFileSystemInner&gt;,
+<a href=#343 id=343 data-nosnippet>343</a>        entry: <span class="kw-2">&amp;</span>str,
+<a href=#344 id=344 data-nosnippet>344</a>        tx: <span class="kw-2">&amp;</span>RunningTransaction,
+<a href=#345 id=345 data-nosnippet>345</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;TrackedInode, KernelError&gt; {
+<a href=#346 id=346 data-nosnippet>346</a>        <span class="kw">let </span>guard = <span class="self">self</span>.inode.read();
+<a href=#347 id=347 data-nosnippet>347</a>        <span class="kw">for </span>fba <span class="kw">in </span>(<span class="number">0</span>..guard.size.div_ceil(<span class="number">4096</span>)).map(FileBlockNumber) {
+<a href=#348 id=348 data-nosnippet>348</a>            <span class="kw">let </span>lba = guard.get(ffs, fba)<span class="question-mark">?</span>;
+<a href=#349 id=349 data-nosnippet>349</a>            <span class="kw">let </span>blk = DirectoryBlock::load(ffs, lba.unwrap())<span class="question-mark">?</span>;
+<a href=#350 id=350 data-nosnippet>350</a>            <span class="kw">let </span><span class="kw-2">mut </span>fit = <span class="prelude-val">None</span>;
+<a href=#351 id=351 data-nosnippet>351</a>            {
+<a href=#352 id=352 data-nosnippet>352</a>                <span class="kw">let </span>guard = blk.read();
+<a href=#353 id=353 data-nosnippet>353</a>                <span class="kw">for </span>(i, en) <span class="kw">in </span>guard.iter().enumerate() {
+<a href=#354 id=354 data-nosnippet>354</a>                    <span class="kw">if </span>en.name() == <span class="prelude-val">Some</span>(entry) {
+<a href=#355 id=355 data-nosnippet>355</a>                        fit = <span class="prelude-val">Some</span>(i);
+<a href=#356 id=356 data-nosnippet>356</a>                        <span class="kw">break</span>;
+<a href=#357 id=357 data-nosnippet>357</a>                    }
+<a href=#358 id=358 data-nosnippet>358</a>                }
+<a href=#359 id=359 data-nosnippet>359</a>            }
+<a href=#360 id=360 data-nosnippet>360</a>            <span class="kw">if let </span><span class="prelude-val">Some</span>(fit) = fit {
+<a href=#361 id=361 data-nosnippet>361</a>                <span class="kw">let </span><span class="kw-2">mut </span>guard = blk.write(tx);
+<a href=#362 id=362 data-nosnippet>362</a>                <span class="kw">let </span>ino = guard[fit].inode.take();
+<a href=#363 id=363 data-nosnippet>363</a>                guard.submit();
+<a href=#364 id=364 data-nosnippet>364</a>                <span class="kw">return </span>ffs
+<a href=#365 id=365 data-nosnippet>365</a>                    .get_inode(ino.ok_or(KernelError::FilesystemCorrupted(<span class="string">"DirectoryEntry"</span>))<span class="question-mark">?</span>);
+<a href=#366 id=366 data-nosnippet>366</a>            }
+<a href=#367 id=367 data-nosnippet>367</a>        }
+<a href=#368 id=368 data-nosnippet>368</a>        <span class="prelude-val">Err</span>(KernelError::NoSuchEntry)
+<a href=#369 id=369 data-nosnippet>369</a>    }
+<a href=#370 id=370 data-nosnippet>370</a>}
+<a href=#371 id=371 data-nosnippet>371</a>
+<a href=#372 id=372 data-nosnippet>372</a><span class="kw">impl </span>keos::fs::traits::Directory <span class="kw">for </span>Directory {
+<a href=#373 id=373 data-nosnippet>373</a>    <span class="doccomment">/// Inode number of the directory.
+<a href=#374 id=374 data-nosnippet>374</a>    </span><span class="kw">fn </span>ino(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; InodeNumber {
+<a href=#375 id=375 data-nosnippet>375</a>        <span class="self">self</span>.inode.read().ino
+<a href=#376 id=376 data-nosnippet>376</a>    }
+<a href=#377 id=377 data-nosnippet>377</a>
+<a href=#378 id=378 data-nosnippet>378</a>    <span class="doccomment">/// Returns the size of the file in bytes.
+<a href=#379 id=379 data-nosnippet>379</a>    </span><span class="attr">#[inline]
+<a href=#380 id=380 data-nosnippet>380</a>    </span><span class="kw">fn </span>size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+<a href=#381 id=381 data-nosnippet>381</a>        <span class="self">self</span>.inode.read().size
+<a href=#382 id=382 data-nosnippet>382</a>    }
+<a href=#383 id=383 data-nosnippet>383</a>
+<a href=#384 id=384 data-nosnippet>384</a>    <span class="doccomment">/// Link count of the directory.
+<a href=#385 id=385 data-nosnippet>385</a>    </span><span class="kw">fn </span>link_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+<a href=#386 id=386 data-nosnippet>386</a>        <span class="self">self</span>.inode.read().link_count
+<a href=#387 id=387 data-nosnippet>387</a>    }
+<a href=#388 id=388 data-nosnippet>388</a>
+<a href=#389 id=389 data-nosnippet>389</a>    <span class="doccomment">/// Opens an entry by name.
+<a href=#390 id=390 data-nosnippet>390</a>    ///
+<a href=#391 id=391 data-nosnippet>391</a>    /// # Parameters
+<a href=#392 id=392 data-nosnippet>392</a>    /// - `entry`: The name of the entry to open.
+<a href=#393 id=393 data-nosnippet>393</a>    ///
+<a href=#394 id=394 data-nosnippet>394</a>    /// # Returns
+<a href=#395 id=395 data-nosnippet>395</a>    /// - `Ok(File)`: The enumerate of the file (e.g., regular file, directory).
+<a href=#396 id=396 data-nosnippet>396</a>    /// - `Err(Error)`: An error if the entry cannot be found or accessed.
+<a href=#397 id=397 data-nosnippet>397</a>    </span><span class="kw">fn </span>open_entry(<span class="kw-2">&amp;</span><span class="self">self</span>, entry: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;keos::fs::File, keos::KernelError&gt; {
+<a href=#398 id=398 data-nosnippet>398</a>        <span class="comment">// Get the filesystem from the weak reference.
+<a href=#399 id=399 data-nosnippet>399</a>        </span><span class="kw">let </span>ffs = <span class="self">self
+<a href=#400 id=400 data-nosnippet>400</a>            </span>.ffs
+<a href=#401 id=401 data-nosnippet>401</a>            .upgrade()
+<a href=#402 id=402 data-nosnippet>402</a>            .ok_or(KernelError::FilesystemCorrupted(<span class="string">"File system closed."</span>))<span class="question-mark">?</span>;
+<a href=#403 id=403 data-nosnippet>403</a>        <span class="comment">// Find the inode corresponding to the entry from the directory.
+<a href=#404 id=404 data-nosnippet>404</a>        </span><span class="kw">let </span>ino = <span class="self">self</span>.find(<span class="kw-2">&amp;</span>ffs, entry)<span class="question-mark">?</span>;
+<a href=#405 id=405 data-nosnippet>405</a>        <span class="kw">let </span>inode = ffs.get_inode(ino)<span class="question-mark">?</span>;
+<a href=#406 id=406 data-nosnippet>406</a>        <span class="macro">todo!</span>()
+<a href=#407 id=407 data-nosnippet>407</a>    }
+<a href=#408 id=408 data-nosnippet>408</a>
+<a href=#409 id=409 data-nosnippet>409</a>    <span class="doccomment">/// Add an entry by name.
+<a href=#410 id=410 data-nosnippet>410</a>    ///
+<a href=#411 id=411 data-nosnippet>411</a>    /// # Parameters
+<a href=#412 id=412 data-nosnippet>412</a>    /// - `entry`: The name of the entry to add.
+<a href=#413 id=413 data-nosnippet>413</a>    /// - `is_dir`: Indicate whether the entry is directory or not.
+<a href=#414 id=414 data-nosnippet>414</a>    ///
+<a href=#415 id=415 data-nosnippet>415</a>    /// # Returns
+<a href=#416 id=416 data-nosnippet>416</a>    /// - `Ok(())`: If the entry was successfully added.
+<a href=#417 id=417 data-nosnippet>417</a>    /// - `Err(Error)`: An error if the add fails.
+<a href=#418 id=418 data-nosnippet>418</a>    </span><span class="kw">fn </span>create_entry(<span class="kw-2">&amp;</span><span class="self">self</span>, entry: <span class="kw-2">&amp;</span>str, is_dir: bool) -&gt; <span class="prelude-ty">Result</span>&lt;keos::fs::File, keos::KernelError&gt; {
+<a href=#419 id=419 data-nosnippet>419</a>        <span class="comment">// Get the filesystem from the weak reference.
+<a href=#420 id=420 data-nosnippet>420</a>        </span><span class="kw">let </span>ffs = <span class="self">self
+<a href=#421 id=421 data-nosnippet>421</a>            </span>.ffs
+<a href=#422 id=422 data-nosnippet>422</a>            .upgrade()
+<a href=#423 id=423 data-nosnippet>423</a>            .ok_or(KernelError::FilesystemCorrupted(<span class="string">"File system closed."</span>))<span class="question-mark">?</span>;
+<a href=#424 id=424 data-nosnippet>424</a>        <span class="comment">// Find whether the duplicated entry exists.
+<a href=#425 id=425 data-nosnippet>425</a>        </span><span class="kw">match </span><span class="self">self</span>.find(<span class="kw-2">&amp;</span>ffs, entry) {
+<a href=#426 id=426 data-nosnippet>426</a>            <span class="prelude-val">Err</span>(KernelError::NoSuchEntry) =&gt; {
+<a href=#427 id=427 data-nosnippet>427</a>                <span class="comment">// If not exist, add the entry to the directory.
+<a href=#428 id=428 data-nosnippet>428</a>                </span><span class="kw">let </span>tx = ffs.open_transaction(<span class="string">"Directory::add_entry"</span>);
+<a href=#429 id=429 data-nosnippet>429</a>                <span class="kw">let </span>parent_ino = <span class="self">self</span>.inode.read().ino;
+<a href=#430 id=430 data-nosnippet>430</a>                <span class="kw">let </span>(ino, inode) = ffs.allocate_inode(is_dir, <span class="kw-2">&amp;</span>tx)<span class="question-mark">?</span>;
+<a href=#431 id=431 data-nosnippet>431</a>                <span class="macro">todo!</span>()
+<a href=#432 id=432 data-nosnippet>432</a>            }
+<a href=#433 id=433 data-nosnippet>433</a>            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(KernelError::FileExist),
+<a href=#434 id=434 data-nosnippet>434</a>            <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(e),
+<a href=#435 id=435 data-nosnippet>435</a>        }
+<a href=#436 id=436 data-nosnippet>436</a>    }
+<a href=#437 id=437 data-nosnippet>437</a>
+<a href=#438 id=438 data-nosnippet>438</a>    <span class="doccomment">/// Removes a directory entry by name.
+<a href=#439 id=439 data-nosnippet>439</a>    ///
+<a href=#440 id=440 data-nosnippet>440</a>    /// Should be fail as [`KernelError::Busy`] when entry's Inode number
+<a href=#441 id=441 data-nosnippet>441</a>    /// is 1 as it means it's a root directory.
+<a href=#442 id=442 data-nosnippet>442</a>    ///
+<a href=#443 id=443 data-nosnippet>443</a>    /// # Parameters
+<a href=#444 id=444 data-nosnippet>444</a>    /// - `entry`: The name of the entry to remove.
+<a href=#445 id=445 data-nosnippet>445</a>    ///
+<a href=#446 id=446 data-nosnippet>446</a>    /// # Returns
+<a href=#447 id=447 data-nosnippet>447</a>    /// - `Ok(())`: If the entry was successfully removed.
+<a href=#448 id=448 data-nosnippet>448</a>    /// - `Err(Error)`: An error if the removal fails.
+<a href=#449 id=449 data-nosnippet>449</a>    </span><span class="kw">fn </span>unlink_entry(<span class="kw-2">&amp;</span><span class="self">self</span>, entry: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), keos::KernelError&gt; {
+<a href=#450 id=450 data-nosnippet>450</a>        <span class="comment">// Get the filesystem from the weak reference.
+<a href=#451 id=451 data-nosnippet>451</a>        </span><span class="kw">let </span>ffs = <span class="self">self
+<a href=#452 id=452 data-nosnippet>452</a>            </span>.ffs
+<a href=#453 id=453 data-nosnippet>453</a>            .upgrade()
+<a href=#454 id=454 data-nosnippet>454</a>            .ok_or(KernelError::FilesystemCorrupted(<span class="string">"File system closed."</span>))<span class="question-mark">?</span>;
+<a href=#455 id=455 data-nosnippet>455</a>
+<a href=#456 id=456 data-nosnippet>456</a>        <span class="kw">let </span>tx = ffs.open_transaction(<span class="string">"Directory::remove_entry"</span>);
+<a href=#457 id=457 data-nosnippet>457</a>        <span class="kw">let </span>inode = <span class="self">self</span>.open_entry(entry)<span class="question-mark">?</span>;
+<a href=#458 id=458 data-nosnippet>458</a>
+<a href=#459 id=459 data-nosnippet>459</a>        <span class="kw">if </span>inode.ino() == InodeNumber::new(<span class="number">1</span>).unwrap() {
+<a href=#460 id=460 data-nosnippet>460</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(KernelError::Busy);
+<a href=#461 id=461 data-nosnippet>461</a>        }
+<a href=#462 id=462 data-nosnippet>462</a>
+<a href=#463 id=463 data-nosnippet>463</a>        <span class="kw">let </span>links_to_dec = <span class="kw">match </span>inode {
+<a href=#464 id=464 data-nosnippet>464</a>            keos::fs::File::Directory(d) =&gt; {
+<a href=#465 id=465 data-nosnippet>465</a>                <span class="kw">if </span>d.read_dir()<span class="question-mark">?</span>.len() != <span class="number">2 </span>{
+<a href=#466 id=466 data-nosnippet>466</a>                    <span class="prelude-val">Err</span>(KernelError::DirectoryNotEmpty)
+<a href=#467 id=467 data-nosnippet>467</a>                } <span class="kw">else </span>{
+<a href=#468 id=468 data-nosnippet>468</a>                    <span class="kw">match </span>d.removed()<span class="question-mark">?</span>.swap(<span class="bool-val">true</span>) {
+<a href=#469 id=469 data-nosnippet>469</a>                        <span class="bool-val">true </span>=&gt; <span class="prelude-val">Err</span>(KernelError::NoSuchEntry),
+<a href=#470 id=470 data-nosnippet>470</a>                        <span class="bool-val">false </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">2</span>),
+<a href=#471 id=471 data-nosnippet>471</a>                    }
+<a href=#472 id=472 data-nosnippet>472</a>                }
+<a href=#473 id=473 data-nosnippet>473</a>            }
+<a href=#474 id=474 data-nosnippet>474</a>            <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">1</span>),
+<a href=#475 id=475 data-nosnippet>475</a>        }<span class="question-mark">?</span>;
+<a href=#476 id=476 data-nosnippet>476</a>        <span class="kw">let </span>inode = <span class="self">self</span>.take_entry(<span class="kw-2">&amp;</span>ffs, entry, <span class="kw-2">&amp;</span>tx)<span class="question-mark">?</span>;
+<a href=#477 id=477 data-nosnippet>477</a>        inode.write_with(<span class="kw-2">&amp;</span>tx, |<span class="kw-2">mut </span>ino| {
+<a href=#478 id=478 data-nosnippet>478</a>            ino.link_count -= links_to_dec;
+<a href=#479 id=479 data-nosnippet>479</a>            ino.submit();
+<a href=#480 id=480 data-nosnippet>480</a>            <span class="prelude-val">Ok</span>(())
+<a href=#481 id=481 data-nosnippet>481</a>        })<span class="question-mark">?</span>;
+<a href=#482 id=482 data-nosnippet>482</a>        tx.commit()
+<a href=#483 id=483 data-nosnippet>483</a>    }
+<a href=#484 id=484 data-nosnippet>484</a>
+<a href=#485 id=485 data-nosnippet>485</a>    <span class="doccomment">/// Reads the contents of the directory.
+<a href=#486 id=486 data-nosnippet>486</a>    ///
+<a href=#487 id=487 data-nosnippet>487</a>    /// This function lists all the entries within the directory.
+<a href=#488 id=488 data-nosnippet>488</a>    ///
+<a href=#489 id=489 data-nosnippet>489</a>    /// # Returns
+<a href=#490 id=490 data-nosnippet>490</a>    /// - `Ok(())`: If the directory was successfully read.
+<a href=#491 id=491 data-nosnippet>491</a>    /// - `Err(Error)`: An error if the read operation fails.
+<a href=#492 id=492 data-nosnippet>492</a>    </span><span class="kw">fn </span>read_dir(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(InodeNumber, String)&gt;, keos::KernelError&gt; {
+<a href=#493 id=493 data-nosnippet>493</a>        <span class="comment">// Get the filesystem from the weak reference.
+<a href=#494 id=494 data-nosnippet>494</a>        </span><span class="kw">let </span>ffs = <span class="self">self
+<a href=#495 id=495 data-nosnippet>495</a>            </span>.ffs
+<a href=#496 id=496 data-nosnippet>496</a>            .upgrade()
+<a href=#497 id=497 data-nosnippet>497</a>            .ok_or(KernelError::FilesystemCorrupted(<span class="string">"File system closed."</span>))<span class="question-mark">?</span>;
+<a href=#498 id=498 data-nosnippet>498</a>        <span class="self">self</span>.read_dir(<span class="kw-2">&amp;</span>ffs)
+<a href=#499 id=499 data-nosnippet>499</a>    }
+<a href=#500 id=500 data-nosnippet>500</a>
+<a href=#501 id=501 data-nosnippet>501</a>    <span class="doccomment">/// Returns [`AtomicBool`] which contains whether directory is removed.
+<a href=#502 id=502 data-nosnippet>502</a>    ///
+<a href=#503 id=503 data-nosnippet>503</a>    /// This is important because directory operations against the removed
+<a href=#504 id=504 data-nosnippet>504</a>    /// directory will result in undesirable behavior (e.g. unreachable file).
+<a href=#505 id=505 data-nosnippet>505</a>    ///
+<a href=#506 id=506 data-nosnippet>506</a>    /// # Returns
+<a href=#507 id=507 data-nosnippet>507</a>    /// - `Ok(())`: If the directory was successfully read.
+<a href=#508 id=508 data-nosnippet>508</a>    /// - `Err(Error)`: An error if the operation fails.
+<a href=#509 id=509 data-nosnippet>509</a>    </span><span class="kw">fn </span>removed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>AtomicBool, KernelError&gt; {
+<a href=#510 id=510 data-nosnippet>510</a>        <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.removed)
+<a href=#511 id=511 data-nosnippet>511</a>    }
+<a href=#512 id=512 data-nosnippet>512</a>}</code></pre></div></section></main></body></html>

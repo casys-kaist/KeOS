@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Pager with Eager Paging Policy"><title>keos_project2::eager_pager - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project2/index.html">keos_<wbr>project2</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module eager_<wbr>pager</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#pager-with-eager-paging-policy" title="Pager with Eager Paging Policy">Pager with Eager Paging Policy</a><ul><li><a href="#memory-loading" title="Memory Loading">Memory Loading</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project2</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project2</a></div><h1>Module <span>eager_pager</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project2/eager_pager.rs.html#1-131">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="pager-with-eager-paging-policy"><a class="doc-anchor" href="#pager-with-eager-paging-policy">§</a>Pager with Eager Paging Policy</h2>
+<p>The <a href="struct.EagerPager.html" title="struct keos_project2::eager_pager::EagerPager"><code>EagerPager</code></a> is a concrete implementation of the <a href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager"><code>Pager</code></a> trait used
+in Project 2 to manage memory mapping behavior during <code>mmap</code> system calls.
+As its name implies, it follows an <strong>eager allocation strategy</strong>: physical
+pages are allocated and mapped into the page table <strong>immediately</strong> at the
+time of <code>mmap</code>, regardless of whether they are subsequently accessed.</p>
+<p>This approach ensures that all virtual pages in the mapped region are backed
+by initialized physical memory at the time of mapping. These pages are
+typically zero-filled and mapped with the requested permissions (e.g., read,
+write, execute). This simplifies the memory model and avoids page faults
+after mapping, making <a href="struct.EagerPager.html" title="struct keos_project2::eager_pager::EagerPager"><code>EagerPager</code></a> a useful baseline for implementing
+memory management in early-stage systems like KeOS.</p>
+<p>The paging interface is defined by the <a href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager"><code>Pager</code></a> trait, which abstracts the
+core functionality for virtual memory: allocation (<code>mmap</code>), deallocation
+(<code>munmap</code>), access resolution (<code>get_user_page</code>), and permission checking
+(<code>access_ok</code>).</p>
+<p>In later stages of KeOS (Project 3), you will implement demand paging using
+<code>LazyPager</code>, which defers physical memory allocation until the first
+access (e.g., page fault). That approach provides a more efficient
+and realistic memory model used by modern operating systems.</p>
+<h3 id="memory-loading"><a class="doc-anchor" href="#memory-loading">§</a>Memory Loading</h3>
+<p>The eager pager supports both anonymous and file-backed memory mappings.
+<strong>Anonymous mappings</strong> in eager paging are typically backed by
+zero-initialized memory. On the other side, when mapping a <strong>file-backed
+page</strong>, the <a href="../../keos/fs/struct.RegularFile.html#method.mmap" title="method keos::fs::RegularFile::mmap"><code>RegularFile::mmap</code></a> method must be used to register the
+mapping. In Project 5, you will extend this method with the <strong>page cache</strong>,
+a core mechanism that allows shared, read-consistent access to file data
+across processes. Although <a href="struct.EagerPager.html" title="struct keos_project2::eager_pager::EagerPager"><code>EagerPager</code></a> currently does not utilize the
+page cache, the <a href="../../keos/fs/struct.RegularFile.html" title="struct keos::fs::RegularFile"><code>RegularFile</code></a> interface and paging trait are designed to
+accommodate it cleanly for future extensions.</p>
+<p>Note that, KeOS does not provide write-back behavior for the file-backed
+pages.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.EagerPager.html#method.mmap" title="method keos_project2::eager_pager::EagerPager::mmap"><code>EagerPager::mmap</code></a></li>
+<li><a href="struct.EagerPager.html#method.munmap" title="method keos_project2::eager_pager::EagerPager::munmap"><code>EagerPager::munmap</code></a></li>
+<li><a href="struct.EagerPager.html#method.get_user_page" title="method keos_project2::eager_pager::EagerPager::get_user_page"><code>EagerPager::get_user_page</code></a></li>
+<li><a href="struct.EagerPager.html#method.access_ok" title="method keos_project2::eager_pager::EagerPager::access_ok"><code>EagerPager::access_ok</code></a></li>
+</ul>
+<p>By implementing the eager pager, your kernel now have sufficient
+functionalities to load user program in the next <a href="../loader/index.html" title="mod keos_project2::loader"><code>section</code></a>.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.EagerPager.html" title="struct keos_project2::eager_pager::EagerPager">Eager<wbr>Pager</a></dt><dd><a href="struct.EagerPager.html" title="struct keos_project2::eager_pager::EagerPager"><code>EagerPager</code></a> is a struct that implements the <a href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager"><code>Pager</code></a> trait.
+It represents a pager strategy that is responsible for eager memory paging.</dd><dt><a class="struct" href="struct.Mapping.html" title="struct keos_project2::eager_pager::Mapping">Mapping</a></dt><dd>Represent a mapping of contiguous memory.</dd></dl></section></div></main></body></html>

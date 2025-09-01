@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="File state of a process."><title>keos_project1::file_struct - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project1" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project1/index.html">keos_<wbr>project1</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module file_<wbr>struct</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#file-state-of-a-process" title="File state of a process.">File state of a process.</a><ul><li><a href="#file" title="File">File</a></li><li><a href="#everything-is-a-file" title="“Everything is a File”">“Everything is a File”</a></li><li><a href="#files-in-keos" title="Files in KeOS">Files in KeOS</a></li><li><a href="#user-memory-access" title="User Memory Access">User Memory Access</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project1</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project1</a></div><h1>Module <span>file_struct</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project1/file_struct.rs.html#1-530">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="file-state-of-a-process"><a class="doc-anchor" href="#file-state-of-a-process">§</a>File state of a process.</h2>
+<p>One of the kernel’s primary responsibilities is managing process states.
+A process is an instance of a program being executed, abstracting a machine
+by encompassing various states like memory allocation, CPU registers, and
+the files it operates on. These process states are crucial for the kernel to
+allocate resources, prioritize tasks, and manage the process lifecycle
+(including creation, execution, suspension, and termination). The kernel
+processes system calls by evaluating the current state of the associated
+processes, checking resource availability, and ensuring that the requested
+operation is carried out safely and efficiently. Between them, this project
+focuses on the kernel’s interaction with the file system.</p>
+<h3 id="file"><a class="doc-anchor" href="#file">§</a>File</h3>
+<p>A <strong>file</strong> primary refers an interface for accessing disk-based data. At its
+core, a file serves as a sequential stream of bytes. There are two primary
+types of files in most file systems:</p>
+<ul>
+<li>
+<p><strong>Regular files</strong>: These contain user or system data, typically organized
+as a sequence of bytes. They can store text, binary data, executable code,
+and more. Regular files are the most common form of file used by
+applications for reading and writing data.</p>
+</li>
+<li>
+<p><strong>Directories</strong>: A directory is a special kind of file that contains
+mappings from human-readable names (filenames) to other files or
+directories. Directories form the backbone of the file system’s
+hierarchical structure, allowing files to be organized and accessed via
+paths.</p>
+</li>
+</ul>
+<p>Processes interact with files through <strong>file descriptors</strong>, which serve
+as handles to open file objects. File descriptors provide an indirection
+layer that allows user programs to perform operations like reading, writing,
+seeking, and closing, without exposing the internal details of file objects.
+This file descriptor plays a <strong>crucial security role</strong>: actual file objects
+reside in kernel space, and are never directly accessible from user
+space. By using descriptors as opaque references, the operating system
+enforces strict isolation between user and kernel memory, preventing
+accidental or malicious tampering with sensitive kernel-managed resources.</p>
+<p>File descriptors are small integer values, typically starting from 0, that
+index into the process’s file descriptor table. This table holds references
+to open file objects, including metadata like the file’s location, access
+mode (e.g., read or write), and other details necessary for I/O operations.
+When a process issues a file operation (e.g., reading, writing, or seeking),
+it provides the appropriate file descriptor as an argument to the system
+call. The kernel uses this descriptor to access the corresponding entry in
+the table and perform the requested operation.</p>
+<h3 id="everything-is-a-file"><a class="doc-anchor" href="#everything-is-a-file">§</a>“Everything is a File”</h3>
+<p>Beyond the abstraction about disk, the <strong>file</strong> abstraction is applied
+uniformly across a wide range of system resources. “Everything is a file” is
+a Unix-inspired design principle that simplifies system interaction by
+treating various resources—including devices, sockets, and processes—as
+files. While not an absolute rule, this philosophy influences many
+Unix-based systems, encouraging the representation of objects as file
+descriptors and enabling interaction through standard I/O operations. This
+approach provides a unified and consistent way to handle different types of
+system objects.</p>
+<p>A key aspect of this principle is the existence of <strong>standard file
+descriptors</strong>:</p>
+<ul>
+<li><strong>Standard Input (stdin) - File Descriptor 0</strong>: Used for reading input
+data (e.g., keyboard input or redirected file input).</li>
+<li><strong>Standard Output (stdout) - File Descriptor 1</strong>: Used for writing output
+data (e.g., printing to the terminal or redirecting output to a file).</li>
+<li><strong>Standard Error (stderr) - File Descriptor 2</strong>: Used for writing error
+messages separately from standard output.</li>
+</ul>
+<p>Another important mechanism following this design is the <strong>pipe</strong>, which
+allows interprocess communication by connecting the output of one process to
+the input of another. Pipes function as a buffer between processes,
+facilitating seamless data exchange without requiring intermediate storage
+in a file. For example, executing:</p>
+<div class="example-wrap"><pre class="language-sh"><code>ls | grep &quot;file&quot;</code></pre></div>
+<p>connects the <code>ls</code> command’s output to the <code>grep</code> command’s input through a
+pipe.</p>
+<h3 id="files-in-keos"><a class="doc-anchor" href="#files-in-keos">§</a>Files in KeOS</h3>
+<p>You need to extend KeOS to support the following system call with a file
+abstraction:</p>
+<ul>
+<li><a href="struct.FileStruct.html#method.open" title="method keos_project1::file_struct::FileStruct::open"><code>open</code></a>: Open a file.</li>
+<li><a href="struct.FileStruct.html#method.read" title="method keos_project1::file_struct::FileStruct::read"><code>read</code></a>: Read data from a file.</li>
+<li><a href="struct.FileStruct.html#method.write" title="method keos_project1::file_struct::FileStruct::write"><code>write</code></a>: Write data to a file.</li>
+<li><a href="struct.FileStruct.html#method.close" title="method keos_project1::file_struct::FileStruct::close"><code>close</code></a>: Close an open file.</li>
+<li><a href="struct.FileStruct.html#method.seek" title="method keos_project1::file_struct::FileStruct::seek"><code>seek</code></a>: Set the file pointer to a specific position.</li>
+<li><a href="struct.FileStruct.html#method.tell" title="method keos_project1::file_struct::FileStruct::tell"><code>tell</code></a>: Get the current position of the file.</li>
+<li><a href="struct.FileStruct.html#method.pipe" title="method keos_project1::file_struct::FileStruct::pipe"><code>pipe</code></a>: Create an interprocess communication channel.</li>
+</ul>
+<p>To manage the state about file, KeOS manages per-process specific state
+about file called <a href="struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct"><code>FileStruct</code></a>, which is corresponding to the Linux
+kernel’s <code>struct file_struct</code>. Through this struct, you need to manage file
+descriptors that represent open files within a process. Since many system
+interactions are built around file descriptors, understanding this principle
+will help you design efficient and flexible system call handlers for file
+operations.</p>
+<p>You need to implement system call handlers with <a href="struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct"><code>FileStruct</code></a> struct that
+manages file states for a process. For example, it contains current working
+directory of a file (cwd), and tables of file descriptors, which map each
+file descriptor (fd) to a specific <a href="enum.FileKind.html" title="enum keos_project1::file_struct::FileKind"><code>FileKind</code></a> state. When invoking system
+calls, you must update these file states accordingly, ensuring the correct
+file state is used for each operation. To store the mapping between file
+descriptor and <a href="enum.FileKind.html" title="enum keos_project1::file_struct::FileKind"><code>FileKind</code></a> state, KeOS utilizes <code>BTreeMap</code> provided by the
+<a href="https://doc.rust-lang.org/alloc/collections/index.html"><code>alloc::collections</code></a> module. You might refer to <a href="../../keos/channel/index.html" title="mod keos::channel"><code>channel</code></a> and
+<a href="../../keos/teletype/index.html" title="mod keos::teletype"><code>teletype</code></a> module for implementing stdio and channel I/O.</p>
+<p>As mentioned before, kernel requires careful <strong>error handling</strong>. The kernel
+must properly ensuring that errors are reported in a stable and reliable
+manner without causing system crashes.</p>
+<h3 id="user-memory-access"><a class="doc-anchor" href="#user-memory-access">§</a>User Memory Access</h3>
+<p>Kernel <strong>MUST NOT</strong> believe the user input. User might maliciously or
+mistakenly inject invalid inputs to the system call arguments. If such input
+represents the invalid memory address or kernel address, directly accessing
+the address can leads security threats.</p>
+<p>To safely interact with user-space memory when handling system call, KeOS
+provides <a href="../../keos/syscall/uaccess/index.html" title="mod keos::syscall::uaccess"><code>uaccess</code></a> module:</p>
+<ul>
+<li><a href="../../keos/syscall/uaccess/struct.UserPtrRO.html" title="struct keos::syscall::uaccess::UserPtrRO"><code>UserPtrRO</code></a>: A read-only user-space pointer, used for safely retrieving
+structured data from user memory.</li>
+<li><a href="../../keos/syscall/uaccess/struct.UserPtrWO.html" title="struct keos::syscall::uaccess::UserPtrWO"><code>UserPtrWO</code></a>: A write-only user-space pointer, used for safely writing
+structured data back to user memory.</li>
+<li><a href="../../keos/syscall/uaccess/struct.UserPtrWO.html" title="struct keos::syscall::uaccess::UserPtrWO"><code>UserCString</code></a>: Read null-terminated strings from user-space (e.g., file
+paths).</li>
+<li><a href="../../keos/syscall/uaccess/struct.UserU8SliceRO.html" title="struct keos::syscall::uaccess::UserU8SliceRO"><code>UserU8SliceRO</code></a>: Read byte slices from user-space (e.g., buffers for
+reading files).</li>
+<li><a href="../../keos/syscall/uaccess/struct.UserU8SliceWO.html" title="struct keos::syscall::uaccess::UserU8SliceWO"><code>UserU8SliceWO</code></a>: Write byte slices to user-space (e.g., buffers for
+writing files).</li>
+</ul>
+<p>These types help prevent unsafe memory access and ensure proper bounds
+checking before performing read/write operations. When error occurs during
+the check, it returns the <code>Err</code> with <a href="../../keos/enum.KernelError.html#variant.BadAddress" title="variant keos::KernelError::BadAddress"><code>KernelError::BadAddress</code></a>. You can
+simply combining the <code>?</code> operator with the methods to propagate the error to
+the system call entry. Therefore, <strong>you should never use <code>unsafe</code> code
+directly for accessing user-space memory</strong>. Instead, utilize these safe
+abstractions, which provide built-in validation and access control, reducing
+the risk of undefined behavior, security vulnerabilities, and kernel
+crashes.</p>
+<h5 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h5>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.FileStruct.html#method.install_file" title="method keos_project1::file_struct::FileStruct::install_file"><code>FileStruct::install_file</code></a></li>
+<li><a href="struct.FileStruct.html#method.open" title="method keos_project1::file_struct::FileStruct::open"><code>FileStruct::open</code></a></li>
+<li><a href="struct.FileStruct.html#method.read" title="method keos_project1::file_struct::FileStruct::read"><code>FileStruct::read</code></a></li>
+<li><a href="struct.FileStruct.html#method.write" title="method keos_project1::file_struct::FileStruct::write"><code>FileStruct::write</code></a></li>
+<li><a href="struct.FileStruct.html#method.seek" title="method keos_project1::file_struct::FileStruct::seek"><code>FileStruct::seek</code></a></li>
+<li><a href="struct.FileStruct.html#method.tell" title="method keos_project1::file_struct::FileStruct::tell"><code>FileStruct::tell</code></a></li>
+<li><a href="struct.FileStruct.html#method.close" title="method keos_project1::file_struct::FileStruct::close"><code>FileStruct::close</code></a></li>
+<li><a href="struct.FileStruct.html#method.pipe" title="method keos_project1::file_struct::FileStruct::pipe"><code>FileStruct::pipe</code></a></li>
+</ul>
+<p>This ends the project 1.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.File.html" title="struct keos_project1::file_struct::File">File</a></dt><dd>The <a href="struct.File.html" title="struct keos_project1::file_struct::File"><code>File</code></a> struct represents an abstraction over a file descriptor in the
+operating system.</dd><dt><a class="struct" href="struct.FileDescriptor.html" title="struct keos_project1::file_struct::FileDescriptor">File<wbr>Descriptor</a></dt><dd>Represents an index into a process’s file descriptor table.</dd><dt><a class="struct" href="struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct">File<wbr>Struct</a></dt><dd>The <a href="struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct"><code>FileStruct</code></a> represents the filesystem state for a specific
+process, which corresponding to the Linux kernel’s <code>struct files_struct</code>.</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.FileKind.html" title="enum keos_project1::file_struct::FileKind">File<wbr>Kind</a></dt><dd>The type of a file in the filesystem.</dd></dl></section></div></main></body></html>

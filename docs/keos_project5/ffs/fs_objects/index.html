@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="File system objects."><title>keos_project5::ffs::fs_objects - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos_project5" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../keos_project5/index.html">keos_<wbr>project5</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module fs_<wbr>objects</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#file-system-objects" title="File system objects.">File system objects.</a></li><li><a href="#directory-internals" title="Directory Internals">Directory Internals</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="../index.html">In keos_<wbr>project5::<wbr>ffs</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">keos_project5</a>::<wbr><a href="../index.html">ffs</a></div><h1>Module <span>fs_objects</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/keos_project5/ffs/fs_objects.rs.html#1-512">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h3 id="file-system-objects"><a class="doc-anchor" href="#file-system-objects">§</a>File system objects.</h3>
+<p>Every on-disk object is represented by an <strong>inode</strong>. This inode is
+diverge into multiple file types like a <strong>regular file</strong> or a <strong>directory</strong>
+based on the <a href="../inode/struct.Inode.html#structfield.ftype" title="field keos_project5::ffs::inode::Inode::ftype"><code>Inode::ftype</code></a> field. In this project, you will support only
+two primary types of file:</p>
+<ul>
+<li><a href="struct.RegularFile.html" title="struct keos_project5::ffs::fs_objects::RegularFile"><code>RegularFile</code></a>: A <strong>regular file</strong> is the most common file type. It
+represents a sequence of bytes, typically used to store application data,
+logs, executables, or any other form of persistent information. The
+operating system exposes system calls such as <code>read()</code>, and <code>write()</code> to
+allow user programs to interact with regular files. Inodes for regular
+files point to data blocks on disk that store the actual file content.</li>
+<li><a href="struct.Directory.html" title="struct keos_project5::ffs::fs_objects::Directory"><code>Directory</code></a>: A <strong>directory</strong> is a special type of file that acts as a
+container for other files. Internally, a directory consists of a list of
+entries that map human-readable file names to inode numbers. This mapping
+allows the kernel to resolve file paths and traverse the hierarchical file
+system structure. Directory inodes point to data blocks containing
+serialized directory entries rather than arbitrary user data.</li>
+</ul>
+<h3 id="directory-internals"><a class="doc-anchor" href="#directory-internals">§</a>Directory Internals</h3>
+<p>A directory is represented as a collection of directory entries
+stored within the <strong>data blocks</strong> of the directory inode. Each directory
+block contains an array of <a href="../disk_layout/struct.DirectoryBlockEntry.html" title="struct keos_project5::ffs::disk_layout::DirectoryBlockEntry"><code>DirectoryBlockEntry</code></a> structures, which provide
+the mapping between human-readable names and their corresponding inode
+numbers. All directory operations, such as adding, removing, or searching
+for files and subdirectories, are performed by manipulating this collection
+of entries. The directory <strong>MUST</strong> start with two entries: “.” and “..”,
+which points to itself and the parent directory respectively.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.RegularFile.html#method.read" title="method keos_project5::ffs::fs_objects::RegularFile::read"><code>RegularFile::read</code></a></li>
+<li><a href="struct.RegularFile.html#method.write" title="method keos_project5::ffs::fs_objects::RegularFile::write"><code>RegularFile::write</code></a></li>
+<li><a href="struct.Directory.html#method.read_dir" title="method keos_project5::ffs::fs_objects::Directory::read_dir"><code>Directory::read_dir</code></a></li>
+<li><a href="struct.Directory.html#method.find" title="method keos_project5::ffs::fs_objects::Directory::find"><code>Directory::find</code></a></li>
+<li><a href="struct.Directory.html#method.open_entry" title="method keos_project5::ffs::fs_objects::Directory::open_entry"><code>Directory::open_entry</code></a></li>
+<li><a href="struct.Directory.html#method.create_entry" title="method keos_project5::ffs::fs_objects::Directory::create_entry"><code>Directory::create_entry</code></a></li>
+</ul>
+<p>At this point, you have implemented the core abstractions for managing
+inodes in the filesystem, supporting both regular files and directories.
+These abstractions provide safe and structured access to both on-disk and
+in-memory inode data, allowing higher-level components to interact with
+files without dealing directly with low-level disk structures.</p>
+<p>This module gives you insight into the internal foundations of the file
+abstraction in the filesystem. The next <a href="../journal/index.html" title="mod keos_project5::ffs::journal"><code>section</code></a> will focus on
+<strong>maintaining crash consistency in the filesystem</strong>..</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Directory.html" title="struct keos_project5::ffs::fs_objects::Directory">Directory</a></dt><dd>Represents a directory, which contains multiple directory entries.</dd><dt><a class="struct" href="struct.RegularFile.html" title="struct keos_project5::ffs::fs_objects::RegularFile">Regular<wbr>File</a></dt><dd>A handle to a regular file in the filesystem.</dd></dl></section></div></main></body></html>

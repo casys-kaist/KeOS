@@ -1,0 +1,115 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Journaling for Crash Consistency."><title>keos_project5::ffs::journal - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos_project5" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../keos_project5/index.html">keos_<wbr>project5</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module journal</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#journaling-for-crash-consistency" title="Journaling for Crash Consistency.">Journaling for Crash Consistency.</a><ul><li><a href="#journaling-in-keos" title="Journaling in KeOS">Journaling in KeOS</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="../index.html">In keos_<wbr>project5::<wbr>ffs</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">keos_project5</a>::<wbr><a href="../index.html">ffs</a></div><h1>Module <span>journal</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/keos_project5/ffs/journal.rs.html#1-564">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="journaling-for-crash-consistency"><a class="doc-anchor" href="#journaling-for-crash-consistency">§</a>Journaling for Crash Consistency.</h2>
+<p>File systems must ensure data consistency in the presence of crashes or
+power failures.  When a system crash or power failure occurs, in-progress
+file operations may leave the file system in an inconsistent state, where
+metadata and data blocks are only partially updated. This can lead to file
+corruption, orphaned blocks, or even complete data loss. Thus, modern file
+systems must guard against these scenarios to ensure durability and
+recoverability.</p>
+<p>To address this, modern file systems employ <strong>journaling</strong>. Journaling
+provides crash-consistency by recording intended changes to a special log
+(called the journal) before applying them to the main file system. In the
+event of a crash, the journal can be replayed to recover to a consistent
+state. This significantly reduces the risk of data corruption and allows
+faster recovery after unclean shutdowns, without the need for full
+file system checks.</p>
+<p>In this approach, all intended updates, such as block allocations, inode
+changes, or directory modifications, are first written to a special log
+called the <strong>journal</strong>. Only after the log is safely persisted to disk,
+the actual file system structures updated. In the event of a crash, the
+system can replay the journal to restore a consistent state. This method
+provides a clear “intent before action” protocol, making recovery
+predictable and bounded.</p>
+<h3 id="journaling-in-keos"><a class="doc-anchor" href="#journaling-in-keos">§</a>Journaling in KeOS</h3>
+<p>To explore the fundamentals of crash-consistent file systems, <strong>KeOS
+implements a minimal meta-data journaling mechanism</strong> using the well-known
+technique of <strong>write-ahead logging</strong>. This mechanism ensures that
+updates to file system structures are made durable and recoverable.</p>
+<p>The journaling mechanism is anchored by a <strong>journal superblock</strong>, which
+includes a <code>commited</code> flag. This flag indicates whether the journal area
+currently holds valid, committed journal data that has not yet been
+checkpointed.</p>
+<p>Journals in KeOS structured around four key stages: <strong>Metadata updates</strong>,
+<strong>commit</strong>, <strong>checkpoint</strong>, and <strong>recovery</strong>.</p>
+<h4 id="1-metadata-updates"><a class="doc-anchor" href="#1-metadata-updates">§</a>1. Metadata Updates</h4>
+<p>In KeOS, journaling is tightly integrated with the <a href="struct.RunningTransaction.html" title="struct keos_project5::ffs::journal::RunningTransaction"><code>RunningTransaction</code></a>
+struct, which acts as the central abstraction for managing write-ahead
+logging of file system changes. All journaled operations must be serialized
+through this structure to ensure consistency.</p>
+<p>Internally, <a href="struct.RunningTransaction.html" title="struct keos_project5::ffs::journal::RunningTransaction"><code>RunningTransaction</code></a> is protected by a <code>SpinLock</code> on the
+journal superblock, enforcing <strong>global serialization</strong> of journal writes.
+This design guarantees that only one transaction may be in progress at any
+given time, preventing concurrent updates to the same block, which could
+otherwise result in a corrupted or inconsistent state.</p>
+<p>Crucially, KeOS uses Rust’s strong type system to enforce this safety at
+compile time: without access to an active <a href="struct.RunningTransaction.html" title="struct keos_project5::ffs::journal::RunningTransaction"><code>RunningTransaction</code></a>, it is
+<strong>impossible</strong> to write metadata blocks. All metadata modifications must be
+submitted explicitly via the <code>submit()</code> method, which stages the changes for
+journaling.</p>
+<p>If you forget to submit modified blocks through <a href="struct.RunningTransaction.html" title="struct keos_project5::ffs::journal::RunningTransaction"><code>RunningTransaction</code></a>, the
+kernel will <strong>panic</strong> with a clear error message, catching the issue early
+and avoiding silent corruption. This design provides both safety and
+transparency, making metadata updates robust and auditable.</p>
+<h4 id="2-commit-phase-runningtransactioncommit"><a class="doc-anchor" href="#2-commit-phase-runningtransactioncommit">§</a>2. Commit Phase: <a href="struct.RunningTransaction.html#method.commit" title="method keos_project5::ffs::journal::RunningTransaction::commit"><code>RunningTransaction::commit</code></a></h4>
+<p>In the commit phase, KeOS records all pending modifications to a dedicated
+<strong>journal area</strong> before applying them to their actual on-disk locations:</p>
+<p>A transaction begins with a <strong><code>TxBegin</code> block</strong>, which contains a list of
+logical block addresses that describe where the updates will eventually be
+written. This is followed by the <strong>journal data blocks</strong>, which contain the
+actual contents to be written to the specified logical blocks. Once all data
+blocks have been written, a <strong><code>TxEnd</code> block</strong> is appended to mark the
+successful conclusion of the transaction. This write-ahead logging
+discipline guarantees that no update reaches the main file system until its
+full intent is safely recorded in the journal.</p>
+<p>You can write journal blocks with <a href="struct.JournalWriter.html" title="struct keos_project5::ffs::journal::JournalWriter"><code>JournalWriter</code></a> struct. This structure
+is marked with a type that represent the stages of commit phase, enforcing
+you to write journal blocks in a correct order.</p>
+<h4 id="3-checkpoint-phase-journalcheckpoint"><a class="doc-anchor" href="#3-checkpoint-phase-journalcheckpoint">§</a>3. Checkpoint Phase: <a href="struct.Journal.html#method.checkpoint" title="method keos_project5::ffs::journal::Journal::checkpoint"><code>Journal::checkpoint</code></a></h4>
+<p>After a transaction is fully committed, the system proceeds to
+<strong>checkpoint</strong> the journal. During checkpointing, the journaled data blocks
+are copied from the journal area to their final destinations in the main
+file system (i.e., to the logical block addresses specified in the <code>TxBegin</code>
+block).</p>
+<p>Once all modified blocks have been written to their final locations, the
+system clears the journal by resetting the <code>commited</code> flag in the journal
+superblock. This indicates that the journal is no longer recovered when
+crash.</p>
+<p>In modern file systems, checkpointing is typically performed
+<strong>asynchronously</strong> in the background to minimize the latency of system calls
+like <code>write()</code> or <code>fsync()</code>. This allows the file system to acknowledge the
+operation as complete once the journal is committed, without waiting for the
+final on-disk update.</p>
+<p>However, for simplicity in this project, <strong>checkpointing is done
+synchronously</strong>: the file system waits until all journaled updates are
+copied to their target locations before clearing the journal. This
+simplifies correctness, avoids the need for background threads or
+deferred work mechanisms, and reduces work for maintaining consistent view
+between disk and commited data.</p>
+<h4 id="4-recovery-journalrecovery"><a class="doc-anchor" href="#4-recovery-journalrecovery">§</a>4. Recovery: <a href="struct.Journal.html#method.recovery" title="method keos_project5::ffs::journal::Journal::recovery"><code>Journal::recovery</code></a></h4>
+<p>If a crash occurs before the checkpointing phase completes, KeOS
+<strong>recovers</strong> the file system during the next boot. It begins by inspecting
+the journal superblock to determine whether a committed transaction exists.</p>
+<p>If the <code>committed</code> flag is set and a valid <code>TxBegin</code>/<code>TxEnd</code> pair is
+present, this indicates a completed transaction whose changes have not yet
+been checkpointed. In this case, KeOS retries the <strong>checkpointing</strong>. If the
+journal is not marked as committed, the system discards the journal
+entirely. This rollback ensures consistency by ignoring partially written
+or aborted transactions.</p>
+<p>This recovery approach is both <strong>bounded</strong> and <strong>idempotent</strong>: it scans only
+the small, fixed-size journal area, avoiding costly full file system
+traversal, and it can safely retry recovery without side effects if
+interrupted again.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.Journal.html#method.recovery" title="method keos_project5::ffs::journal::Journal::recovery"><code>Journal::recovery</code></a></li>
+<li><a href="struct.Journal.html#method.checkpoint" title="method keos_project5::ffs::journal::Journal::checkpoint"><code>Journal::checkpoint</code></a></li>
+<li><a href="struct.JournalWriter.html#method.write_tx_begin" title="method keos_project5::ffs::journal::JournalWriter::write_tx_begin"><code>JournalWriter::&lt;TxBegin&gt;::write_tx_begin</code></a></li>
+<li><a href="struct.JournalWriter.html#method.write_blocks" title="method keos_project5::ffs::journal::JournalWriter::write_blocks"><code>JournalWriter::&lt;Block&gt;::write_blocks</code></a></li>
+<li><a href="struct.JournalWriter.html#method.write_tx_end" title="method keos_project5::ffs::journal::JournalWriter::write_tx_end"><code>JournalWriter::&lt;TxEnd&gt;::write_tx_end</code></a></li>
+</ul>
+<p>After implement the functionalities, move on to the last <a href="../../advanced_file_structs/index.html" title="mod keos_project5::advanced_file_structs"><code>section</code></a> of the
+KeOS.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Block.html" title="struct keos_project5::ffs::journal::Block">Block</a></dt><dd>Marker type for the second phase of a journal commit: writing the metadata
+blocks.</dd><dt><a class="struct" href="struct.Journal.html" title="struct keos_project5::ffs::journal::Journal">Journal</a></dt><dd>A structure representing the journal metadata used for crash consistency.</dd><dt><a class="struct" href="struct.JournalWriter.html" title="struct keos_project5::ffs::journal::JournalWriter">Journal<wbr>Writer</a></dt><dd>A staged writer for committing a transaction to the journal.</dd><dt><a class="struct" href="struct.RunningTransaction.html" title="struct keos_project5::ffs::journal::RunningTransaction">Running<wbr>Transaction</a></dt><dd>Represents an in-progress file system transaction using write-ahead
+journaling.</dd><dt><a class="struct" href="struct.TxBegin.html" title="struct keos_project5::ffs::journal::TxBegin">TxBegin</a></dt><dd>Marker type for the first phase of a journal commit: TxBegin.</dd><dt><a class="struct" href="struct.TxEnd.html" title="struct keos_project5::ffs::journal::TxEnd">TxEnd</a></dt><dd>Marker type for the final phase of a journal commit: TxEnd.</dd></dl></section></div></main></body></html>

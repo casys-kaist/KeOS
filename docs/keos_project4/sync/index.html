@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Synchronization Primitives."><title>keos_project4::sync - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project4/index.html">keos_<wbr>project4</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module sync</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#synchronization-primitives" title="Synchronization Primitives.">Synchronization Primitives.</a><ul><li><a href="#implementation-orders" title="Implementation Orders">Implementation Orders</a></li></ul></li></ul><h3><a href="#modules">Module Items</a></h3><ul class="block"><li><a href="#modules" title="Modules">Modules</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project4</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project4</a></div><h1>Module <span>sync</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project4/sync/mod.rs.html#1-84">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="synchronization-primitives"><a class="doc-anchor" href="#synchronization-primitives">§</a>Synchronization Primitives.</h2>
+<p>An operating system kernel must coordinate access to shared resources among
+multiple threads of execution. This coordination is vital to ensure data
+consistency, prevent race conditions, and maintain overall system stability
+and performance.</p>
+<p>In earlier projects, KeOS employed a single synchronization primitive: the
+<a href="keos::sync::SpinLock"><code>SpinLock</code></a>. While <a href="keos::sync::SpinLock"><code>SpinLock</code></a> provides correct mutual exclusion by
+repeatedly checking for lock availability (i.e., “spinning”), it is
+inefficient under high contention, as it wastes CPU cycles by actively
+polling instead of sleeping.</p>
+<p>In this project, you will address these limitations by implementing
+additional synchronization primitives that offer more efficient and
+expressive mechanisms for managing concurrency. These primitives are
+essential tools for building correct and performant multithreaded
+systems, particularly in contexts where threads may need to sleep,
+coordinate, or share limited resources.</p>
+<p>The synchronization primitives you will implement include:</p>
+<ul>
+<li>
+<p><a href="mutex/index.html" title="mod keos_project4::sync::mutex"><code>Mutex</code></a>: A mutual exclusion primitive that ensures only one thread can
+access a critical section at a time. Unlike a spinlock, a mutex puts the
+thread to sleep if the lock is unavailable, avoiding busy-waiting and
+reducing CPU usage.</p>
+</li>
+<li>
+<p><a href="condition_variable/struct.ConditionVariable.html" title="struct keos_project4::sync::condition_variable::ConditionVariable"><code>ConditionVariable</code></a>: A coordination mechanism that allows threads to
+sleep until a particular condition becomes true. It enables efficient
+producer-consumer style synchronization and is often used in conjunction
+with a mutex.</p>
+</li>
+<li>
+<p><a href="semaphore/index.html" title="mod keos_project4::sync::semaphore"><code>Semaphore</code></a>: A counting synchronization primitive that controls access
+to a shared resource by maintaining a counter. It allows a fixed number of
+threads to access the resource concurrently and can also be used to
+implement other synchronization patterns.</p>
+</li>
+</ul>
+<p>Together, these primitives provide a flexible foundation for managing
+concurrency in a robust and scalable kernel. They will enable you to
+implement more sophisticated system services, such as blocking system calls
+and multithreaded applications.</p>
+<p>Different synchronization primitives are suited to different concurrency
+patterns. The table below summarizes their key characteristics:</p>
+<div><table><thead><tr><th>Primitive</th><th>Blocks Thread?</th><th>Fair?</th><th>Typical Use Case</th></tr></thead><tbody>
+<tr><td><a href="keos::sync::SpinLock"><code>SpinLock</code></a></td><td>No (busy wait)</td><td>No</td><td>Short, uncontended critical sections in the kernel</td></tr>
+<tr><td><a href="mutex/index.html" title="mod keos_project4::sync::mutex"><code>Mutex</code></a></td><td>Yes</td><td>Yes</td><td>Exclusive access to shared data</td></tr>
+<tr><td><a href="condition_variable/struct.ConditionVariable.html" title="struct keos_project4::sync::condition_variable::ConditionVariable"><code>ConditionVariable</code></a></td><td>Yes</td><td>Yes</td><td>Waiting for a condition to become true</td></tr>
+<tr><td><a href="semaphore/index.html" title="mod keos_project4::sync::semaphore"><code>Semaphore</code></a></td><td>Yes</td><td>Depends</td><td>Limiting access to a bounded resource</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li><strong>SpinLock</strong> spins in a loop until the lock becomes available. This is
+suitable for extremely short operations in low-contention paths.</li>
+<li><strong>Mutex</strong> puts the thread to sleep when the lock is unavailable, making it
+ideal for when exclusive access is needed and blocking is acceptable</li>
+<li><strong>ConditionVariable</strong> works in tandem with a mutex to block threads until
+a predicate becomes false, then wake them up. Meaning that it fits when a
+thread must wait for a condition while coordinating with a <a href="mutex/index.html" title="mod keos_project4::sync::mutex"><code>Mutex</code></a>.</li>
+<li><strong>Semaphore</strong> tracks a count of available permits and is often used to
+control access to a pool of resources or to implement thread joins. It can
+be used when multiple threads can proceed concurrently, up to a fixed
+limit.</li>
+</ul>
+<h3 id="implementation-orders"><a class="doc-anchor" href="#implementation-orders">§</a>Implementation Orders</h3>
+<ol>
+<li><a href="mutex/index.html" title="mod keos_project4::sync::mutex"><code>mutex</code></a></li>
+<li><a href="condition_variable/index.html" title="mod keos_project4::sync::condition_variable"><code>condition_variable</code></a></li>
+<li><a href="semaphore/index.html" title="mod keos_project4::sync::semaphore"><code>semaphore</code></a></li>
+</ol>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><dl class="item-table reexports"><dt><code>pub use <a class="mod" href="condition_variable/index.html" title="mod keos_project4::sync::condition_variable">condition_variable</a>::*;</code></dt><dt><code>pub use <a class="mod" href="mutex/index.html" title="mod keos_project4::sync::mutex">mutex</a>::*;</code></dt><dt><code>pub use <a class="mod" href="semaphore/index.html" title="mod keos_project4::sync::semaphore">semaphore</a>::*;</code></dt></dl><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="condition_variable/index.html" title="mod keos_project4::sync::condition_variable">condition_<wbr>variable</a></dt><dd>Condition Variable.</dd><dt><a class="mod" href="mutex/index.html" title="mod keos_project4::sync::mutex">mutex</a></dt><dd>Mutex.</dd><dt><a class="mod" href="semaphore/index.html" title="mod keos_project4::sync::semaphore">semaphore</a></dt><dd>Semaphore.</dd></dl></section></div></main></body></html>

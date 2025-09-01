@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Memory State of a process"><title>keos_project2::mm_struct - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project2/index.html">keos_<wbr>project2</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module mm_<wbr>struct</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#memory-state-of-a-process" title="Memory State of a process">Memory State of a process</a><ul><li><a href="#memory-in-keos" title="Memory in KeOS">Memory in KeOS</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project2</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project2</a></div><h1>Module <span>mm_struct</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project2/mm_struct.rs.html#1-335">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="memory-state-of-a-process"><a class="doc-anchor" href="#memory-state-of-a-process">§</a>Memory State of a process</h2>
+<p>In the project 1, you implemented the file state management for a
+process. An equally important state of a process is memory state.
+This memory state involves managing virtual memory regions, tracking memory
+allocations, and implementing memory deallocation when memory is no longer
+needed. The operating system must track all active mappings per process,
+enforce correct access permissions, and ensure proper cleanup when memory is
+unmapped.</p>
+<h3 id="memory-in-keos"><a class="doc-anchor" href="#memory-in-keos">§</a>Memory in KeOS</h3>
+<p>The state of a process’s memory is represented by the <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a>
+structure, similiar to the Linux kernel’s <code>struct mm_struct</code>. Each process
+maintains an <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> instance, which tracks the memory mapping state
+for a process. This state plays a central role for serving a memory mapping
+system calls: <strong>mmap</strong> and <strong>munmap</strong>.</p>
+<p>Memory mapping (<code>mmap</code>) allows processes to allocate, share, or access
+memory in a flexible way. It is commonly used for:</p>
+<ul>
+<li>Allocating memory dynamically without relying on heap or stack growth.</li>
+<li>Mapping files into memory for fast access.</li>
+<li>Sharing memory between processes.</li>
+</ul>
+<p>The <code>mmap</code> system call establishes a mapping between a process’s virtual
+address space and either physical memory or a file. These memory mappings
+are recorded within the <strong>page table</strong>, similar to how regular memory pages
+are managed. However, unlike normal heap allocations, <code>mmap</code>-based
+allocations allow more control over page protection, mapping policies, and
+address alignment. When a process accesses an address within the mapped
+region, a <strong>page fault</strong> occurs, triggering the operating system to allocate
+and map the corresponding physical pages.</p>
+<p>The <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> contains the two key components:</p>
+<ul>
+<li><strong>Page Table</strong>: Tracks mappings between virtual and physical addresses.</li>
+<li><strong>Pager</strong>: Defines the policy for memory mapping. and unmapping.`</li>
+</ul>
+<h4 id="validating-user-input"><a class="doc-anchor" href="#validating-user-input">§</a>Validating User Input</h4>
+<p>One of the important aspects of managing memory safely is ensuring that
+user input, such as memory addresses provided by system calls, is validated
+correctly. <strong>The kernel must never crash due to user input.</strong></p>
+<p>Many system calls, like <code>read</code> and <code>write</code>, rely on user-supplied memory
+addresses—typically as buffer pointers. These addresses need to be carefully
+validated before they can be used to ensure the integrity and stability of
+the system.</p>
+<p>Without proper validation, several serious problems may arise:</p>
+<ul>
+<li><strong>Unauthorized access to kernel memory</strong>: If the user is allowed to access
+kernel memory, this can lead to privilege escalation vulnerabilities,
+potentially giving the user more control than intended.</li>
+<li><strong>Dereferencing invalid pointers</strong>: Accessing uninitialized or incorrectly
+mapped memory can result in segmentation faults or undefined behavior,
+leading to crashes or unexpected outcomes.</li>
+<li><strong>Memory corruption</strong>: Improper handling of memory can result in
+corrupting the system’s memory state, which can affect other processes,
+crash the kernel, or destabilize the entire system.</li>
+</ul>
+<p><a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> mitigate these risks with the <a href="struct.MmStruct.html#method.access_ok" title="method keos_project2::mm_struct::MmStruct::access_ok"><code>MmStruct::access_ok</code></a> method,
+which ensures that the memory addresses provided by system calls are <strong>valid
+and safe</strong> before being used. This validation mechanism will
+prevent dangerous operations by checking if memory access is allowed, based
+on the current process’s memory layout and protection policies.</p>
+<p>By incorporating proper validation, <a href="struct.MmStruct.html#method.access_ok" title="method keos_project2::mm_struct::MmStruct::access_ok"><code>MmStruct::access_ok</code></a> ensures that
+invalid memory accesses are handled <strong>gracefully</strong>, returning appropriate
+errors rather than causing kernel panics or undefined behavior. This
+validation mechanism plays a crucial role in maintaining system integrity
+and protecting the kernel from potential vulnerabilities.</p>
+<h4 id="pager"><a class="doc-anchor" href="#pager">§</a><code>Pager</code></h4>
+<p>The actual behavior of <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> lies in the <a href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager"><code>Pager</code></a> trait.
+When a user program invokes those system calls, the <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> parses the
+arguements from the <a href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a> and forwarded them to an implementation
+of the <a href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager"><code>Pager</code></a> traits, which provides the core interface for handling
+memory mappings. Similarly, the core implementation to validate memory also
+lies on the <a href="../pager/trait.Pager.html#tymethod.access_ok" title="method keos_project2::pager::Pager::access_ok"><code>Pager::access_ok</code></a>.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.MmStruct.html#method.mmap" title="method keos_project2::mm_struct::MmStruct::mmap"><code>MmStruct::mmap</code></a></li>
+<li><a href="struct.MmStruct.html#method.munmap" title="method keos_project2::mm_struct::MmStruct::munmap"><code>MmStruct::munmap</code></a></li>
+<li><a href="struct.MmStruct.html#method.access_ok" title="method keos_project2::mm_struct::MmStruct::access_ok"><code>MmStruct::access_ok</code></a></li>
+</ul>
+<p>After implementing them, move on to the next <a href="../eager_pager/index.html" title="mod keos_project2::eager_pager"><code>section</code></a> to implement
+paging policy, called <code>EagerPager</code>.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a></dt><dd>The <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> represents the memory state for a specific process,
+corresponding to the Linux kernel’s <code>struct mm_struct</code>.</dd></dl></section></div></main></body></html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Trait representing a directory in the filesystem."><title>Directory in keos::fs::traits - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc trait"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../keos/index.html">keos</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Directory</a></h2><h3><a href="#required-methods">Required Methods</a></h3><ul class="block"><li><a href="#tymethod.create_entry" title="create_entry">create_entry</a></li><li><a href="#tymethod.ino" title="ino">ino</a></li><li><a href="#tymethod.link_count" title="link_count">link_count</a></li><li><a href="#tymethod.open_entry" title="open_entry">open_entry</a></li><li><a href="#tymethod.read_dir" title="read_dir">read_dir</a></li><li><a href="#tymethod.removed" title="removed">removed</a></li><li><a href="#tymethod.size" title="size">size</a></li><li><a href="#tymethod.unlink_entry" title="unlink_entry">unlink_entry</a></li></ul><h3><a href="#implementors">Implementors</a></h3></section><div id="rustdoc-modnav"><h2><a href="index.html">In keos::<wbr>fs::<wbr>traits</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">keos</a>::<wbr><a href="../index.html">fs</a>::<wbr><a href="index.html">traits</a></div><h1>Trait <span class="trait">Directory</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/keos/fs.rs.html#114-179">Source</a> </span></div><pre class="rust item-decl"><code>pub trait Directory<div class="where">where
+    Self: Send + Sync,</div>{
+    // Required methods
+    fn <a href="#tymethod.ino" class="fn">ino</a>(&amp;self) -&gt; <a class="struct" href="../struct.InodeNumber.html" title="struct keos::fs::InodeNumber">InodeNumber</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.size" class="fn">size</a>(&amp;self) -&gt; usize;
+<span class="item-spacer"></span>    fn <a href="#tymethod.link_count" class="fn">link_count</a>(&amp;self) -&gt; usize;
+<span class="item-spacer"></span>    fn <a href="#tymethod.open_entry" class="fn">open_entry</a>(&amp;self, entry: &amp;str) -&gt; Result&lt;<a class="enum" href="../enum.File.html" title="enum keos::fs::File">File</a>, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;;
+<span class="item-spacer"></span>    fn <a href="#tymethod.create_entry" class="fn">create_entry</a>(
+        &amp;self,
+        entry: &amp;str,
+        is_dir: bool,
+    ) -&gt; Result&lt;<a class="enum" href="../enum.File.html" title="enum keos::fs::File">File</a>, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;;
+<span class="item-spacer"></span>    fn <a href="#tymethod.unlink_entry" class="fn">unlink_entry</a>(&amp;self, entry: &amp;str) -&gt; Result&lt;(), <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;;
+<span class="item-spacer"></span>    fn <a href="#tymethod.read_dir" class="fn">read_dir</a>(&amp;self) -&gt; Result&lt;Vec&lt;(<a class="struct" href="../struct.InodeNumber.html" title="struct keos::fs::InodeNumber">InodeNumber</a>, String)&gt;, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;;
+<span class="item-spacer"></span>    fn <a href="#tymethod.removed" class="fn">removed</a>(&amp;self) -&gt; Result&lt;&amp;<a class="struct" href="../../sync/atomic/struct.AtomicBool.html" title="struct keos::sync::atomic::AtomicBool">AtomicBool</a>, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;;
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Trait representing a directory in the filesystem.</p>
+<p>A directory contains entries that reference other files or directories.</p>
+</div></details><h2 id="required-methods" class="section-header">Required Methods<a href="#required-methods" class="anchor">§</a></h2><div class="methods"><details class="toggle method-toggle" open><summary><section id="tymethod.ino" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#119">Source</a><h4 class="code-header">fn <a href="#tymethod.ino" class="fn">ino</a>(&amp;self) -&gt; <a class="struct" href="../struct.InodeNumber.html" title="struct keos::fs::InodeNumber">InodeNumber</a></h4></section></summary><div class="docblock"><p>Returns the inode number of the directory.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.size" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#122">Source</a><h4 class="code-header">fn <a href="#tymethod.size" class="fn">size</a>(&amp;self) -&gt; usize</h4></section></summary><div class="docblock"><p>Returns the size of the file in bytes.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.link_count" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#125">Source</a><h4 class="code-header">fn <a href="#tymethod.link_count" class="fn">link_count</a>(&amp;self) -&gt; usize</h4></section></summary><div class="docblock"><p>Returns the link count of the directory.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.open_entry" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#136">Source</a><h4 class="code-header">fn <a href="#tymethod.open_entry" class="fn">open_entry</a>(&amp;self, entry: &amp;str) -&gt; Result&lt;<a class="enum" href="../enum.File.html" title="enum keos::fs::File">File</a>, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Opens an entry by name.</p>
+<h5 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h5>
+<ul>
+<li><code>entry</code>: The name of the entry to open.</li>
+</ul>
+<h5 id="returns"><a class="doc-anchor" href="#returns">§</a>Returns</h5>
+<ul>
+<li><code>Ok(File)</code>: The enumerate of the file (e.g., regular file,
+directory).</li>
+<li><code>Err(Error)</code>: An error if the entry cannot be found or accessed.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.create_entry" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#147">Source</a><h4 class="code-header">fn <a href="#tymethod.create_entry" class="fn">create_entry</a>(&amp;self, entry: &amp;str, is_dir: bool) -&gt; Result&lt;<a class="enum" href="../enum.File.html" title="enum keos::fs::File">File</a>, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Create an entry by name.</p>
+<h5 id="parameters-1"><a class="doc-anchor" href="#parameters-1">§</a>Parameters</h5>
+<ul>
+<li><code>entry</code>: The name of the entry to add.</li>
+<li><code>is_dir</code>: Indicate whether the entry is directory or not.</li>
+</ul>
+<h5 id="returns-1"><a class="doc-anchor" href="#returns-1">§</a>Returns</h5>
+<ul>
+<li><code>Ok(())</code>: If the entry was successfully added.</li>
+<li><code>Err(Error)</code>: An error if the add fails.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.unlink_entry" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#157">Source</a><h4 class="code-header">fn <a href="#tymethod.unlink_entry" class="fn">unlink_entry</a>(&amp;self, entry: &amp;str) -&gt; Result&lt;(), <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Unlinks a directory entry by name.</p>
+<h5 id="parameters-2"><a class="doc-anchor" href="#parameters-2">§</a>Parameters</h5>
+<ul>
+<li><code>entry</code>: The name of the entry to remove.</li>
+</ul>
+<h5 id="returns-2"><a class="doc-anchor" href="#returns-2">§</a>Returns</h5>
+<ul>
+<li><code>Ok(())</code>: If the entry was successfully removed.</li>
+<li><code>Err(Error)</code>: An error if the removal fails.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.read_dir" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#166">Source</a><h4 class="code-header">fn <a href="#tymethod.read_dir" class="fn">read_dir</a>(&amp;self) -&gt; Result&lt;Vec&lt;(<a class="struct" href="../struct.InodeNumber.html" title="struct keos::fs::InodeNumber">InodeNumber</a>, String)&gt;, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Reads the contents of the directory.</p>
+<p>This function lists all the entries within the directory.</p>
+<h5 id="returns-3"><a class="doc-anchor" href="#returns-3">§</a>Returns</h5>
+<ul>
+<li><code>Ok(())</code>: If the directory was successfully read.</li>
+<li><code>Err(Error)</code>: An error if the read operation fails.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.removed" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#178">Source</a><h4 class="code-header">fn <a href="#tymethod.removed" class="fn">removed</a>(&amp;self) -&gt; Result&lt;&amp;<a class="struct" href="../../sync/atomic/struct.AtomicBool.html" title="struct keos::sync::atomic::AtomicBool">AtomicBool</a>, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Returns a reference of <a href="../../sync/atomic/struct.AtomicBool.html" title="struct keos::sync::atomic::AtomicBool"><code>AtomicBool</code></a> which contains whether
+directory is removed.</p>
+<p>This is important because directory operations against the removed
+directory will result in undesirable behavior (e.g. unreachable
+file).</p>
+<h5 id="returns-4"><a class="doc-anchor" href="#returns-4">§</a>Returns</h5>
+<ul>
+<li><code>Ok(())</code>: If the directory was successfully read.</li>
+<li><code>Err(Error)</code>: An error if the operation fails.</li>
+</ul>
+</div></details></div><h2 id="implementors" class="section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"></div><script src="../../../trait.impl/keos/fs/traits/trait.Directory.js" async></script></section></div></main></body></html>

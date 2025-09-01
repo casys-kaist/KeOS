@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["page_table","tlb"],"static":["PALLOC"],"struct":["Arena","BytePP","ContigPages","Page","PageRef","PhysicalAllocator"]};

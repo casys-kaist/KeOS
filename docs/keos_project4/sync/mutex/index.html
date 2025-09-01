@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Mutex."><title>keos_project4::sync::mutex - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../keos_project4/index.html">keos_<wbr>project4</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module mutex</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#mutex" title="Mutex.">Mutex.</a><ul><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="../index.html">In keos_<wbr>project4::<wbr>sync</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">keos_project4</a>::<wbr><a href="../index.html">sync</a></div><h1>Module <span>mutex</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/keos_project4/sync/mutex.rs.html#1-289">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="mutex"><a class="doc-anchor" href="#mutex">§</a>Mutex.</h2>
+<p>Mutex is a synchronization primitive that allows <strong>only one thread at a
+time</strong> to access a critical section of code, protecting shared resources
+such as memory, files, or device state from concurrent modification.
+Unlike the spin lock, it <strong>blocks</strong> threads trying to acquire it if another
+thread already holds the lock.</p>
+<p>The <a href="struct.Mutex.html" title="struct keos_project4::sync::mutex::Mutex"><code>Mutex</code></a> maintains the list of threads sleeping on the mutex.
+When unlocking, the kernel <strong>wakes up</strong> one of the waiting threads.
+In KeOS, you can sleep the current thread by calling the
+<a href="../../../keos/thread/struct.Current.html#method.park_with" title="associated function keos::thread::Current::park_with"><code>Current::park_with</code></a>. This function takes a closure to run before falling
+in sleep with a argument <a href="../../../keos/thread/struct.ParkHandle.html" title="struct keos::thread::ParkHandle"><code>ParkHandle</code></a>, which is the handle to wake up the
+sleeping thread.</p>
+<p>Although mutex and spin lock provides similar synchronization guarantees,
+they are used in different circumstances. The following table compares the
+spin lock and mutex.</p>
+<div><table><thead><tr><th></th><th>SpinLock</th><th>Mutex</th></tr></thead><tbody>
+<tr><td>Waiting thread</td><td>Spins (busy-waits)</td><td>Sleeps</td></tr>
+<tr><td>CPU usage</td><td>High (wastes CPU cycles)</td><td>Low (no busy waiting)</td></tr>
+<tr><td>Overhead</td><td>Low (fast if uncontended)</td><td>Higher (due to sleep/wake)</td></tr>
+</tbody></table>
+</div>
+<p>These characterists lead that the spin lock is suitable when critical
+sections are extremely short and contention is rare, because spinning wastes
+CPU cycles. On the other side, the mutex is better for longer critical
+sections or when a lock may be held for a non-trivial amount of time, as
+sleeping threads do not waste CPU.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.Mutex.html" title="struct keos_project4::sync::mutex::Mutex"><code>Mutex</code></a></li>
+<li><a href="struct.Mutex.html#method.new" title="associated function keos_project4::sync::mutex::Mutex::new"><code>Mutex::new</code></a></li>
+<li><a href="struct.Mutex.html#method.lock" title="method keos_project4::sync::mutex::Mutex::lock"><code>Mutex::lock</code></a></li>
+<li><a href="struct.MutexGuard.html#method.unlock" title="method keos_project4::sync::mutex::MutexGuard::unlock"><code>MutexGuard::unlock</code></a></li>
+</ul>
+<p>After implement the functionalities, move on to the next <a href="../condition_variable/index.html" title="mod keos_project4::sync::condition_variable"><code>section</code></a>.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Mutex.html" title="struct keos_project4::sync::mutex::Mutex">Mutex</a></dt><dd>A mutual exclusion primitive useful for protecting shared data</dd><dt><a class="struct" href="struct.MutexGuard.html" title="struct keos_project4::sync::mutex::MutexGuard">Mutex<wbr>Guard</a></dt><dd>An RAII implementation of a “scoped lock” of a mutex. When this structure
+is dropped (falls out of scope) without unlocking, the panic occurs.</dd></dl></section></div></main></body></html>

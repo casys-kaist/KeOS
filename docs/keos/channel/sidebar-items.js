@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["TryRecvError","TrySendError"],"fn":["channel"],"struct":["ChannelInner","IntoIter","Iter","Receiver","RecvError","SendError","Sender","TryIter"]};

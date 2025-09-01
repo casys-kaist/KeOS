@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["BlockBitmap","DirectoryBlock","DirectoryBlockEntry","IndirectBlock","Inode","InodeArray","InodeBitmap","JournalSb","JournalTxBegin","JournalTxEnd","SuperBlock"]};

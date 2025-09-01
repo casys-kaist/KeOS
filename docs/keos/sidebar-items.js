@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MAX_CPU"],"enum":["KernelError"],"fn":["rust_ap_main","rust_main"],"macro":["debug","info","print","println","warning"],"mod":["addressing","channel","fs","interrupt","intrinsics","lang","mm","sync","syscall","task","teletype","thread","util"],"static":["PANIC_DEPTH"],"struct":["SystemConfigurationBuilder","TestDriver","TryFromError"]};

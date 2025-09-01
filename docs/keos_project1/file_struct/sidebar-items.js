@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FileKind"],"struct":["File","FileDescriptor","FileStruct"]};

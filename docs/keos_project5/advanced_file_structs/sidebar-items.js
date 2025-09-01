@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Dentry","Stat"],"trait":["AdvancedFileStructs"]};

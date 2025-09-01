@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SyscallNumber"],"mod":["eager_pager","loader","mm_struct","page_table","pager","process"]};

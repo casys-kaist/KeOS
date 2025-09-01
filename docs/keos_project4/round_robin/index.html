@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Multicore Round-Robin Scheduling."><title>keos_project4::round_robin - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project4/index.html">keos_<wbr>project4</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module round_<wbr>robin</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#multicore-round-robin-scheduling" title="Multicore Round-Robin Scheduling.">Multicore Round-Robin Scheduling.</a><ul><li><a href="#scheduling-in-keos" title="Scheduling in KeOS">Scheduling in KeOS</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project4</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project4</a></div><h1>Module <span>round_robin</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project4/round_robin.rs.html#1-209">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="multicore-round-robin-scheduling"><a class="doc-anchor" href="#multicore-round-robin-scheduling">§</a>Multicore Round-Robin Scheduling.</h2>
+<p>The scheduler is an essential component of process management in any
+operating system. It ensures that multiple threads share CPU time in a fair
+and orderly manner.</p>
+<p>In an operating system, a <strong>thread</strong> is an abstraction of a CPU core. The
+thread abstraction enables the operating system to run multiple tasks
+concurrently, even on a single CPU core. At any given time, <strong>exactly one
+thread runs</strong> on the CPU, while other threads that are not active remain in
+an inactive state.If there are no threads ready to run, a special <strong>idle
+thread</strong> is executed to prevent the CPU from being idle.</p>
+<p>Round-Robin scheduling is a preemptive scheduling algorithm that assigns
+each thread a fixed time slice (or quantum) in a circular order. Once a
+thread’s time slice expires, it is preempted and pushed back to the end of
+the ready queue, while the next thread in the queue gets to run. This
+guarantees that all threads receive a fair share of CPU time.</p>
+<h3 id="scheduling-in-keos"><a class="doc-anchor" href="#scheduling-in-keos">§</a>Scheduling in KeOS</h3>
+<p>KeOS already provides basic thread
+functionalities such as thread creation and thread switching. You can create
+a new thread using the <a href="../../keos/thread/struct.ThreadBuilder.html" title="struct keos::thread::ThreadBuilder"><code>ThreadBuilder</code></a>. By calling
+<a href="../../keos/thread/struct.ThreadBuilder.html#method.spawn" title="method keos::thread::ThreadBuilder::spawn"><code>ThreadBuilder::spawn</code></a>, you pass a function that will be executed when the
+thread is first run. The thread will terminate once the function completes
+its execution. Each thread effectively acts as a mini-program running within
+the kernel, isolated from the others.</p>
+<p>The <strong>scheduler</strong> manages the CPU resources between the threads, by
+determines which thread runs next or whether yielding the running thread.
+After determining the next thread, the kernel conducts a <strong>context switch</strong>
+to run the thread. The magic of a <strong>context switch</strong> happens through the
+<a href="../../keos/thread/struct.Thread.html#method.run" title="method keos::thread::Thread::run"><code>Thread::run</code></a> function, which saves the state of the currently running
+thread and restores the state of the next thread to be executed.</p>
+<p>The core of schedulers in KeOS lies in <a href="../../keos/thread/scheduler/trait.Scheduler.html" title="trait keos::thread::scheduler::Scheduler"><code>Scheduler</code></a> traits. This trait
+defines the scheduling policy. The kernel consults with the scheduler
+implementation to determine next thread with <a href="../../keos/thread/scheduler/trait.Scheduler.html#tymethod.next_to_run" title="method keos::thread::scheduler::Scheduler::next_to_run"><code>Scheduler::next_to_run</code></a>, and
+determine to yield the current thread within <a href="../../keos/thread/scheduler/trait.Scheduler.html#tymethod.timer_tick" title="method keos::thread::scheduler::Scheduler::timer_tick"><code>Scheduler::timer_tick</code></a>.</p>
+<h5 id="per-core-scheduler-state"><a class="doc-anchor" href="#per-core-scheduler-state">§</a>Per-Core Scheduler State</h5>
+<p>In a multi-core system, each CPU core must manage its own scheduling queue
+and state independently. This is crucial for implementing an efficient
+multi-core scheduler, which is why the <a href="struct.PerCore.html" title="struct keos_project4::round_robin::PerCore"><code>PerCore</code></a> structure is used.</p>
+<p>The <a href="struct.PerCore.html" title="struct keos_project4::round_robin::PerCore"><code>PerCore</code></a> struct represents the per-core scheduling state. Each core
+has its own scheduling queue (<code>run_queue</code>) and time slice (<code>remain</code>). These
+allow each CPU core to manage threads independently, ensuring
+no thread monopolizes CPU time on any core.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">struct </span>PerCore {
+    <span class="doccomment">/// Queue of threads ready to run on this CPU core.
+    </span>run_queue: SpinLock&lt;VecDeque&lt;Box&lt;Thread&gt;&gt;&gt;,
+
+    <span class="doccomment">/// Remaining time slice for the currently running thread.
+    </span>remain: AtomicIsize,
+}</code></pre></div>
+<p>The <a href="struct.PerCore.html" title="struct keos_project4::round_robin::PerCore"><code>PerCore</code></a> struct is essential in ensuring each CPU core can
+independently manage its threads. Key components include:</p>
+<ul>
+<li>
+<p><strong>run_queue</strong>: This is a queue of threads ready to run on the respective
+CPU core. It is protected by a <a href="../../../keos/sync/struct.SpinLock.html"><code>SpinLock</code></a> to ensure that only one core
+can modify the queue at a time, preventing race conditions. The
+<a href="https://doc.rust-lang.org/alloc/collections/vec_deque/struct.VecDeque.html"><code>VecDeque</code></a> allows for efficient push and pop operations, making it an
+ideal choice for managing threads in the ready state.</p>
+</li>
+<li>
+<p><strong>remain</strong>: This field holds the remaining time slice for the currently
+running thread on the CPU core. The remaining time slice is typically
+decremented on each timer interrupt, and when it reaches zero, a context
+switch occurs, and the current thread is preempted to allow the next
+thread to execute.</p>
+</li>
+</ul>
+<h5 id="round-robin-scheduler"><a class="doc-anchor" href="#round-robin-scheduler">§</a>Round-Robin Scheduler</h5>
+<p>The <a href="struct.RoundRobin.html" title="struct keos_project4::round_robin::RoundRobin"><code>RoundRobin</code></a> scheduler in KeOS implements a time-sharing policy
+across multiple CPU cores using a round-robin approach. Each CPU core is
+associated with a dedicated <a href="struct.PerCore.html" title="struct keos_project4::round_robin::PerCore"><code>PerCore</code></a> structure, which maintains its own
+ready queue and scheduling state. This per-core design enables efficient
+parallel scheduling, minimizes contention, and ensures that all cores
+participate in thread execution without interference.</p>
+<p>In a round-robin policy, each runnable thread is assigned a fixed time slice
+(quantum) during which it can execute before being preempted. You will use
+the default quantum as 5 milliseconds. When a thread exhausts its time
+slice, it is reschdules with <a href="../../../keos/thread/scheduler/trait.Scheduler.html#method.reschedule"><code>Scheduler::reschedule</code></a>. This ensures fair
+CPU allocation among all threads and prevents starvation.</p>
+<p>KeOS employs a periodic timer interrupt that fires every 1 millisecond on
+each core. These timer interrupts invoke <a href="../../keos/thread/scheduler/trait.Scheduler.html#tymethod.timer_tick" title="method keos::thread::scheduler::Scheduler::timer_tick"><code>Scheduler::timer_tick</code></a>, which
+updates the scheduling state, decrements the current thread’s time slice,
+and triggers a context switch if the quantum has expired.</p>
+<p>A challenge in per-core scheduling arises when a core’s local run queue is
+empty: the CPU becomes idle, even though other cores may have work queued.
+To address this, the scheduler implements <strong>work stealing</strong>, a mechanism
+that allows idle cores to “steal” runnable threads from the queues of other
+cores. This dynamic load-balancing strategy ensures that CPU resources are
+used efficiently and that no core remains idle while runnable threads exist
+elsewhere in the system.</p>
+<p>Overall, the round-robin scheduler in KeOS offers a simple yet effective
+baseline for multicore scheduling, balancing responsiveness, fairness, and
+throughput across all available cores.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.RoundRobin.html#method.next_to_run" title="method keos_project4::round_robin::RoundRobin::next_to_run"><code>RoundRobin::next_to_run</code></a></li>
+<li><a href="struct.RoundRobin.html#method.push_to_queue" title="method keos_project4::round_robin::RoundRobin::push_to_queue"><code>RoundRobin::push_to_queue</code></a></li>
+<li><a href="struct.RoundRobin.html#method.timer_tick" title="method keos_project4::round_robin::RoundRobin::timer_tick"><code>RoundRobin::timer_tick</code></a></li>
+</ul>
+<p>This ends project 4.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.PerCore.html" title="struct keos_project4::round_robin::PerCore">PerCore</a></dt><dd>Per-core scheduler state.</dd><dt><a class="struct" href="struct.RoundRobin.html" title="struct keos_project4::round_robin::RoundRobin">Round<wbr>Robin</a></dt><dd>A round robin scheduler.</dd></dl></section></div></main></body></html>

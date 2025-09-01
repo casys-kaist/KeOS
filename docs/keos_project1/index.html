@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Project 1: System Call"><title>keos_project1 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="keos_project1" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../static.files/storage-68b7e25d.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../keos_project1/index.html">keos_<wbr>project1</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#project-1-system-call" title="Project 1: System Call">Project 1: System Call</a><ul><li><a href="#getting-started" title="Getting Started">Getting Started</a></li><li><a href="#modifiable-files" title="Modifiable Files">Modifiable Files</a></li><li><a href="#project-outline" title="Project Outline">Project Outline</a></li></ul></li></ul><h3><a href="#reexports">Crate Items</a></h3><ul class="block"><li><a href="#reexports" title="Re-exports">Re-exports</a></li><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#enums" title="Enums">Enums</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>keos_project1</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/keos_project1/lib.rs.html#1-163">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="project-1-system-call"><a class="doc-anchor" href="#project-1-system-call">§</a>Project 1: System Call</h2>
+<p>In Project 1, both user applications and the kernel run at the same
+privilege level. This is because the system does not yet support memory
+isolation; thus, there is no hardware-enforced boundary between user and
+kernel memory. In the next project, KeOS will introduce <strong>privilege
+separation</strong>, leveraging hardware features to isolate user space from the
+kernel, as is standard in modern operating systems.</p>
+<p>This project builds the <strong>system call handling</strong>, which is the groundwork
+for secure and structured interaction between user applications and kernel
+services in subsequent stages of the system.</p>
+<p>We are aware that you may not yet be familiar with the Rust language as well
+as KeOS apis, so this project is intended to be much easier than later
+projects.
+Please consult the <a href="https://doc.rust-lang.org/book/"><code>Rust Book</code></a> if you are unfamiliar with Rust and be
+familiar with Rust by solving exercises in <a href="https://rustlings.rust-lang.org/"><code>Rustling</code></a>. It is highly
+recommend to tring those exercises if this is your first project in Rust.</p>
+<h3 id="getting-started"><a class="doc-anchor" href="#getting-started">§</a>Getting Started</h3>
+<p>To begin, navigate to the <code>keos-project1/grader</code> directory and run:</p>
+<div class="example-wrap"><pre class="language-bash"><code>$ cargo run --target ../../.cargo/x86_64-unknown-keos.json</code></pre></div>
+<p>Initially, KeOS will panic with a “not yet implemented” message, indicating
+the missing components that you need to implement.</p>
+<h3 id="modifiable-files"><a class="doc-anchor" href="#modifiable-files">§</a>Modifiable Files</h3>
+<p>In this project, you can modify the following two files:</p>
+<ul>
+<li><code>syscall.rs</code></li>
+<li><code>file_struct.rs</code></li>
+</ul>
+<p>When grading, other than theses two files are overwritten to the original
+one.</p>
+<h3 id="project-outline"><a class="doc-anchor" href="#project-outline">§</a>Project Outline</h3>
+<ul>
+<li><a href="syscall/index.html" title="mod keos_project1::syscall"><code>System Call Infrastructure</code></a>: Extract arguments from system call
+requests in a structured manner.</li>
+<li><a href="file_struct/index.html" title="mod keos_project1::file_struct"><code>File System Calls</code></a>: Introduce system calls for file operations.</li>
+</ul>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><dl class="item-table reexports"><dt id="reexport.Process"><code>pub use process::<a class="struct" href="process/struct.Process.html" title="struct keos_project1::process::Process">Process</a>;</code></dt></dl><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="file_struct/index.html" title="mod keos_project1::file_struct">file_<wbr>struct</a></dt><dd>File state of a process.</dd><dt><a class="mod" href="process/index.html" title="mod keos_project1::process">process</a></dt><dd>The process model for project1.</dd><dt><a class="mod" href="syscall/index.html" title="mod keos_project1::syscall">syscall</a></dt><dd>System call abi for x86_64.</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.SyscallNumber.html" title="enum keos_project1::SyscallNumber">Syscall<wbr>Number</a></dt><dd>Represents system call numbers used in project1.</dd></dl></section></div></main></body></html>

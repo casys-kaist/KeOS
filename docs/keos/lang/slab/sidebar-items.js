@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["index_from_size"],"macro":["dispatch"],"mod":["atomic128","slab_allocator"],"static":["ALLOCATOR"],"struct":["Allocator","Palloc"]};

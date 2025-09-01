@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="System call abi for x86_64."><title>keos_project1::syscall - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project1" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project1/index.html">keos_<wbr>project1</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module syscall</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#system-call-abi-for-x86_64" title="System call abi for x86_64.">System call abi for x86_64.</a><ul><li><a href="#system-call-details" title="System Call Details">System Call Details</a></li><li><a href="#handling-system-call-in-keos" title="Handling System Call in KeOS">Handling System Call in KeOS</a></li><li><a href="#error-handling-via-result-type" title="Error Handling via `Result` Type">Error Handling via <code>Result</code> Type</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project1</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project1</a></div><h1>Module <span>syscall</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project1/syscall.rs.html#1-184">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="system-call-abi-for-x86_64"><a class="doc-anchor" href="#system-call-abi-for-x86_64">§</a>System call abi for x86_64.</h2>
+<p>Operating systems provide an abstraction of hardware resources to user
+programs, allowing them to interact with hardware without needing to
+understand its complexities. The kernel is responsible for managing
+resources such as memory, processes, and input/output devices, while
+offering a simplified interface for user programs. System calls serve as a
+crucial interface between user applications and the kernel, providing an
+additional layer of abstraction that enables programs to request
+services like file I/O and process management, without directly dealing with
+the hardware.</p>
+<h3 id="system-call-details"><a class="doc-anchor" href="#system-call-details">§</a>System Call Details</h3>
+<p>The operating system deals with <strong>software exceptions</strong>, which occur
+due to program execution errors such as a page fault or division by zero.
+<strong>Exceptions</strong> are also the mechanism by which a user program requests
+services from the operating system. These service requests are <strong>system
+calls</strong>.</p>
+<p>In traditional x86 architecture, system calls were handled like any other
+software exception through the <code>int</code> instruction. However, in x86-64
+architecture, manufacturers introduced the <code>syscall</code> instruction, which
+provides a fast and efficient way to invoke system calls.</p>
+<p>In modern systems, the <code>syscall</code> instruction is the most commonly used means
+of invoking system calls. When a user program wants to make a system call,
+it invokes the <code>syscall</code> instruction. The system call number and any
+additional arguments are placed in registers before invoking <code>syscall</code>. Here
+are the key details:</p>
+<ol>
+<li>The <strong>system call number</strong> is passed in the <code>%rax</code> register.</li>
+<li>The <strong>arguments</strong> are passed in the registers <code>%rdi</code>, <code>%rsi</code>, <code>%rdx</code>,
+<code>%r10</code>, <code>%r8</code>, and <code>%r9</code>. Specifically:
+<ul>
+<li><code>%rdi</code>: First argument</li>
+<li><code>%rsi</code>: Second argument</li>
+<li><code>%rdx</code>: Third argument</li>
+<li><code>%r10</code>: Fourth argument</li>
+<li><code>%r8</code>: Fifth argument</li>
+<li><code>%r9</code>: Sixth argument</li>
+</ul>
+</li>
+<li>The <strong>return value</strong> is stored to the <code>%rax</code> register.</li>
+</ol>
+<h3 id="handling-system-call-in-keos"><a class="doc-anchor" href="#handling-system-call-in-keos">§</a>Handling System Call in KeOS</h3>
+<p>When the <code>syscall</code> instruction is invoked, the KeOS kernel serves the
+requests by calling the <a href="../../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> method with the state of the CPU
+captured in a structure called <a href="../../../keos/syscall/struct.Registers.html"><code>Registers</code></a>. This structure contains the
+state of all registers, which is accessible to the handler and allows for
+the manipulation of register values (including the return value) within the
+handler.</p>
+<p>On the beginning of the <a href="../../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> method, KeOS parses the arguments
+of the system call by calling the <a href="struct.SyscallAbi.html#method.from_registers" title="associated function keos_project1::syscall::SyscallAbi::from_registers"><code>SyscallAbi::from_registers</code></a>, which is
+currently marked with <code>todo!()</code>. Your job is to extend this to retrieve
+system call number and arguments according to the abi.</p>
+<p>After acquiring the <a href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a> struct, KeOS dispatches the system call
+handler based on the parsed system call number. This system call handler
+handles the requests and returns the <code>Result&lt;usize, KernelError&gt;</code> to
+indicate the result.</p>
+<h3 id="error-handling-via-result-type"><a class="doc-anchor" href="#error-handling-via-result-type">§</a>Error Handling via <code>Result</code> Type</h3>
+<p>Proper error handling is crucial for maintaining system stability and
+ensuring that unexpected conditions do not lead to crashes or undefined
+behavior. Errors incured by user <strong>MUST NOT</strong> stop the kernel.
+When an error occurs, ensure that the system call returns an appropriate
+error code rather than panicking or causing undefined behavior.
+Providing meaningful error messages can also improve debugging and user
+experience. Properly handling edge cases will help ensure a robust and
+stable kernel implementation.</p>
+<p>To this end, KeOS combines the rust’s <code>Result</code> type with <a href="../../keos/enum.KernelError.html" title="enum keos::KernelError"><code>KernelError</code></a>
+type to enumerate all possible errors that kernel can make.
+For example, when implementing system call handlers, you can consider the
+following error conditions:</p>
+<ul>
+<li><a href="../../keos/enum.KernelError.html#variant.BadFileDescriptor" title="variant keos::KernelError::BadFileDescriptor"><code>KernelError::BadFileDescriptor</code></a>: Attempting to operate on a file
+descriptor that is not open.</li>
+<li><a href="../../keos/enum.KernelError.html#variant.InvalidArgument" title="variant keos::KernelError::InvalidArgument"><code>KernelError::InvalidArgument</code></a>: A process tries to perform an operation
+it lacks permission for (e.g., writing to a read-only file).</li>
+<li><a href="../../keos/enum.KernelError.html#variant.NoSuchEntry" title="variant keos::KernelError::NoSuchEntry"><code>KernelError::NoSuchEntry</code></a>: A process attempts to open a non-existent
+file without specifying a creation flag.</li>
+<li><a href="../../keos/enum.KernelError.html#variant.BadAddress" title="variant keos::KernelError::BadAddress"><code>KernelError::BadAddress</code></a>: A process attempts to access an unmapped or
+kernel memory.</li>
+</ul>
+<p>During the execution of a function, you might confront the errors. In such
+cases, you should <strong>never</strong> handle the errors by panicking the kernel.
+Instead, you propagates the error with <code>?</code> operator to the
+<a href="../../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a>, which conveys the error code to the userspace. Consult
+with <a href="https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html"><code>RustBook</code></a> for how to use <code>?</code> operator.</p>
+<h4 id="returning-value-to-user"><a class="doc-anchor" href="#returning-value-to-user">§</a>Returning Value to User</h4>
+<p>The epilog of the <a href="../../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> captures both the result and error of
+the function, interprets them in to the <code>usize</code>, and return the values into
+the user space. You can update the user program’s registers by directly
+modify the fields of <a href="../../../keos/syscall/struct.Registers.html"><code>Registers</code></a> captured in the <a href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a>.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.SyscallAbi.html#method.from_registers" title="associated function keos_project1::syscall::SyscallAbi::from_registers"><code>SyscallAbi::from_registers</code></a></li>
+<li><a href="struct.SyscallAbi.html#method.set_return_value" title="method keos_project1::syscall::SyscallAbi::set_return_value"><code>SyscallAbi::set_return_value</code></a></li>
+</ul>
+<p>After implementing both methods, move on to the next <a href="../file_struct/index.html" title="mod keos_project1::file_struct"><code>Section</code></a>.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">Syscall<wbr>Abi</a></dt><dd>A struct representing the system call ABI (Application Binary Interface).</dd></dl></section></div></main></body></html>

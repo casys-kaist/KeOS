@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Trait representing a regular file in the filesystem."><title>RegularFile in keos::fs::traits - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc trait"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../keos/index.html">keos</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Regular<wbr>File</a></h2><h3><a href="#required-methods">Required Methods</a></h3><ul class="block"><li><a href="#tymethod.ino" title="ino">ino</a></li><li><a href="#tymethod.read" title="read">read</a></li><li><a href="#tymethod.size" title="size">size</a></li><li><a href="#tymethod.write" title="write">write</a></li><li><a href="#tymethod.writeback" title="writeback">writeback</a></li></ul><h3><a href="#provided-methods">Provided Methods</a></h3><ul class="block"><li><a href="#method.mmap" title="mmap">mmap</a></li></ul><h3><a href="#implementors">Implementors</a></h3></section><div id="rustdoc-modnav"><h2><a href="index.html">In keos::<wbr>fs::<wbr>traits</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">keos</a>::<wbr><a href="../index.html">fs</a>::<wbr><a href="index.html">traits</a></div><h1>Trait <span class="trait">RegularFile</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/keos/fs.rs.html#31-109">Source</a> </span></div><pre class="rust item-decl"><code>pub trait RegularFile<div class="where">where
+    Self: Send + Sync,</div>{
+    // Required methods
+    fn <a href="#tymethod.ino" class="fn">ino</a>(&amp;self) -&gt; <a class="struct" href="../struct.InodeNumber.html" title="struct keos::fs::InodeNumber">InodeNumber</a>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.size" class="fn">size</a>(&amp;self) -&gt; usize;
+<span class="item-spacer"></span>    fn <a href="#tymethod.read" class="fn">read</a>(
+        &amp;self,
+        fba: <a class="struct" href="../struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber">FileBlockNumber</a>,
+        buf: &amp;mut [u8; 4096],
+    ) -&gt; Result&lt;bool, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;;
+<span class="item-spacer"></span>    fn <a href="#tymethod.write" class="fn">write</a>(
+        &amp;self,
+        fba: <a class="struct" href="../struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber">FileBlockNumber</a>,
+        buf: &amp;[u8; 4096],
+        min_size: usize,
+    ) -&gt; Result&lt;(), <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;;
+<span class="item-spacer"></span>    fn <a href="#tymethod.writeback" class="fn">writeback</a>(&amp;self) -&gt; Result&lt;(), <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;;
+
+    // Provided method
+    fn <a href="#method.mmap" class="fn">mmap</a>(&amp;self, fba: <a class="struct" href="../struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber">FileBlockNumber</a>) -&gt; Result&lt;<a class="struct" href="../../mm/struct.Page.html" title="struct keos::mm::Page">Page</a>, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt; { ... }
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Trait representing a regular file in the filesystem.</p>
+<p>A regular file contains user data and supports basic read and write
+operations.</p>
+</div></details><h2 id="required-methods" class="section-header">Required Methods<a href="#required-methods" class="anchor">§</a></h2><div class="methods"><details class="toggle method-toggle" open><summary><section id="tymethod.ino" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#36">Source</a><h4 class="code-header">fn <a href="#tymethod.ino" class="fn">ino</a>(&amp;self) -&gt; <a class="struct" href="../struct.InodeNumber.html" title="struct keos::fs::InodeNumber">InodeNumber</a></h4></section></summary><div class="docblock"><p>Returns the inode number of the file.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.size" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#39">Source</a><h4 class="code-header">fn <a href="#tymethod.size" class="fn">size</a>(&amp;self) -&gt; usize</h4></section></summary><div class="docblock"><p>Returns the size of the file in bytes.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.read" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#51">Source</a><h4 class="code-header">fn <a href="#tymethod.read" class="fn">read</a>(
+    &amp;self,
+    fba: <a class="struct" href="../struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber">FileBlockNumber</a>,
+    buf: &amp;mut [u8; 4096],
+) -&gt; Result&lt;bool, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Reads data from the file into the provided buffer.</p>
+<h5 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h5>
+<ul>
+<li><code>fba</code>: The <code>FileBlockNumber</code> which to read.</li>
+<li><code>buf</code>: A mutable array where the file content will be stored.</li>
+</ul>
+<h5 id="returns"><a class="doc-anchor" href="#returns">§</a>Returns</h5>
+<ul>
+<li><code>Ok(true)</code>: If the read success.</li>
+<li><code>Ok(false)</code>: If the read success.</li>
+<li><code>Err(Error)</code>: An error occured while the read operation.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.write" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#75-80">Source</a><h4 class="code-header">fn <a href="#tymethod.write" class="fn">write</a>(
+    &amp;self,
+    fba: <a class="struct" href="../struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber">FileBlockNumber</a>,
+    buf: &amp;[u8; 4096],
+    min_size: usize,
+) -&gt; Result&lt;(), <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Writes a 4096-byte page of data into the specified file block.</p>
+<p>This method writes the contents of <code>buf</code> to the file block indicated
+by <code>fba</code>. If the target block lies beyond the current end of
+the file, the file may be extended up to <code>new_size</code> bytes to
+accommodate the write.</p>
+<p>However, if the target block lies beyond the current file size
+<strong>and</strong> <code>min_size</code> is insufficient to reach it, the write
+will fail.</p>
+<h5 id="parameters-1"><a class="doc-anchor" href="#parameters-1">§</a>Parameters</h5>
+<ul>
+<li><code>fba</code>: The <code>FileBlockNumber</code> indicating the block to write to.</li>
+<li><code>buf</code>: A buffer containing exactly 4096 bytes of data to write.</li>
+<li><code>min_size</code>: The desired minimum file size (in bytes) after the
+write.   If this value is less than or equal to the current file
+size, no growth occurs.</li>
+</ul>
+<h5 id="returns-1"><a class="doc-anchor" href="#returns-1">§</a>Returns</h5>
+<ul>
+<li><code>Ok(())</code> if the write is successful.</li>
+<li><code>Err(KernelError)</code> if the operation fails (e.g., out-of-bounds
+write, I/O error).</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.writeback" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#108">Source</a><h4 class="code-header">fn <a href="#tymethod.writeback" class="fn">writeback</a>(&amp;self) -&gt; Result&lt;(), <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Write back the file to disk.</p>
+</div></details></div><h2 id="provided-methods" class="section-header">Provided Methods<a href="#provided-methods" class="anchor">§</a></h2><div class="methods"><details class="toggle method-toggle" open><summary><section id="method.mmap" class="method"><a class="src rightside" href="../../../src/keos/fs.rs.html#101-105">Source</a><h4 class="code-header">fn <a href="#method.mmap" class="fn">mmap</a>(&amp;self, fba: <a class="struct" href="../struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber">FileBlockNumber</a>) -&gt; Result&lt;<a class="struct" href="../../mm/struct.Page.html" title="struct keos::mm::Page">Page</a>, <a class="enum" href="../../enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Maps a file block into memory.</p>
+<p>This method retrieves the contents of the file at the specified file
+block number (<code>fba</code>) and returns it as a <a href="../../mm/struct.Page.html" title="struct keos::mm::Page"><code>Page</code></a> containing the
+contents of the file block.</p>
+<p>The memory-mapped page reflects the current contents of the file at
+the requested block, and it can be used for reading or
+modifying file data at page granularity.</p>
+<h5 id="parameters-2"><a class="doc-anchor" href="#parameters-2">§</a>Parameters</h5>
+<ul>
+<li><code>fba</code>: The file block number to map into memory. This is a logical
+offset into the file, measured in fixed-size blocks (not bytes).</li>
+</ul>
+<h5 id="returns-2"><a class="doc-anchor" href="#returns-2">§</a>Returns</h5>
+<ul>
+<li><code>Ok(Page)</code>: A reference-counted, in-memory page containing the
+file block’s data.</li>
+<li><code>Err(KernelError)</code>: If the file block cannot be found or loaded
+(e.g., out-of-bounds access).</li>
+</ul>
+</div></details></div><h2 id="implementors" class="section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"></div><script src="../../../trait.impl/keos/fs/traits/trait.RegularFile.js" async></script></section></div></main></body></html>

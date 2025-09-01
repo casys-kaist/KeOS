@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="The `MmStruct` represents the memory state for a specific process, corresponding to the Linux kernel’s `struct mm_struct`."><title>MmStruct in keos_project2::mm_struct - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc struct"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project2/index.html">keos_<wbr>project2</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">MmStruct</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#memory-state" title="Memory State">Memory State</a></li></ul><h3><a href="#fields">Fields</a></h3><ul class="block structfield"><li><a href="#structfield.page_table" title="page_table">page_table</a></li><li><a href="#structfield.pager" title="pager">pager</a></li></ul><h3><a href="#implementations">Methods</a></h3><ul class="block method"><li><a href="#method.access_ok" title="access_ok">access_ok</a></li><li><a href="#method.do_mmap" title="do_mmap">do_mmap</a></li><li><a href="#method.get_user_page_and" title="get_user_page_and">get_user_page_and</a></li><li><a href="#method.mmap" title="mmap">mmap</a></li><li><a href="#method.munmap" title="munmap">munmap</a></li><li><a href="#method.new" title="new">new</a></li></ul><h3><a href="#trait-implementations">Trait Implementations</a></h3><ul class="block trait-implementation"><li><a href="#impl-Default-for-MmStruct%3CP%3E" title="Default">Default</a></li></ul><h3><a href="#synthetic-implementations">Auto Trait Implementations</a></h3><ul class="block synthetic-implementation"><li><a href="#impl-Freeze-for-MmStruct%3CP%3E" title="Freeze">Freeze</a></li><li><a href="#impl-RefUnwindSafe-for-MmStruct%3CP%3E" title="RefUnwindSafe">RefUnwindSafe</a></li><li><a href="#impl-Send-for-MmStruct%3CP%3E" title="Send">Send</a></li><li><a href="#impl-Sync-for-MmStruct%3CP%3E" title="Sync">Sync</a></li><li><a href="#impl-Unpin-for-MmStruct%3CP%3E" title="Unpin">Unpin</a></li><li><a href="#impl-UnwindSafe-for-MmStruct%3CP%3E" title="UnwindSafe">UnwindSafe</a></li></ul><h3><a href="#blanket-implementations">Blanket Implementations</a></h3><ul class="block blanket-implementation"><li><a href="#impl-Any-for-T" title="Any">Any</a></li><li><a href="#impl-Borrow%3CT%3E-for-T" title="Borrow&#60;T&#62;">Borrow&#60;T&#62;</a></li><li><a href="#impl-BorrowMut%3CT%3E-for-T" title="BorrowMut&#60;T&#62;">BorrowMut&#60;T&#62;</a></li><li><a href="#impl-From%3CT%3E-for-T" title="From&#60;T&#62;">From&#60;T&#62;</a></li><li><a href="#impl-Into%3CU%3E-for-T" title="Into&#60;U&#62;">Into&#60;U&#62;</a></li><li><a href="#impl-TryFrom%3CU%3E-for-T" title="TryFrom&#60;U&#62;">TryFrom&#60;U&#62;</a></li><li><a href="#impl-TryInto%3CU%3E-for-T" title="TryInto&#60;U&#62;">TryInto&#60;U&#62;</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="index.html">In keos_<wbr>project2::<wbr>mm_<wbr>struct</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project2</a>::<wbr><a href="index.html">mm_struct</a></div><h1>Struct <span class="struct">MmStruct</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project2/mm_struct.rs.html#127-135">Source</a> </span></div><pre class="rust item-decl"><code>pub struct MmStruct&lt;P: <a class="trait" href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager">Pager</a>&gt; {
+    pub page_table: <a class="struct" href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
+    pub pager: P,
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>The <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> represents the memory state for a specific process,
+corresponding to the Linux kernel’s <code>struct mm_struct</code>.</p>
+<p>This struct encapsulates the essential information required to manage
+a process’s virtual memory, including its page table and the pager
+responsible for handling memory mapping operations (such as <code>mmap</code> and
+<code>munmap</code>).</p>
+<p>The <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> ensures that memory-related system calls and operations are
+correctly applied within the process’s address space. It provides mechanisms
+to allocate, map, and unmap memory pages, and serves as the interface
+through which the OS kernel interacts with the user process’s memory layout.</p>
+<h2 id="memory-state"><a class="doc-anchor" href="#memory-state">§</a>Memory State</h2>
+<p>The memory state includes the page table (referenced by <code>page_table_addr</code>)
+that manages the virtual-to-physical address translations for the process,
+and a pager (<code>pager</code>) that defines how memory-mapped files and dynamic
+memory allocations are handled. Together, these components allow each
+process to maintain its own isolated memory environment, supporting both
+memory protection and efficient address space management.</p>
+<p>Like its Linux counterpart, <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> plays a central role in memory
+management, providing the kernel with per-process control over virtual
+memory.</p>
+</div></details><h2 id="fields" class="fields section-header">Fields<a href="#fields" class="anchor">§</a></h2><span id="structfield.page_table" class="structfield section-header"><a href="#structfield.page_table" class="anchor field">§</a><code>page_table: <a class="struct" href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a></code></span><div class="docblock"><p>The page table that maintains mappings between virtual and physical
+addresses.</p>
+</div><span id="structfield.pager" class="structfield section-header"><a href="#structfield.pager" class="anchor field">§</a><code>pager: P</code></span><div class="docblock"><p>The pager that handles memory allocation (<code>mmap</code>) and deallocation
+(<code>munmap</code>).</p>
+</div><h2 id="implementations" class="section-header">Implementations<a href="#implementations" class="anchor">§</a></h2><div id="implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-MmStruct%3CP%3E" class="impl"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#143-335">Source</a><a href="#impl-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P: <a class="trait" href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager">Pager</a>&gt; <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.new" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#150-155">Source</a><h4 class="code-header">pub fn <a href="#method.new" class="fn">new</a>() -&gt; Self</h4></section></summary><div class="docblock"><p>Creates a new <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> with an empty page table and a new pager
+instance.</p>
+<h5 id="returns"><a class="doc-anchor" href="#returns">§</a>Returns</h5>
+<ul>
+<li>A new <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> instance initialized with a new <a href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable"><code>PageTable</code></a> and
+<code>P::new()</code>.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.access_ok" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#171-173">Source</a><h4 class="code-header">pub fn <a href="#method.access_ok" class="fn">access_ok</a>(&amp;self, addr: Range&lt;Va&gt;, is_write: bool) -&gt; bool</h4></section></summary><div class="docblock"><p>This function ensures that system calls using memory addresses (such as
+<code>read</code>, <code>write</code>, etc.) operate only on <strong>valid and accessible</strong>
+memory regions.</p>
+<h5 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h5>
+<ul>
+<li><code>addr</code>: A range of virtual addresses to be accessed.</li>
+<li><code>is_write</code>: <code>true</code> if the memory is being written to, <code>false</code> if it’s
+only being read.</li>
+</ul>
+<h5 id="returns-1"><a class="doc-anchor" href="#returns-1">§</a>Returns</h5>
+<ul>
+<li><code>true</code> if the memory range is valid.</li>
+<li><code>false</code> if the memory range is invalid or inaccessible.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.do_mmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#186-197">Source</a><h4 class="code-header">pub fn <a href="#method.do_mmap" class="fn">do_mmap</a>(
+    &amp;mut self,
+    addr: Va,
+    size: usize,
+    prot: <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>,
+    file: Option&lt;&amp;<a class="struct" href="../../keos/fs/struct.RegularFile.html" title="struct keos::fs::RegularFile">RegularFile</a>&gt;,
+    offset: usize,
+) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Wrapper function for the pager’s <code>mmap</code> method. It delegates the actual
+memory mapping operation to the pager’s <code>mmap</code> method.</p>
+<h5 id="parameters-1"><a class="doc-anchor" href="#parameters-1">§</a>Parameters</h5>
+<ul>
+<li><code>fstate</code>: A mutable reference to the file state.</li>
+<li><code>abi</code>: The system call ABI, which contains the arguments for the
+system call.</li>
+</ul>
+<h5 id="returns-2"><a class="doc-anchor" href="#returns-2">§</a>Returns</h5>
+<ul>
+<li>The result of the memory mapping operation, returned by the pager’s
+<code>mmap</code>.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.mmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#247-253">Source</a><h4 class="code-header">pub fn <a href="#method.mmap" class="fn">mmap</a>(
+    &amp;mut self,
+    fstate: &amp;mut <a class="struct" href="../../keos_project1/file_struct/struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct">FileStruct</a>,
+    abi: &amp;<a class="struct" href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'_&gt;,
+) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Maps a file into the process’s virtual address space.</p>
+<p>This function implements the <code>mmap</code> system call, which maps either an
+anonymous mapping (fd = -1) or portion of a file into memory (fd &gt;= 0).
+If the mapped region represent a file content, user programs can
+access the file contents as the part of the process’s memory.</p>
+<h5 id="syscall-api"><a class="doc-anchor" href="#syscall-api">§</a>Syscall API</h5><div class="example-wrap"><pre class="language-c"><code>void *mmap(void *addr, size_t length, int prot, int fd, off_t offset);</code></pre></div>
+<ul>
+<li><code>addr</code>: Desired starting address of the mapping (must be page-aligned
+and non-zero).</li>
+<li><code>length</code>: Number of bytes to map (must be non-zero).</li>
+<li><code>prot</code>: Desired memory protection flags (currently ignored).</li>
+<li><code>fd</code>: File descriptor of the file to be mapped.</li>
+<li><code>offset</code>: Offset in the file where mapping should begin.</li>
+</ul>
+<h5 id="arguments"><a class="doc-anchor" href="#arguments">§</a>Arguments</h5>
+<ul>
+<li><code>fstate</code> - Mutable reference to the current file state.</li>
+<li><code>abi</code> - A reference to the system call arguments, including the file
+descriptor, mapping length, protection flags, and file offset.</li>
+</ul>
+<h5 id="behavior"><a class="doc-anchor" href="#behavior">§</a>Behavior</h5>
+<p>This function performs validation on the provided arguments before
+forwarding the request to the pager’s <code>mmap</code> method. The following
+conditions must be met:</p>
+<ul>
+<li><code>addr</code> must be non-zero and page-aligned.</li>
+<li><code>length</code> must be non-zero.</li>
+<li>The file descriptor must refer to a regular file or -1 for anonymous
+mapping.</li>
+<li>The mapping must not overlap with any already mapped region, including
+the user stack or any memory occupied by the program binary.</li>
+</ul>
+<p>Unlike Linux, KeOS does not support automatic address selection for
+<code>addr == NULL</code>, so <code>mmap</code> fails if <code>addr</code> is zero.</p>
+<p>If the length of the file is not a multiple of the page size, any excess
+bytes in the final page are zero-filled.</p>
+<h5 id="returns-3"><a class="doc-anchor" href="#returns-3">§</a>Returns</h5>
+<p>Returns the starting virtual address of the mapped region on success, or
+a <a href="../../keos/enum.KernelError.html" title="enum keos::KernelError"><code>KernelError</code></a> on failure due to invalid arguments or conflicts with
+existing memory mappings.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.munmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#294-297">Source</a><h4 class="code-header">pub fn <a href="#method.munmap" class="fn">munmap</a>(&amp;mut self, abi: &amp;<a class="struct" href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'_&gt;) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Unmaps a memory-mapped file region.</p>
+<p>This function implements the <code>munmap</code> system call, which removes a
+previously established memory mapping created by <code>mmap</code>. It releases
+the virtual memory associated with the mapping.</p>
+<h5 id="syscall-api-1"><a class="doc-anchor" href="#syscall-api-1">§</a>Syscall API</h5><div class="example-wrap"><pre class="language-c"><code>int munmap(void *addr);</code></pre></div>
+<ul>
+<li><code>addr</code>: The starting virtual address of the mapping to unmap. This
+must match the address returned by a previous call to <code>mmap</code> by the
+same process and must not have been unmapped already.</li>
+</ul>
+<h5 id="arguments-1"><a class="doc-anchor" href="#arguments-1">§</a>Arguments</h5>
+<ul>
+<li><code>fstate</code> - Mutable reference to the current file state.</li>
+<li><code>abi</code> - A reference to the system call arguments, including the
+address to unmap.</li>
+</ul>
+<h5 id="behavior-1"><a class="doc-anchor" href="#behavior-1">§</a>Behavior</h5>
+<ul>
+<li>Unmaps the virtual memory region starting at <code>addr</code> that was
+previously mapped via <code>mmap</code>.</li>
+<li>Unmodified pages are simply discarded.</li>
+<li>The virtual pages corresponding to the mapping are removed from the
+process’s address space.</li>
+</ul>
+<h5 id="additional-notes"><a class="doc-anchor" href="#additional-notes">§</a>Additional Notes</h5>
+<ul>
+<li>Calling <code>close</code> on a file descriptor or removing the file from the
+filesystem does <strong>not</strong> unmap any of its active mappings.</li>
+<li>To follow the Unix convention, mappings remain valid until they are
+explicitly unmapped via <code>munmap</code>.</li>
+</ul>
+<h5 id="returns-4"><a class="doc-anchor" href="#returns-4">§</a>Returns</h5>
+<p>Returns <code>Ok(0)</code> on success or a <a href="../../keos/enum.KernelError.html" title="enum keos::KernelError"><code>KernelError</code></a> if the address is
+invalid or does not correspond to an active memory mapping.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_user_page_and" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#323-334">Source</a><h4 class="code-header">pub fn <a href="#method.get_user_page_and" class="fn">get_user_page_and</a>&lt;R&gt;(
+    &amp;mut self,
+    addr: Va,
+    f: impl FnOnce(<a class="struct" href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef">PageRef</a>&lt;'_&gt;, <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>) -&gt; R,
+) -&gt; Result&lt;R, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Find a mapped page at the given virtual address and apply a function to
+it.</p>
+<p>This function searches for a memory page mapped at <code>addr</code> and, if found,
+applies the provided function <code>f</code> to it. The function <code>f</code> receives a
+<a href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef"><code>PageRef</code></a> to the page and its corresponding <a href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission"><code>Permission</code></a> flags.</p>
+<h5 id="parameters-2"><a class="doc-anchor" href="#parameters-2">§</a>Parameters</h5>
+<ul>
+<li><code>addr</code>: The virtual address ([<code>Va</code>]) of the page to find.</li>
+<li><code>f</code>: A closure that takes a <a href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef"><code>PageRef</code></a> and its <a href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission"><code>Permission</code></a> flags,
+returning a value of type <code>R</code>.</li>
+</ul>
+<h5 id="returns-5"><a class="doc-anchor" href="#returns-5">§</a>Returns</h5>
+<ul>
+<li><code>Some(R)</code>: If the page is found, the function <code>f</code> is applied, and its
+result is returned.</li>
+<li><code>None</code>: If no mapped page is found at <code>addr</code>.</li>
+</ul>
+<h5 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h5>
+<p>This method allows safe access to a mapped page. It is useful for
+performing read operations or permission checks on a page.</p>
+<h5 id="safety"><a class="doc-anchor" href="#safety">§</a>Safety</h5>
+<ul>
+<li>The rust’s lifetime guarantees that the closure <code>f</code> never stores the
+<a href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef"><code>PageRef</code></a> beyond its invocation.</li>
+</ul>
+</div></details></div></details></div><h2 id="trait-implementations" class="section-header">Trait Implementations<a href="#trait-implementations" class="anchor">§</a></h2><div id="trait-implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-Default-for-MmStruct%3CP%3E" class="impl"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#137-141">Source</a><a href="#impl-Default-for-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P: <a class="trait" href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager">Pager</a>&gt; Default for <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.default" class="method trait-impl"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#138-140">Source</a><a href="#method.default" class="anchor">§</a><h4 class="code-header">fn <a class="fn">default</a>() -&gt; Self</h4></section></summary><div class='docblock'>Returns the “default value” for a type. <a>Read more</a></div></details></div></details></div><h2 id="synthetic-implementations" class="section-header">Auto Trait Implementations<a href="#synthetic-implementations" class="anchor">§</a></h2><div id="synthetic-implementations-list"><section id="impl-Freeze-for-MmStruct%3CP%3E" class="impl"><a href="#impl-Freeze-for-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P&gt; Freeze for <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;<div class="where">where
+    P: Freeze,</div></h3></section><section id="impl-RefUnwindSafe-for-MmStruct%3CP%3E" class="impl"><a href="#impl-RefUnwindSafe-for-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P&gt; RefUnwindSafe for <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;<div class="where">where
+    P: RefUnwindSafe,</div></h3></section><section id="impl-Send-for-MmStruct%3CP%3E" class="impl"><a href="#impl-Send-for-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P&gt; Send for <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;<div class="where">where
+    P: Send,</div></h3></section><section id="impl-Sync-for-MmStruct%3CP%3E" class="impl"><a href="#impl-Sync-for-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P&gt; Sync for <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;<div class="where">where
+    P: Sync,</div></h3></section><section id="impl-Unpin-for-MmStruct%3CP%3E" class="impl"><a href="#impl-Unpin-for-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P&gt; Unpin for <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;<div class="where">where
+    P: Unpin,</div></h3></section><section id="impl-UnwindSafe-for-MmStruct%3CP%3E" class="impl"><a href="#impl-UnwindSafe-for-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P&gt; UnwindSafe for <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;<div class="where">where
+    P: UnwindSafe,</div></h3></section></div><h2 id="blanket-implementations" class="section-header">Blanket Implementations<a href="#blanket-implementations" class="anchor">§</a></h2><div id="blanket-implementations-list"><details class="toggle implementors-toggle"><summary><section id="impl-Any-for-T" class="impl"><a href="#impl-Any-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; Any for T<div class="where">where
+    T: 'static + ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.type_id" class="method trait-impl"><a href="#method.type_id" class="anchor">§</a><h4 class="code-header">fn <a class="fn">type_id</a>(&amp;self) -&gt; TypeId</h4></section></summary><div class='docblock'>Gets the <code>TypeId</code> of <code>self</code>. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-Borrow%3CT%3E-for-T" class="impl"><a href="#impl-Borrow%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; Borrow&lt;T&gt; for T<div class="where">where
+    T: ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.borrow" class="method trait-impl"><a href="#method.borrow" class="anchor">§</a><h4 class="code-header">fn <a class="fn">borrow</a>(&amp;self) -&gt; &amp;T</h4></section></summary><div class='docblock'>Immutably borrows from an owned value. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-BorrowMut%3CT%3E-for-T" class="impl"><a href="#impl-BorrowMut%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; BorrowMut&lt;T&gt; for T<div class="where">where
+    T: ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.borrow_mut" class="method trait-impl"><a href="#method.borrow_mut" class="anchor">§</a><h4 class="code-header">fn <a class="fn">borrow_mut</a>(&amp;mut self) -&gt; &amp;mut T</h4></section></summary><div class='docblock'>Mutably borrows from an owned value. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-From%3CT%3E-for-T" class="impl"><a href="#impl-From%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; From&lt;T&gt; for T</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.from" class="method trait-impl"><a href="#method.from" class="anchor">§</a><h4 class="code-header">fn <a class="fn">from</a>(t: T) -&gt; T</h4></section></summary><div class="docblock"><p>Returns the argument unchanged.</p>
+</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-Into%3CU%3E-for-T" class="impl"><a href="#impl-Into%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; Into&lt;U&gt; for T<div class="where">where
+    U: From&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.into" class="method trait-impl"><a href="#method.into" class="anchor">§</a><h4 class="code-header">fn <a class="fn">into</a>(self) -&gt; U</h4></section></summary><div class="docblock"><p>Calls <code>U::from(self)</code>.</p>
+<p>That is, this conversion is whatever the implementation of
+<code>[From]&lt;T&gt; for U</code> chooses to do.</p>
+</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-TryFrom%3CU%3E-for-T" class="impl"><a href="#impl-TryFrom%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; TryFrom&lt;U&gt; for T<div class="where">where
+    U: Into&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle" open><summary><section id="associatedtype.Error-1" class="associatedtype trait-impl"><a href="#associatedtype.Error-1" class="anchor">§</a><h4 class="code-header">type <a class="associatedtype">Error</a> = Infallible</h4></section></summary><div class='docblock'>The type returned in the event of a conversion error.</div></details><details class="toggle method-toggle" open><summary><section id="method.try_from" class="method trait-impl"><a href="#method.try_from" class="anchor">§</a><h4 class="code-header">fn <a class="fn">try_from</a>(value: U) -&gt; Result&lt;T, &lt;T as TryFrom&lt;U&gt;&gt;::Error&gt;</h4></section></summary><div class='docblock'>Performs the conversion.</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-TryInto%3CU%3E-for-T" class="impl"><a href="#impl-TryInto%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; TryInto&lt;U&gt; for T<div class="where">where
+    U: TryFrom&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle" open><summary><section id="associatedtype.Error" class="associatedtype trait-impl"><a href="#associatedtype.Error" class="anchor">§</a><h4 class="code-header">type <a class="associatedtype">Error</a> = &lt;U as TryFrom&lt;T&gt;&gt;::Error</h4></section></summary><div class='docblock'>The type returned in the event of a conversion error.</div></details><details class="toggle method-toggle" open><summary><section id="method.try_into" class="method trait-impl"><a href="#method.try_into" class="anchor">§</a><h4 class="code-header">fn <a class="fn">try_into</a>(self) -&gt; Result&lt;U, &lt;U as TryFrom&lt;T&gt;&gt;::Error&gt;</h4></section></summary><div class='docblock'>Performs the conversion.</div></details></div></details></div></section></div></main></body></html>

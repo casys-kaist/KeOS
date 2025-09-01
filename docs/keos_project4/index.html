@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Project 4: Synchronization and Multithreading"><title>keos_project4 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="keos_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../static.files/storage-68b7e25d.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../keos_project4/index.html">keos_<wbr>project4</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#project-4-synchronization-and-multithreading" title="Project 4: Synchronization and Multithreading">Project 4: Synchronization and Multithreading</a><ul><li><a href="#getting-started" title="Getting Started">Getting Started</a></li><li><a href="#modifiable-files" title="Modifiable Files">Modifiable Files</a></li><li><a href="#project-outline" title="Project Outline">Project Outline</a></li></ul></li></ul><h3><a href="#reexports">Crate Items</a></h3><ul class="block"><li><a href="#reexports" title="Re-exports">Re-exports</a></li><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#enums" title="Enums">Enums</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>keos_project4</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/keos_project4/lib.rs.html#1-233">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="project-4-synchronization-and-multithreading"><a class="doc-anchor" href="#project-4-synchronization-and-multithreading">§</a>Project 4: Synchronization and Multithreading</h2>
+<p>In Project 4, you will expand KeOS’s process abstraction to support
+<strong>multithreading</strong>. You will implement basic <strong>synchronization primitives</strong>
+such as <strong>mutexes</strong>, <strong>condition variables</strong>, and <strong>semaphores</strong> to
+synchronize resources between threads.</p>
+<p>Synchronization primitives will be used to support correct multithreaded
+behavior. For example, <strong>thread join</strong> functionality will be built using
+semaphores, which themselves are implemented using a combination of mutexes
+and condition variables.</p>
+<p>Finally, you will improve the scheduler by implementing a <strong>round-robin</strong>
+scheduling algorithm. Unlike previous projects where the unit of scheduling
+was the <strong>entire process</strong>, starting from this project, the unit of
+scheduling becomes an individual <strong>thread</strong>.</p>
+<h3 id="getting-started"><a class="doc-anchor" href="#getting-started">§</a>Getting Started</h3>
+<p>To get started, navigate to the <code>keos-project4/grader</code> directory and run:</p>
+<div class="example-wrap"><pre class="language-bash"><code>$ cargo run --target ../../.cargo/x86_64-unknown-keos.json</code></pre></div><h3 id="modifiable-files"><a class="doc-anchor" href="#modifiable-files">§</a>Modifiable Files</h3>
+<p>In this project, you can modify the following five files:</p>
+<ul>
+<li><code>sync/mutex.rs</code></li>
+<li><code>sync/condition_variable.rs</code></li>
+<li><code>sync/semaphore.rs</code></li>
+<li><code>process.rs</code></li>
+<li><code>round_robin.rs</code></li>
+</ul>
+<h3 id="project-outline"><a class="doc-anchor" href="#project-outline">§</a>Project Outline</h3>
+<ul>
+<li>
+<p><a href="sync/index.html" title="mod keos_project4::sync"><code>Synchronization Primitives</code></a>:</p>
+<ul>
+<li><strong>Mutex</strong>: Provide mutual exclusion.</li>
+<li><strong>Condition Variable</strong>: Enable waiting for conditions.</li>
+<li><strong>Semaphore</strong>: Implement higher-level synchronization using mutex and
+condition variables.</li>
+</ul>
+</li>
+<li>
+<p><a href="process/index.html" title="mod keos_project4::process"><code>MultiThreading</code></a>: Implement thread creation, termination, and and join
+mechanisms.</p>
+</li>
+<li>
+<p><a href="round_robin/index.html" title="mod keos_project4::round_robin"><code>Round Robin Scheduler</code></a>: Implement a round-robin scheduler that switches
+between threads fairly, using time slices.</p>
+</li>
+</ul>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><dl class="item-table reexports"><dt id="reexport.Thread"><code>pub use process::<a class="struct" href="process/struct.Thread.html" title="struct keos_project4::process::Thread">Thread</a>;</code></dt></dl><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="process/index.html" title="mod keos_project4::process">process</a></dt><dd>Multithreaded Process</dd><dt><a class="mod" href="round_robin/index.html" title="mod keos_project4::round_robin">round_<wbr>robin</a></dt><dd>Multicore Round-Robin Scheduling.</dd><dt><a class="mod" href="sync/index.html" title="mod keos_project4::sync">sync</a></dt><dd>Synchronization Primitives.</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.SyscallNumber.html" title="enum keos_project4::SyscallNumber">Syscall<wbr>Number</a></dt><dd>Represents system call numbers used in project4.</dd></dl></section></div></main></body></html>

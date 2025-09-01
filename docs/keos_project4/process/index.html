@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Multithreaded Process"><title>keos_project4::process - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project4/index.html">keos_<wbr>project4</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module process</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#multithreaded-process" title="Multithreaded Process">Multithreaded Process</a><ul><li><a href="#multithreading-in-keos" title="Multithreading in KeOS">Multithreading in KeOS</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project4</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project4</a></div><h1>Module <span>process</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project4/process.rs.html#1-310">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="multithreaded-process"><a class="doc-anchor" href="#multithreaded-process">§</a>Multithreaded Process</h2>
+<p>Modern applications increasingly rely on <strong>multithreading</strong> to achieve
+responsiveness, scalability, and efficient utilization of multicore
+processors. By enabling a single process to run multiple threads
+concurrently, the system can perform I/O and computation in parallel, reduce
+latency, and better respond to user interactions or real-time events.</p>
+<p>To support such workloads, the operating system must provide robust
+mechanisms for creating, scheduling, and synchronizing threads within a
+single process. This includes managing shared memory access, ensuring
+thread-safe operations, and allowing coordination through synchronization
+primitives such as mutexes, condition variables, and semaphores.</p>
+<p>In KeOS, extending the process abstraction to support multithreading is a
+critical step toward building a realistic and capable system. This
+enhances your knowledge about how the multithreading, the foundation for
+concurrent programming models, works in real-world operating system.</p>
+<h3 id="multithreading-in-keos"><a class="doc-anchor" href="#multithreading-in-keos">§</a>Multithreading in KeOS</h3>
+<p>Previously, a process in KeOS consisted of a single thread. Your goal is
+extending the process to run <strong>multiple concurrent threads</strong>, each with its
+own execution context but sharing the same address space and resources.
+Each thread maintains its own register states while sharing the same states.</p>
+<p>In earlier projects, each <code>Process</code> owned its own <a href="../../keos_project1/file_struct/struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct"><code>FileStruct</code></a> and
+<a href="../../keos_project2/mm_struct/struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a>. However, on the multi-threaded model, these components are
+<strong>shared across all threads</strong> of a process. That is, they become <strong>shared
+resources</strong>, requiring proper synchronization. To support shared and mutable
+access, these resources are wrapped inside an <code>Arc&lt;Mutex&lt;_&gt;&gt;</code>.</p>
+<ul>
+<li><a href="https://doc.rust-lang.org/beta/alloc/sync/struct.Arc.html"><code>Arc</code></a> provides shared ownership with reference counting.</li>
+<li><a href="../sync/mutex/struct.Mutex.html" title="struct keos_project4::sync::mutex::Mutex"><code>Mutex</code></a> ensures exclusive access to mutable state.</li>
+</ul>
+<p>This allows multiple threads to safely access and modify shared structures
+like file tables and virtual memory mappings.</p>
+<h5 id="thread-life-cycle"><a class="doc-anchor" href="#thread-life-cycle">§</a>Thread Life Cycle</h5>
+<p>KeOS supports a lightweight threading model within a single process,
+enabling multiple threads to execute concurrently while sharing the same
+address space. The life cycle of a thread is managed through four key system
+calls:</p>
+<ul>
+<li><a href="struct.Thread.html#method.thread_create" title="method keos_project4::process::Thread::thread_create"><code>thread_create</code></a>: Creates a new thread within the same process, executing
+a given function on a user-supplied stack.</li>
+<li><a href="struct.Thread.html#method.thread_join" title="method keos_project4::process::Thread::thread_join"><code>thread_join</code></a>: Waits for a specified thread to terminate and retrieves
+its return value.</li>
+<li><a href="struct.Thread.html#method.exit" title="method keos_project4::process::Thread::exit"><code>exit</code></a>: Terminates the calling thread without affecting other threads in
+the same process.</li>
+<li><a href="struct.Thread.html#method.exit_group" title="method keos_project4::process::Thread::exit_group"><code>exit_group</code></a>: Terminates all threads within the process simultaneously.</li>
+</ul>
+<p>When creating a new thread via <a href="struct.Thread.html#method.thread_create" title="method keos_project4::process::Thread::thread_create"><code>thread_create</code></a>, the user must provide a
+pointer to a valid, writable memory region that will serve as the new
+thread’s stack. This approach mirrors Linux’s <code>clone()</code> system call and
+gives userspace full control over stack allocation and reuse. The kernel
+validates that the provided stack lies within a properly mapped and writable
+memory region to ensure memory safety.</p>
+<p>Threads can be terminated individually using the <a href="struct.Thread.html#method.exit" title="method keos_project4::process::Thread::exit"><code>exit</code></a> system call,
+which affects only the calling thread. Other threads in the same process
+continue executing. To coordinate with thread termination, a thread may
+invoke <a href="struct.Thread.html#method.thread_join" title="method keos_project4::process::Thread::thread_join"><code>thread_join</code></a>, which blocks until the target thread exits and
+returns its result. This can be implemented using a <a href="../sync/semaphore/index.html" title="mod keos_project4::sync::semaphore"><code>Semaphore</code></a>
+initialized with zero permits, where the exiting thread signals completion
+by releasing a permit.</p>
+<p>In contrast, <a href="struct.Thread.html#method.exit_group" title="method keos_project4::process::Thread::exit_group"><code>exit_group</code></a> is used when the entire process must be
+terminated, bringing down all associated threads by calling
+<a href="../../keos/thread/fn.kill_by_tid.html" title="fn keos::thread::kill_by_tid"><code>thread::kill_by_tid</code></a>. This is necessary in scenarios such as a fatal
+error in the main thread, unhandled signals, or explicit process termination
+by the application. Unlike <a href="struct.Thread.html#method.exit" title="method keos_project4::process::Thread::exit"><code>exit</code></a>, which only marks the calling thread for
+termination, <a href="struct.Thread.html#method.exit_group" title="method keos_project4::process::Thread::exit_group"><code>exit_group</code></a> ensures that all threads in the process are
+promptly and safely terminated, and that the process is cleaned up
+consistently. This behavior aligns with the semantics of multi-threaded
+processes in modern operating systems and prevents resource leaks or partial
+process shutdowns.</p>
+<p>Together, these mechanisms provide a simple yet robust model for managing
+thread life cycles in KeOS, balancing fine-grained control with process-wide
+coordination.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.Thread.html" title="struct keos_project4::process::Thread"><code>Thread</code></a></li>
+<li><a href="struct.Thread.html#method.from_file_mm_struct" title="associated function keos_project4::process::Thread::from_file_mm_struct"><code>Thread::from_file_mm_struct</code></a></li>
+<li><a href="struct.Thread.html#method.with_file_struct_mut" title="method keos_project4::process::Thread::with_file_struct_mut"><code>Thread::with_file_struct_mut</code></a></li>
+<li><a href="struct.Thread.html#method.with_mm_struct_mut" title="method keos_project4::process::Thread::with_mm_struct_mut"><code>Thread::with_mm_struct_mut</code></a></li>
+<li><a href="struct.Thread.html#method.thread_create" title="method keos_project4::process::Thread::thread_create"><code>Thread::thread_create</code></a></li>
+<li><a href="struct.Thread.html#method.exit" title="method keos_project4::process::Thread::exit"><code>Thread::exit</code></a></li>
+<li><a href="struct.Thread.html#method.thread_join" title="method keos_project4::process::Thread::thread_join"><code>Thread::thread_join</code></a></li>
+<li><a href="struct.Thread.html#method.exit_group" title="method keos_project4::process::Thread::exit_group"><code>Thread::exit_group</code></a></li>
+</ul>
+<p>By implementing this section, you can move on to the next <a href="../round_robin/index.html" title="mod keos_project4::round_robin"><code>section</code></a> with
+the final form of execution model that widely used in modern OSes:</p>
+<div class="example-wrap"><pre class="language-text"><code>+========= Process =========+
+| Shared States:            |
+|  - MmStruct               |
+|  - FileStruct             |
+|                           |
+| Threads:                  |
+|  +----- Thread 1 -----+   |
+|  |  - Register State  |   |
+|  |  - User Stack      |   |
+|  +--------------------+   |
+|           ...             |
+|  +----- Thread N -----+   |
+|  |  - Register State  |   |
+|  |  - User Stack      |   |
+|  +--------------------+   |
++===========================+</code></pre></div></div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Thread.html" title="struct keos_project4::process::Thread">Thread</a></dt><dd>A thread state of project 4, which contains file and memory state.</dd></dl></section></div></main></body></html>

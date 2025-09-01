@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Inode abstraction."><title>keos_project5::ffs::inode - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos_project5" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../keos_project5/index.html">keos_<wbr>project5</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module inode</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#inode-abstraction" title="Inode abstraction.">Inode abstraction.</a><ul><li><a href="#inode-internals" title="Inode Internals">Inode Internals</a></li><li><a href="#inode-indexing-in-ffs" title="Inode Indexing in FFS">Inode Indexing in FFS</a></li></ul></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="../index.html">In keos_<wbr>project5::<wbr>ffs</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">keos_project5</a>::<wbr><a href="../index.html">ffs</a></div><h1>Module <span>inode</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/keos_project5/ffs/inode.rs.html#1-348">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h3 id="inode-abstraction"><a class="doc-anchor" href="#inode-abstraction">§</a>Inode abstraction.</h3>
+<p>In a Unix-like file system, every object in a file system is represented by
+a data structure known as an <strong>inode</strong>. An <strong>inode</strong> (index node) stores
+metadata about a file system object, including its size, permissions,
+timestamps, and pointers to the underlying data blocks.</p>
+<h4 id="inode-internals"><a class="doc-anchor" href="#inode-internals">§</a>Inode Internals</h4>
+<p>An <code>Inode</code> is the authoritative metadata structure for a file or
+directory. It stores essential information such as the object’s type, size,
+and pointers to data blocks, serving as the central handle for locating and
+managing file data.</p>
+<p>At its core, an inode functions as an <strong>indexing structure</strong>: it maps a
+<a href="../../../keos/fs/struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber"><code>FileBlockNumber</code></a> (a block’s position relative to the file) to a
+<a href="../types/struct.LogicalBlockAddress.html" title="struct keos_project5::ffs::types::LogicalBlockAddress"><code>LogicalBlockAddress</code></a> (the actual block location on disk). This mapping
+enables the file system to translate file-relative accesses into physical
+disk operations, bridging the logical view of a file with the underlying
+storage layout.</p>
+<p>While the on-disk inode structure provides persistence,
+the kernel maintains in-memory inodes to speed up access and coordinate
+concurrent operations. To ensure this, KeOS provides the
+<a href="../struct.FastFileSystemInner.html#method.get_inode" title="method keos_project5::ffs::FastFileSystemInner::get_inode"><code>FastFileSystemInner::get_inode</code></a> API to maintains <strong>single, global view</strong>
+of each inode inside the kernel.</p>
+<p>The function looks up an inode number (<a href="../../../keos/fs/struct.InodeNumber.html" title="struct keos::fs::InodeNumber"><code>InodeNumber</code></a>) and returns a
+<a href="../access_control/struct.TrackedInode.html" title="struct keos_project5::ffs::access_control::TrackedInode"><code>TrackedInode</code></a>, which is a consistent view for a reference-counted,
+thread-safe wrapper around the in-memory inode. All kernel subsystems
+interact with inodes through this wrapper, ensuring proper synchronization.</p>
+<p>A <a href="../access_control/struct.TrackedInode.html" title="struct keos_project5::ffs::access_control::TrackedInode"><code>TrackedInode</code></a> provides two key capabilities:</p>
+<ul>
+<li><strong>Read access</strong> via <a href="../access_control/struct.TrackedInode.html#method.read" title="method keos_project5::ffs::access_control::TrackedInode::read"><code>TrackedInode::read</code></a>, which acquires a shared guard
+for inspecting inode state (e.g., file size, permissions) without
+modification.</li>
+<li><strong>Write access</strong> via <a href="../access_control/struct.TrackedInode.html#method.write_with" title="method keos_project5::ffs::access_control::TrackedInode::write_with"><code>TrackedInode::write_with</code></a>, which locks both the
+in-memory and on-disk inode. Writes are performed inside a closure that
+receives a <a href="../access_control/struct.TrackedInodeWriteGuard.html" title="struct keos_project5::ffs::access_control::TrackedInodeWriteGuard"><code>TrackedInodeWriteGuard</code></a>. Changes must be explicitly
+finalized with <a href="../access_control/struct.TrackedInodeWriteGuard.html#method.submit" title="method keos_project5::ffs::access_control::TrackedInodeWriteGuard::submit"><code>TrackedInodeWriteGuard::submit</code></a>, ensuring that memory
+and disk stay consistent.</li>
+</ul>
+<p>Together, <code>get_inode</code> and <code>TrackedInode</code> enforce a disciplined access model:
+there is exactly one in-memory representation of each inode, guarded by
+lock. This design keeps inode state consistent across memory and disk, even
+under concurrent file system activity.</p>
+<h4 id="inode-indexing-in-ffs"><a class="doc-anchor" href="#inode-indexing-in-ffs">§</a>Inode Indexing in FFS</h4>
+<p>An inode does not store file data directly. Instead, it contains pointers
+to <strong>data blocks</strong> that hold the file’s contents. To balance efficiency
+for small files with scalability for large files, FFS adopts a tiered
+indexing scheme as follow:</p>
+<div class="example-wrap"><pre class="language-text"><code>             ┌───────────────────────────┐
+             │         Inode             │
+             ├───────────────────────────┤
+             │ dblocks[0] → Data blk 0   │
+             │ dblocks[1] → Data blk 1   │
+             │ ...                       │
+             │ dblocks[11] → Data blk11  │
+             │                           │
+             │ iblock 0 ───────────────┐ │
+             │                         │ │
+             │ diblock ─────────────┐  │ │
+             └──────────────────────┬──┬─┘
+                                    │  │
+         ┌──────────────────────────┘  │
+  ┌──────▼───────┐                 ┌───▼──────────┐
+  │ Double ind.  │                 │ Indirect     │
+  ├──────────────┤                 ├──────────────┤
+  │ → iblock 1   │                 │ → Data blk12 │
+  │ → iblock 2   │─┐               │ → Data blk13 │
+  │ ..           │ │               │ ...          │
+  │ → iblock 512 │ │               │ → Data blk523│
+  └──────────────┘ │               └──────────────┘
+                   │
+    ┌──────────────┘
+┌───▼──────────┐
+│ Indirect blk │
+├──────────────┤
+│ → Data blk X │
+│ → Data blk Y │
+│ ...          │
+└──────────────┘</code></pre></div>
+<ul>
+<li><strong>Direct blocks (<code>dblocks</code>)</strong> The first 12 pointers directly reference
+data blocks. This makes access to small files very fast, as no additional
+lookup is required. Small files can therefore be served entirely from
+these direct entries.</li>
+<li><strong>Indirect block (<code>iblock</code>)</strong> When the file grows beyond the direct
+blocks, the inode refers to a single <strong>indirect block</strong>. This block is
+itself an array of data block pointers, extending the maximum file size
+significantly.</li>
+<li><strong>Double indirect block (<code>diblock</code>)</strong> For even larger files, the inode
+uses a <strong>double indirection</strong>. The inode points to a block that contains
+pointers to <em>indirect blocks</em>, each of which then contains pointers to
+data blocks. This extra level of indirection allows extremely large files
+to be addressed.</li>
+</ul>
+<p>Together, these three levels form a hierarchical mapping from a
+<a href="../../../keos/fs/struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber"><code>FileBlockNumber</code></a> (position within a file) to a
+<a href="../types/struct.LogicalBlockAddress.html" title="struct keos_project5::ffs::types::LogicalBlockAddress"><code>LogicalBlockAddress</code></a> (actual block on disk).</p>
+<p>Your task is to implement the two core file access functions based on the
+indexing structure: <a href="struct.Inode.html#method.get" title="method keos_project5::ffs::inode::Inode::get"><code>Inode::get</code></a> and <a href="struct.Inode.html#method.grow" title="method keos_project5::ffs::inode::Inode::grow"><code>Inode::grow</code></a>.</p>
+<ul>
+<li>
+<p><a href="struct.Inode.html#method.get" title="method keos_project5::ffs::inode::Inode::get"><code>Inode::get</code></a> retrieves the disk location of a specific file block. It
+traverses the inode’s indexing structure and returns the corresponding
+disk block address, or <code>None</code> if the block has not been allocated.</p>
+</li>
+<li>
+<p><a href="struct.Inode.html#method.grow" title="method keos_project5::ffs::inode::Inode::grow"><code>Inode::grow</code></a> ensures that the inode can cover a target file block
+number. If needed, it allocates new blocks and updates the inode’s
+indexing structure. All modifications are performed transactionally to
+guarantee consistency.</p>
+</li>
+</ul>
+<p>These functions use <a href="../access_control/trait.MetaData.html#method.load" title="associated function keos_project5::ffs::access_control::MetaData::load"><code>MetaData::load</code></a> to access or create
+<a href="../disk_layout/struct.IndirectBlock.html" title="struct keos_project5::ffs::disk_layout::IndirectBlock"><code>IndirectBlock</code></a>s, and they update these blocks via the transaction API
+(using <a href="../access_control/struct.BlockPointsTo.html#method.write" title="method keos_project5::ffs::access_control::BlockPointsTo::write"><code>BlockPointsTo::write</code></a> and
+<a href="../access_control/struct.BlockPointsToWriteGuard.html#method.submit" title="method keos_project5::ffs::access_control::BlockPointsToWriteGuard::submit"><code>BlockPointsToWriteGuard::submit</code></a>). For reference on using these APIs, you
+may consult the documentation or implementation of the followings:</p>
+<ul>
+<li><a href="../access_control/index.html" title="mod keos_project5::ffs::access_control"><code>access_control</code></a></li>
+<li><a href="../fs_objects/struct.Directory.html#method.add_entry" title="method keos_project5::ffs::fs_objects::Directory::add_entry"><code>Directory::add_entry</code></a></li>
+</ul>
+<p>While implementing the requirements, you may encounter
+<a href="../journal/struct.RunningTransaction.html" title="struct keos_project5::ffs::journal::RunningTransaction"><code>RunningTransaction</code></a> struct. You do not need to understand it until the
+implementation of the journaling; for now, simply pass a reference to the
+required methods.</p>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.Inode.html#method.get" title="method keos_project5::ffs::inode::Inode::get"><code>Inode::get</code></a></li>
+<li><a href="struct.Inode.html#method.grow" title="method keos_project5::ffs::inode::Inode::grow"><code>Inode::grow</code></a></li>
+</ul>
+<p>After implement the functionalities, move on to the next <a href="../fs_objects/index.html" title="mod keos_project5::ffs::fs_objects"><code>section</code></a>.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode">Inode</a></dt><dd>Represents an inode in memory, the metadata structure for a file or
+directory.</dd></dl></section></div></main></body></html>

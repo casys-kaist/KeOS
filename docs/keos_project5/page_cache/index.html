@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Page Cache."><title>keos_project5::page_cache - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project5" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project5/index.html">keos_<wbr>project5</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module page_<wbr>cache</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#page-cache" title="Page Cache.">Page Cache.</a><ul><li><a href="#page-cache-in-keos" title="Page Cache in KeOS">Page Cache in KeOS</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#modules">Module Items</a></h3><ul class="block"><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project5</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project5</a></div><h1>Module <span>page_cache</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project5/page_cache/mod.rs.html#1-463">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="page-cache"><a class="doc-anchor" href="#page-cache">§</a>Page Cache.</h2>
+<p>The <strong>page cache</strong> is a fundamental component of the operating system’s file
+system infrastructure. It functions as a high-speed, memory-resident buffer
+that caches frequently accessed file data, thereby significantly reducing
+the overhead of disk I/O operations.</p>
+<p>When a process reads from a file, the kernel first checks whether the
+requested data is present in the page cache. If it is, the data is served
+directly from memory, bypassing the much slower disk access path. If not,
+the system fetches the data from disk, inserts it into the cache, and then
+returns it to the process. This mechanism greatly enhances system
+responsiveness and throughput, especially in workloads involving repeated or
+sequential file access patterns.</p>
+<p>Because disk I/O is orders of magnitude slower than memory access, the page
+cache is essential for delivering high performance in modern operating
+systems. Without it, every file read or write would necessitate direct disk
+access, resulting in substantial latency and performance degradation.</p>
+<p>Once the page cache is introduced, file data can be directly mapped into a
+process’s virtual memory space through <code>mmap()</code>. Instead of allocating
+memory and copying file contents manually, <code>mmap()</code> establishes a direct
+mapping to pages backed by the page cache. This integration enables
+efficient, demand-paged file I/O: page faults during memory access are
+resolved by loading data from the page cache. If the page is not yet cached,
+the kernel fetches it from disk into the cache, then maps it into the
+process. When mapped pages are modified, they are marked as <em>dirty</em>, and
+later written back to disk as part of the page cache’s write-back policy.
+This mechanism ensures consistency while minimizing redundant I/O
+operations.</p>
+<p>To maintain consistency and durability, the page cache uses a <strong>write-back</strong>
+policy. Modifications to cached file data are initially applied in memory,
+and the affected pages are marked as dirty. These pages are later flushed to
+disk, either explicitly via the <code>fsync()</code> system call or automatically by
+background kernel threads. This approach optimizes performance by deferring
+costly write operations, while still ensuring data persistence.</p>
+<p>Since memory is a limited resource, the kernel must eventually evict
+pages from the page cache to make room for new data. This requires a cache
+eviction policy that decides which pages to reclaim based on usage
+patterns—commonly using heuristics such as Least Recently Used (LRU).
+Eviction is a critical aspect of page cache design, as it balances memory
+pressure with the goal of retaining useful data in cache to maximize
+performance.</p>
+<p>The page cache also enables <strong>readahead</strong>, a performance optimization that
+preemptively loads file pages into memory based on access patterns. When the
+kernel detects sequential file access, it predicts future reads and
+asynchronously fetches additional pages into the cache. This significantly
+reduces the number of page faults and improves I/O latency, making readahead
+particularly effective for streaming large files or reading large datasets.</p>
+<p>Implementing a page cache is a critical step toward building a modern,
+high-performance operating system. It not only enhances file system
+efficiency but also provides insight into how the OS bridges the performance
+gap between fast volatile memory and slow persistent storage.</p>
+<h3 id="page-cache-in-keos"><a class="doc-anchor" href="#page-cache-in-keos">§</a>Page Cache in KeOS</h3>
+<p>Your goal is to extend KeOS to support a page cache to bridge file I/O
+operations with memory-backed caching. The template provides three major
+abstraction:</p>
+<ul>
+<li>
+<p><a href="struct.PageCacheInner.html" title="struct keos_project5::page_cache::PageCacheInner"><code>PageCacheInner</code></a>: An internal wrapper that coordinates low-level
+interactions between the cache, and storage layer.</p>
+</li>
+<li>
+<p><a href="struct.PageCacheState.html" title="struct keos_project5::page_cache::PageCacheState"><code>PageCacheState</code></a>: This is the high-level cache manager. It embeds an
+<a href="../lru/struct.LRUCache.html" title="struct keos_project5::lru::LRUCache"><code>LRUCache</code></a> keyed by <code>(InodeNumber, FileBlockNumber)</code> and manages up to
+512 slots (~2MiB). It is the central entry point for page-cache-aware file
+I/O.</p>
+</li>
+<li>
+<p><a href="struct.Slot.html" title="struct keos_project5::page_cache::Slot"><code>Slot</code></a>: A <a href="struct.Slot.html" title="struct keos_project5::page_cache::Slot"><code>Slot</code></a> represents a single cached file block. It contains
+the owning <a href="../../keos/fs/struct.RegularFile.html" title="struct keos::fs::RegularFile"><code>RegularFile</code></a>, the corresponding file block number (<code>FBA</code>),
+the backing <a href="../../keos/mm/struct.Page.html" title="struct keos::mm::Page"><code>Page</code></a>, and metadata such as the write-back size. Dirty
+slots track modifications and are eventually flushed back to disk.</p>
+</li>
+</ul>
+<h4 id="readahead-policy"><a class="doc-anchor" href="#readahead-policy">§</a>Readahead Policy</h4>
+<p>KeOS employs a simple readahead policy: when a file block is read, the cache
+preemptively loads up to 16 subsequent blocks. This heuristic is designed to
+optimize sequential access workloads (e.g., file scans or streaming),
+reducing future read latency and improving throughput. Random workloads
+remain unaffected, since readahead is limited and opportunistic.</p>
+<h4 id="cache-replacement-lru"><a class="doc-anchor" href="#cache-replacement-lru">§</a>Cache Replacement: LRU</h4>
+<p><a href="struct.PageCacheState.html" title="struct keos_project5::page_cache::PageCacheState"><code>PageCacheState</code></a> relies on an Least-Recently-Used (LRU) policy to manage
+memory pressure. When the cache reaches capacity, the least recently used
+slot is evicted. If the slot is dirty, its contents are flushed back to disk
+before eviction. This policy balances simplicity and efficiency by retaining
+hot (recently accessed) pages while discarding cold ones. All these
+functionalities are provided by the <a href="../lru/struct.LRUCache.html" title="struct keos_project5::lru::LRUCache"><code>LRUCache</code></a> struct.</p>
+<h4 id="workflow"><a class="doc-anchor" href="#workflow">§</a>Workflow</h4>
+<ol>
+<li>
+<p><strong>Read</strong>: On a read request, the cache checks for an existing slot. If
+present, data is served from memory; otherwise, the block is loaded from
+disk, inserted into the cache, and readahead is triggered.</p>
+</li>
+<li>
+<p><strong>Write</strong>: Writes update the cached slot in place. The slot is marked
+dirty and write-back occurs lazily, either via explicit sync or eviction.</p>
+</li>
+<li>
+<p><strong>mmap</strong>: Pages can be directly mapped into user space from the page
+cache. Faults are resolved by pulling in the corresponding slot.</p>
+</li>
+<li>
+<p><strong>Unlink</strong>: When a file is deleted, all its slots are invalidated without
+flushing, ensuring consistency with the file system state.</p>
+</li>
+<li>
+<p><strong>Writeback</strong>: Dirty slots are flushed either explicitly (via <code>fsync</code>) or
+opportunistically during eviction. This ensures persistence while
+reducing redundant disk I/O.</p>
+</li>
+</ol>
+<p>The following diagram depicts the work-flow of the page cache subsystem of
+the KeOS.</p>
+<div class="example-wrap"><pre class="language-text"><code>           +-------------------------------+
+           |       Process issues          |
+           |  read(), write(), or mmap()   |
+           +---------------+---------------+
+                           |
+                           v
+                +-------------------+
+                |  Check Slot in    |
+                |  PageCacheState   |
+                +--------+----------+
+                 Hit            |   Miss
+                  |             |
+                  v             v
+           +------------+   +----------------------+
+           | Serve data |   | Load block from disk |
+           | from cache |   +-----------+----------+
+           +-----+------+               |
+                 |                      v
+                 |             +----------------------+
+                 |             | Insert block as Slot |
+                 |             |  into LRUCache       |
+                 |             |  Trigger readahead   |
+                 |             +-----------+----------+
+                 |                         |
+                 +-------------------------+
+                 |
+                 v
+          +-------------------+
+          | Is this a write?  |
+          +--------+----------+
+                 Yes
+                  |
+                  v
+    +---------------+---------+
+    | Mark Slot dirty (defer  |
+    | writeback to disk)      |
+    +-----------+-------------+</code></pre></div><h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.PageCacheState.html#method.readahead" title="method keos_project5::page_cache::PageCacheState::readahead"><code>PageCacheState::readahead</code></a></li>
+<li><a href="struct.PageCacheState.html#method.do_read" title="method keos_project5::page_cache::PageCacheState::do_read"><code>PageCacheState::do_read</code></a></li>
+<li><a href="struct.PageCacheState.html#method.do_write" title="method keos_project5::page_cache::PageCacheState::do_write"><code>PageCacheState::do_write</code></a></li>
+<li><a href="struct.PageCacheState.html#method.do_mmap" title="method keos_project5::page_cache::PageCacheState::do_mmap"><code>PageCacheState::do_mmap</code></a></li>
+<li><a href="struct.Slot.html#method.read_page" title="method keos_project5::page_cache::Slot::read_page"><code>Slot::read_page</code></a></li>
+<li><a href="struct.Slot.html#method.write_page" title="method keos_project5::page_cache::Slot::write_page"><code>Slot::write_page</code></a></li>
+<li><a href="struct.Slot.html#method.writeback" title="method keos_project5::page_cache::Slot::writeback"><code>Slot::writeback</code></a></li>
+<li><a href="struct.Slot.html#method.drop" title="method keos_project5::page_cache::Slot::drop"><code>Slot::drop</code></a></li>
+<li><a href="struct.PageCache.html#method.read" title="method keos_project5::page_cache::PageCache::read"><code>PageCache::read</code></a></li>
+</ul>
+<p>After implement the functionalities, move on to the next <a href="../ffs/index.html" title="mod keos_project5::ffs"><code>section</code></a>.</p>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="overlaying/index.html" title="mod keos_project5::page_cache::overlaying">overlaying</a></dt><dd>An overlaying mechanism for appling page cache to any file system.</dd></dl><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.PageCache.html" title="struct keos_project5::page_cache::PageCache">Page<wbr>Cache</a></dt><dd>A reference-counted handle to the page cache.</dd><dt><a class="struct" href="struct.PageCacheInner.html" title="struct keos_project5::page_cache::PageCacheInner">Page<wbr>Cache<wbr>Inner</a></dt><dd>Internal representation of a <a href="struct.PageCache.html" title="struct keos_project5::page_cache::PageCache"><code>PageCache</code></a>.</dd><dt><a class="struct" href="struct.PageCacheState.html" title="struct keos_project5::page_cache::PageCacheState">Page<wbr>Cache<wbr>State</a></dt><dd>The global page cache state.</dd><dt><a class="struct" href="struct.Slot.html" title="struct keos_project5::page_cache::Slot">Slot</a></dt><dd>A single entry in the page cache.</dd></dl></section></div></main></body></html>

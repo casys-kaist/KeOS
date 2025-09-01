@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="The `Pager` trait defines the interface for memory paging operations, including memory mapping (`mmap`), unmapping (`munmap`), and resolving page through `get_user_page`. It serves as the core abstraction for implementing paging policies in the operating system."><title>Pager in keos_project2::pager - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc trait"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project2/index.html">keos_<wbr>project2</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Pager</a></h2><h3><a href="#required-methods">Required Methods</a></h3><ul class="block"><li><a href="#tymethod.access_ok" title="access_ok">access_ok</a></li><li><a href="#tymethod.get_user_page" title="get_user_page">get_user_page</a></li><li><a href="#tymethod.mmap" title="mmap">mmap</a></li><li><a href="#tymethod.munmap" title="munmap">munmap</a></li><li><a href="#tymethod.new" title="new">new</a></li></ul><h3><a href="#dyn-compatibility">Dyn Compatibility</a></h3><h3><a href="#implementors">Implementors</a></h3></section><div id="rustdoc-modnav"><h2><a href="index.html">In keos_<wbr>project2::<wbr>pager</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project2</a>::<wbr><a href="index.html">pager</a></div><h1>Trait <span class="trait">Pager</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project2/pager.rs.html#28-129">Source</a> </span></div><pre class="rust item-decl"><code>pub trait Pager {
+    // Required methods
+    fn <a href="#tymethod.new" class="fn">new</a>() -&gt; Self;
+<span class="item-spacer"></span>    fn <a href="#tymethod.mmap" class="fn">mmap</a>(
+        &amp;mut self,
+        page_table: &amp;mut <a class="struct" href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
+        addr: Va,
+        size: usize,
+        prot: <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>,
+        file: Option&lt;&amp;<a class="struct" href="../../keos/fs/struct.RegularFile.html" title="struct keos::fs::RegularFile">RegularFile</a>&gt;,
+        offset: usize,
+    ) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;
+       <span class="where">where Self: Sized</span>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.munmap" class="fn">munmap</a>(
+        &amp;mut self,
+        page_table: &amp;mut <a class="struct" href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
+        addr: Va,
+    ) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;
+       <span class="where">where Self: Sized</span>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.get_user_page" class="fn">get_user_page</a>(
+        &amp;mut self,
+        page_table: &amp;mut <a class="struct" href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
+        addr: Va,
+    ) -&gt; Option&lt;(<a class="struct" href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef">PageRef</a>&lt;'_&gt;, <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>)&gt;
+       <span class="where">where Self: Sized</span>;
+<span class="item-spacer"></span>    fn <a href="#tymethod.access_ok" class="fn">access_ok</a>(&amp;self, va: Va, is_write: bool) -&gt; bool;
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>The <a href="trait.Pager.html" title="trait keos_project2::pager::Pager"><code>Pager</code></a> trait defines the interface for memory paging operations,
+including memory mapping (<code>mmap</code>), unmapping (<code>munmap</code>), and resolving
+page through <a href="trait.Pager.html#tymethod.get_user_page" title="method keos_project2::pager::Pager::get_user_page"><code>get_user_page</code></a>. It serves as the core abstraction
+for implementing paging policies in the operating system.</p>
+<p>This trait allows the OS to support multiple paging strategies by swapping
+in different implementations. Each <a href="trait.Pager.html" title="trait keos_project2::pager::Pager"><code>Pager</code></a> manages how virtual memory
+pages are backed, populated, and protected during execution.</p>
+<p>In <strong>Project 2</strong>, you will use <a href="../../project2/eager_pager/struct.EagerPager.html"><code>EagerPager</code></a>, which eagerly allocates all
+required pages at the time of <code>mmap</code>.</p>
+<p>In <strong>Project 3</strong>, you will implement <a href="../../project3/lazy_pager/struct.LazyPager.html"><code>LazyPager</code></a>, which delays page
+allocation until the page is accessed (i.e., implements demand paging).</p>
+</div></details><h2 id="required-methods" class="section-header">Required Methods<a href="#required-methods" class="anchor">§</a></h2><div class="methods"><details class="toggle method-toggle" open><summary><section id="tymethod.new" class="method"><a class="src rightside" href="../../src/keos_project2/pager.rs.html#33">Source</a><h4 class="code-header">fn <a href="#tymethod.new" class="fn">new</a>() -&gt; Self</h4></section></summary><div class="docblock"><p>Creates a new instance of the pager.</p>
+<p>This method initializes the internal state needed for the pager’s
+memory management operations.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.mmap" class="method"><a class="src rightside" href="../../src/keos_project2/pager.rs.html#57-67">Source</a><h4 class="code-header">fn <a href="#tymethod.mmap" class="fn">mmap</a>(
+    &amp;mut self,
+    page_table: &amp;mut <a class="struct" href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
+    addr: Va,
+    size: usize,
+    prot: <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>,
+    file: Option&lt;&amp;<a class="struct" href="../../keos/fs/struct.RegularFile.html" title="struct keos::fs::RegularFile">RegularFile</a>&gt;,
+    offset: usize,
+) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;<div class="where">where
+    Self: Sized,</div></h4></section></summary><div class="docblock"><p>Maps a virtual memory region into the process’s address space.</p>
+<p>This function is responsible for allocating and mapping virtual memory
+pages. If a file is provided, it may also initialize the memory
+contents from that file (starting at <code>offset</code>). The mapped memory
+should be configured with the specified access <code>prot</code>.</p>
+<h5 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h5>
+<ul>
+<li><code>page_table</code>: The current page table of the process.</li>
+<li><code>addr</code>: The starting virtual address of the mapping. Must be
+page-aligned.</li>
+<li><code>size</code>: The size of the region to map in bytes. Must be greater than
+zero.</li>
+<li><code>prot</code>: Memory protection flags (e.g., read, write, execute).</li>
+<li><code>file</code>: Optional file backing for the mapping.</li>
+<li><code>offset</code>: Offset into the file where the mapping begins.</li>
+</ul>
+<h5 id="returns"><a class="doc-anchor" href="#returns">§</a>Returns</h5>
+<ul>
+<li><code>Ok(n)</code>: Number of bytes successfully mapped.</li>
+<li><code>Err([KernelError])</code>: If the operation fails, e.g., due to invalid
+arguments, overlapping mappings, zero-length file, or a
+non-page-aligned <code>addr</code>.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.munmap" class="method"><a class="src rightside" href="../../src/keos_project2/pager.rs.html#81-83">Source</a><h4 class="code-header">fn <a href="#tymethod.munmap" class="fn">munmap</a>(
+    &amp;mut self,
+    page_table: &amp;mut <a class="struct" href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
+    addr: Va,
+) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;<div class="where">where
+    Self: Sized,</div></h4></section></summary><div class="docblock"><p>Unmaps a previously mapped memory region.</p>
+<p>This function removes memory mappings corresponding to <code>addr</code>.</p>
+<h5 id="parameters-1"><a class="doc-anchor" href="#parameters-1">§</a>Parameters</h5>
+<ul>
+<li><code>page_table</code>: The process’s page table to modify.</li>
+<li><code>addr</code>: Starting virtual address of the region to unmap.</li>
+</ul>
+<h5 id="returns-1"><a class="doc-anchor" href="#returns-1">§</a>Returns</h5>
+<ul>
+<li><code>Ok(n)</code>: Number of bytes successfully unmapped.</li>
+<li><code>Err([KernelError])</code>: On invalid addresses, unmapped regions, or other
+errors.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.get_user_page" class="method"><a class="src rightside" href="../../src/keos_project2/pager.rs.html#98-104">Source</a><h4 class="code-header">fn <a href="#tymethod.get_user_page" class="fn">get_user_page</a>(
+    &amp;mut self,
+    page_table: &amp;mut <a class="struct" href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
+    addr: Va,
+) -&gt; Option&lt;(<a class="struct" href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef">PageRef</a>&lt;'_&gt;, <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>)&gt;<div class="where">where
+    Self: Sized,</div></h4></section></summary><div class="docblock"><p>Resolves a virtual address to a page reference.</p>
+<p>This function checks whether a mapping exists for the virtual address
+<code>addr</code> and, if so, returns the in-memory page and its access
+permissions.</p>
+<h5 id="parameters-2"><a class="doc-anchor" href="#parameters-2">§</a>Parameters</h5>
+<ul>
+<li><code>page_table</code>: The current process’s page table.</li>
+<li><code>addr</code>: The virtual address to resolve.</li>
+</ul>
+<h5 id="returns-2"><a class="doc-anchor" href="#returns-2">§</a>Returns</h5>
+<ul>
+<li><code>Some((PageRef, Permission))</code>: If the page exists and is accessible.</li>
+<li><code>None</code>: If no page is mapped at <code>addr</code>.</li>
+</ul>
+</div></details><details class="toggle method-toggle" open><summary><section id="tymethod.access_ok" class="method"><a class="src rightside" href="../../src/keos_project2/pager.rs.html#128">Source</a><h4 class="code-header">fn <a href="#tymethod.access_ok" class="fn">access_ok</a>(&amp;self, va: Va, is_write: bool) -&gt; bool</h4></section></summary><div class="docblock"><p>Checks whether access to the given virtual address is permitted.</p>
+<p>This function verifies that a virtual address <code>va</code> is part of a valid
+memory mapping and that the requested access type (read or write) is
+allowed by the page’s protection flags.</p>
+<p>It is used by system calls and the kernel to ensure that user-level
+memory accesses (e.g., writing to buffers or reading strings) are safe
+and legal. This check prevents unauthorized access, such as writing to
+read-only pages or accessing unmapped memory.</p>
+<p>Unlike <code>get_user_page</code>, this function does <strong>not</strong> resolve or load the
+page into memory. It only checks that the memory mapping is valid for
+the given access type.</p>
+<h5 id="parameters-3"><a class="doc-anchor" href="#parameters-3">§</a>Parameters</h5>
+<ul>
+<li><code>va</code>: The virtual address to check.</li>
+<li><code>is_write</code>: Indicates whether the access is for writing (<code>true</code>) or
+reading (<code>false</code>).</li>
+</ul>
+<h5 id="returns-3"><a class="doc-anchor" href="#returns-3">§</a>Returns</h5>
+<ul>
+<li><code>true</code>: If the page exists and is accessible with the permission.</li>
+<li><code>false</code>: If no page is mapped at <code>addr</code> or permission mismatches.</li>
+</ul>
+</div></details></div><h2 id="dyn-compatibility" class="section-header">Dyn Compatibility<a href="#dyn-compatibility" class="anchor">§</a></h2><div class="dyn-compatibility-info"><p>This trait is <b>not</b> <a href="https://doc.rust-lang.org/nightly/reference/items/traits.html#dyn-compatibility">dyn compatible</a>.</p><p><i>In older versions of Rust, dyn compatibility was called "object safety", so this trait is not object safe.</i></p></div><h2 id="implementors" class="section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"><section id="impl-Pager-for-EagerPager" class="impl"><a class="src rightside" href="../../src/keos_project2/eager_pager.rs.html#75-131">Source</a><a href="#impl-Pager-for-EagerPager" class="anchor">§</a><h3 class="code-header">impl <a class="trait" href="trait.Pager.html" title="trait keos_project2::pager::Pager">Pager</a> for <a class="struct" href="../eager_pager/struct.EagerPager.html" title="struct keos_project2::eager_pager::EagerPager">EagerPager</a></h3></section></div><script src="../../trait.impl/keos_project2/pager/trait.Pager.js" async></script></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["INIT"],"fn":["idle","scheduler","set_scheduler"],"static":["BOOT_DONE","FIFO","IDLE","SCHEDULER"],"struct":["Fifo"],"trait":["Scheduler"]};

@@ -1,0 +1,213 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="An integer type which can be safely shared between threads."><title>AtomicU32 in keos::sync::atomic - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc struct"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../keos/index.html">keos</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Atomic<wbr>U32</a></h2><h3><a href="#fields">Tuple Fields</a></h3><ul class="block structfield"><li><a href="#structfield.0" title="0">0</a></li></ul><h3><a href="#implementations">Methods</a></h3><ul class="block method"><li><a href="#method.as_ptr" title="as_ptr">as_ptr</a></li><li><a href="#method.compare_exchange" title="compare_exchange">compare_exchange</a></li><li><a href="#method.fetch_add" title="fetch_add">fetch_add</a></li><li><a href="#method.fetch_and" title="fetch_and">fetch_and</a></li><li><a href="#method.fetch_max" title="fetch_max">fetch_max</a></li><li><a href="#method.fetch_min" title="fetch_min">fetch_min</a></li><li><a href="#method.fetch_nand" title="fetch_nand">fetch_nand</a></li><li><a href="#method.fetch_or" title="fetch_or">fetch_or</a></li><li><a href="#method.fetch_sub" title="fetch_sub">fetch_sub</a></li><li><a href="#method.fetch_update" title="fetch_update">fetch_update</a></li><li><a href="#method.fetch_xor" title="fetch_xor">fetch_xor</a></li><li><a href="#method.get_mut" title="get_mut">get_mut</a></li><li><a href="#method.into_inner" title="into_inner">into_inner</a></li><li><a href="#method.load" title="load">load</a></li><li><a href="#method.new" title="new">new</a></li><li><a href="#method.store" title="store">store</a></li><li><a href="#method.swap" title="swap">swap</a></li></ul><h3><a href="#trait-implementations">Trait Implementations</a></h3><ul class="block trait-implementation"><li><a href="#impl-Debug-for-AtomicU32" title="Debug">Debug</a></li><li><a href="#impl-Default-for-AtomicU32" title="Default">Default</a></li><li><a href="#impl-From%3Cu32%3E-for-AtomicU32" title="From&#60;u32&#62;">From&#60;u32&#62;</a></li></ul><h3><a href="#synthetic-implementations">Auto Trait Implementations</a></h3><ul class="block synthetic-implementation"><li><a href="#impl-Freeze-for-AtomicU32" title="!Freeze">!Freeze</a></li><li><a href="#impl-RefUnwindSafe-for-AtomicU32" title="RefUnwindSafe">RefUnwindSafe</a></li><li><a href="#impl-Send-for-AtomicU32" title="Send">Send</a></li><li><a href="#impl-Sync-for-AtomicU32" title="Sync">Sync</a></li><li><a href="#impl-Unpin-for-AtomicU32" title="Unpin">Unpin</a></li><li><a href="#impl-UnwindSafe-for-AtomicU32" title="UnwindSafe">UnwindSafe</a></li></ul><h3><a href="#blanket-implementations">Blanket Implementations</a></h3><ul class="block blanket-implementation"><li><a href="#impl-Any-for-T" title="Any">Any</a></li><li><a href="#impl-Borrow%3CT%3E-for-T" title="Borrow&#60;T&#62;">Borrow&#60;T&#62;</a></li><li><a href="#impl-BorrowMut%3CT%3E-for-T" title="BorrowMut&#60;T&#62;">BorrowMut&#60;T&#62;</a></li><li><a href="#impl-From%3CT%3E-for-T" title="From&#60;T&#62;">From&#60;T&#62;</a></li><li><a href="#impl-Into%3CU%3E-for-T" title="Into&#60;U&#62;">Into&#60;U&#62;</a></li><li><a href="#impl-TryFrom%3CU%3E-for-T" title="TryFrom&#60;U&#62;">TryFrom&#60;U&#62;</a></li><li><a href="#impl-TryInto%3CU%3E-for-T" title="TryInto&#60;U&#62;">TryInto&#60;U&#62;</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="index.html">In keos::<wbr>sync::<wbr>atomic</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">keos</a>::<wbr><a href="../index.html">sync</a>::<wbr><a href="index.html">atomic</a></div><h1>Struct <span class="struct">AtomicU32</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a> </span></div><pre class="rust item-decl"><code><div class="code-attribute">#[repr(transparent)]</div>pub struct AtomicU32(AtomicU32);</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>An integer type which can be safely shared between threads.</p>
+<p>This type has the same
+size and bit validity
+as the underlying integer type, [<code>u32</code>].
+However, the alignment of this type is always equal to its size, even on targets where [<code>u32</code>] has a lesser alignment.</p>
+<p>For more about the differences between atomic types and
+non-atomic types as well as information about the portability of
+this type, please see the [module-level documentation].</p>
+<p><strong>Note:</strong> This type is only available on platforms that support
+atomic loads and stores of [<code>u32</code>].</p>
+</div></details><h2 id="fields" class="fields section-header">Tuple Fields<a href="#fields" class="anchor">§</a></h2><span id="structfield.0" class="structfield section-header"><a href="#structfield.0" class="anchor field">§</a><code>0: AtomicU32</code></span><h2 id="implementations" class="section-header">Implementations<a href="#implementations" class="anchor">§</a></h2><div id="implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-AtomicU32" class="impl"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><a href="#impl-AtomicU32" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.new" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub const fn <a href="#method.new" class="fn">new</a>(v: u32) -&gt; Self</h4></section></summary><div class="docblock"><p>Creates a new atomic integer.</p>
+<h5 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>atomic_forty_two = AtomicU32::new(<span class="number">42</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_mut" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.get_mut" class="fn">get_mut</a>(&amp;mut self) -&gt; &amp;mut u32</h4></section></summary><div class="docblock"><p>Returns a mutable reference to the underlying integer.</p>
+<p>This is safe because the mutable reference guarantees that no other threads are
+concurrently accessing the atomic data.</p>
+<h5 id="examples-1"><a class="doc-anchor" href="#examples-1">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span><span class="kw-2">mut </span>some_var = AtomicU32::new(<span class="number">10</span>);
+<span class="macro">assert_eq!</span>(<span class="kw-2">*</span>some_var.get_mut(), <span class="number">10</span>);
+<span class="kw-2">*</span>some_var.get_mut() = <span class="number">5</span>;
+<span class="macro">assert_eq!</span>(some_var.load(), <span class="number">5</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.into_inner" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub const fn <a href="#method.into_inner" class="fn">into_inner</a>(self) -&gt; u32</h4></section></summary><div class="docblock"><p>Consumes the atomic and returns the contained value.</p>
+<p>This is safe because passing <code>self</code> by value guarantees that no other threads are
+concurrently accessing the atomic data.</p>
+<h5 id="examples-2"><a class="doc-anchor" href="#examples-2">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>some_var = AtomicU32::new(<span class="number">5</span>);
+<span class="macro">assert_eq!</span>(some_var.into_inner(), <span class="number">5</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.load" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.load" class="fn">load</a>(&amp;self) -&gt; u32</h4></section></summary><div class="docblock"><p>Loads a value from the atomic integer.</p>
+<h5 id="examples-3"><a class="doc-anchor" href="#examples-3">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>some_var = AtomicU32::new(<span class="number">5</span>);
+
+<span class="macro">assert_eq!</span>(some_var.load(d), <span class="number">5</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.store" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.store" class="fn">store</a>(&amp;self, val: u32)</h4></section></summary><div class="docblock"><p>Stores a value into the atomic integer.</p>
+<h5 id="examples-4"><a class="doc-anchor" href="#examples-4">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>some_var = AtomicU32::new(<span class="number">5</span>);
+
+some_var.store(<span class="number">10d</span>);
+<span class="macro">assert_eq!</span>(some_var.load(d), <span class="number">10</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.swap" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.swap" class="fn">swap</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Stores a value into the atomic integer, returning the previous value.</p>
+<h5 id="examples-5"><a class="doc-anchor" href="#examples-5">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>some_var = AtomicU32::new(<span class="number">5</span>);
+
+<span class="macro">assert_eq!</span>(some_var.swap(<span class="number">10d</span>), <span class="number">5</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.compare_exchange" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.compare_exchange" class="fn">compare_exchange</a>(&amp;self, current: u32, new: u32) -&gt; Result&lt;u32, u32&gt;</h4></section></summary><div class="docblock"><p>Stores a value into the atomic integer if the current value is the same as
+the <code>current</code> value.</p>
+<p>The return value is a result indicating whether the new value was written and
+containing the previous value. On success this value is guaranteed to be equal to
+<code>current</code>.</p>
+<h5 id="examples-6"><a class="doc-anchor" href="#examples-6">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>some_var = AtomicU32::new(<span class="number">5</span>);
+
+<span class="macro">assert_eq!</span>(some_var.compare_exchange(<span class="number">5</span>, <span class="number">10</span>, e), <span class="prelude-val">Ok</span>(<span class="number">5</span>));
+<span class="macro">assert_eq!</span>(some_var.load(d), <span class="number">10</span>);
+
+<span class="macro">assert_eq!</span>(some_var.compare_exchange(<span class="number">6</span>, <span class="number">12</span>, e), <span class="prelude-val">Err</span>(<span class="number">10</span>));
+<span class="macro">assert_eq!</span>(some_var.load(d), <span class="number">10</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_add" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_add" class="fn">fetch_add</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Adds to the current value, returning the previous value.</p>
+<p>This operation wraps around on overflow.</p>
+<h5 id="examples-7"><a class="doc-anchor" href="#examples-7">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">0</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_add(<span class="number">10</span>), <span class="number">0</span>);
+<span class="macro">assert_eq!</span>(foo.load(), <span class="number">10</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_sub" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_sub" class="fn">fetch_sub</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Subtracts from the current value, returning the previous value.</p>
+<p>This operation wraps around on overflow.</p>
+<h5 id="examples-8"><a class="doc-anchor" href="#examples-8">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">20</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_sub(<span class="number">10</span>), <span class="number">20</span>);
+<span class="macro">assert_eq!</span>(foo.load(), <span class="number">10</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_and" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_and" class="fn">fetch_and</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Bitwise “and” with the current value.</p>
+<p>Performs a bitwise “and” operation on the current value and the argument <code>val</code>, and
+sets the new value to the result.</p>
+<p>Returns the previous value.</p>
+<h5 id="examples-9"><a class="doc-anchor" href="#examples-9">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">0b101101</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_and(<span class="number">0b110011</span>), <span class="number">0b101101</span>);
+<span class="macro">assert_eq!</span>(foo.load(), <span class="number">0b100001</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_nand" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_nand" class="fn">fetch_nand</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Bitwise “nand” with the current value.</p>
+<p>Performs a bitwise “nand” operation on the current value and the argument <code>val</code>, and
+sets the new value to the result.</p>
+<p>Returns the previous value.</p>
+<h5 id="examples-10"><a class="doc-anchor" href="#examples-10">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">0x13</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_nand(<span class="number">0x31</span>), <span class="number">0x13</span>);
+<span class="macro">assert_eq!</span>(foo.load(), !(<span class="number">0x13 </span>&amp; <span class="number">0x31</span>));</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_or" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_or" class="fn">fetch_or</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Bitwise “or” with the current value.</p>
+<p>Performs a bitwise “or” operation on the current value and the argument <code>val</code>, and
+sets the new value to the result.</p>
+<p>Returns the previous value.</p>
+<h5 id="examples-11"><a class="doc-anchor" href="#examples-11">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">0b101101</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_or(<span class="number">0b110011</span>), <span class="number">0b101101</span>);
+<span class="macro">assert_eq!</span>(foo.load(), <span class="number">0b111111</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_xor" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_xor" class="fn">fetch_xor</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Bitwise “xor” with the current value.</p>
+<p>Performs a bitwise “xor” operation on the current value and the argument <code>val</code>, and
+sets the new value to the result.</p>
+<p>Returns the previous value.</p>
+<h5 id="examples-12"><a class="doc-anchor" href="#examples-12">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">0b101101</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_xor(<span class="number">0b110011</span>), <span class="number">0b101101</span>);
+<span class="macro">assert_eq!</span>(foo.load(), <span class="number">0b011110</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_update" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_update" class="fn">fetch_update</a>&lt;F&gt;(&amp;self, f: F) -&gt; Result&lt;u32, u32&gt;<div class="where">where
+    F: FnMut(u32) -&gt; Option&lt;u32&gt;,</div></h4></section></summary><div class="docblock"><p>Fetches the value, and applies a function to it that returns an optional
+new value. Returns a <code>Result</code> of <code>Ok(previous_value)</code> if the function returned <code>Some(_)</code>, else
+<code>Err(previous_value)</code>.</p>
+<p>Note: This may call the function multiple times if the value has been changed from other threads in
+the meantime, as long as the function returns <code>Some(_)</code>, but the function will have been applied
+only once to the stored value.</p>
+<h5 id="examples-13"><a class="doc-anchor" href="#examples-13">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>x = AtomicU32::new(<span class="number">7</span>);
+<span class="macro">assert_eq!</span>(x.fetch_update(|<span class="kw">_</span>| <span class="prelude-val">None</span>), <span class="prelude-val">Err</span>(<span class="number">7</span>));
+<span class="macro">assert_eq!</span>(x.fetch_update(|x| <span class="prelude-val">Some</span>(x + <span class="number">1</span>)), <span class="prelude-val">Ok</span>(<span class="number">7</span>));
+<span class="macro">assert_eq!</span>(x.fetch_update(|x| <span class="prelude-val">Some</span>(x + <span class="number">1</span>)), <span class="prelude-val">Ok</span>(<span class="number">8</span>));
+<span class="macro">assert_eq!</span>(x.load(), <span class="number">9</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_max" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_max" class="fn">fetch_max</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Maximum with the current value.</p>
+<p>Finds the maximum of the current value and the argument <code>val</code>, and
+sets the new value to the result.</p>
+<p>Returns the previous value.</p>
+<h5 id="examples-14"><a class="doc-anchor" href="#examples-14">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">23</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_max(<span class="number">42</span>), <span class="number">23</span>);
+<span class="macro">assert_eq!</span>(foo.load(), <span class="number">42</span>);</code></pre></div>
+<p>If you want to obtain the maximum value in one step, you can use the following:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">23</span>);
+<span class="kw">let </span>bar = <span class="number">42</span>;
+<span class="kw">let </span>max_foo = foo.fetch_max(bar).max(bar);
+<span class="macro">assert!</span>(max_foo == <span class="number">42</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.fetch_min" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub fn <a href="#method.fetch_min" class="fn">fetch_min</a>(&amp;self, val: u32) -&gt; u32</h4></section></summary><div class="docblock"><p>Minimum with the current value.</p>
+<p>Finds the minimum of the current value and the argument <code>val</code>, and
+sets the new value to the result.</p>
+<p>Returns the previous value.</p>
+<h5 id="examples-15"><a class="doc-anchor" href="#examples-15">§</a>Examples</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">23</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_min(<span class="number">42d</span>), <span class="number">23</span>);
+<span class="macro">assert_eq!</span>(foo.load(d), <span class="number">23</span>);
+<span class="macro">assert_eq!</span>(foo.fetch_min(<span class="number">22d</span>), <span class="number">23</span>);
+<span class="macro">assert_eq!</span>(foo.load(d), <span class="number">22</span>);</code></pre></div>
+<p>If you want to obtain the minimum value in one step, you can use the following:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">let </span>foo = AtomicU32::new(<span class="number">23</span>);
+<span class="kw">let </span>bar = <span class="number">12</span>;
+<span class="kw">let </span>min_foo = foo.fetch_min(bar).min(bar);
+<span class="macro">assert_eq!</span>(min_foo, <span class="number">12</span>);</code></pre></div>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.as_ptr" class="method"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><h4 class="code-header">pub const fn <a href="#method.as_ptr" class="fn">as_ptr</a>(&amp;self) -&gt; *mut u32</h4></section></summary><div class="docblock"><p>Returns a mutable pointer to the underlying integer.</p>
+<p>Doing non-atomic reads and writes on the resulting integer can be a data race.
+This method is mostly useful for FFI, where the function signature may use
+<code>*mut u32</code> instead of <code>&amp;AtomicU32</code>.</p>
+<p>Returning an <code>*mut</code> pointer from a shared reference to this atomic is safe because the
+atomic types work with interior mutability. All modifications of an atomic change the value
+through a shared reference, and can do so safely as long as they use atomic operations. Any
+use of the returned raw pointer requires an <code>unsafe</code> block and still has to uphold the same
+restriction: operations on it must be atomic.</p>
+<h5 id="examples-16"><a class="doc-anchor" href="#examples-16">§</a>Examples</h5>
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>keos::atomic::AtomicU32;
+
+<span class="kw">extern </span><span class="string">"C" </span>{
+    <span class="kw">fn </span>my_atomic_op(arg: <span class="kw-2">*mut </span>u32);
+}
+
+<span class="kw">let </span>atomic = AtomicU32::new(<span class="number">1</span>);
+
+<span class="comment">// SAFETY: Safe as long as `my_atomic_op` is atomic.
+</span><span class="kw">unsafe </span>{
+    my_atomic_op(atomic.as_ptr());
+}</code></pre></div>
+</div></details></div></details></div><h2 id="trait-implementations" class="section-header">Trait Implementations<a href="#trait-implementations" class="anchor">§</a></h2><div id="trait-implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-Debug-for-AtomicU32" class="impl"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><a href="#impl-Debug-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl Debug for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.fmt" class="method trait-impl"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><a href="#method.fmt" class="anchor">§</a><h4 class="code-header">fn <a class="fn">fmt</a>(&amp;self, f: &amp;mut Formatter&lt;'_&gt;) -&gt; Result</h4></section></summary><div class='docblock'>Formats the value using the given formatter. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Default-for-AtomicU32" class="impl"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><a href="#impl-Default-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl Default for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.default" class="method trait-impl"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><a href="#method.default" class="anchor">§</a><h4 class="code-header">fn <a class="fn">default</a>() -&gt; <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h4></section></summary><div class='docblock'>Returns the “default value” for a type. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-From%3Cu32%3E-for-AtomicU32" class="impl"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><a href="#impl-From%3Cu32%3E-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl From&lt;u32&gt; for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.from" class="method trait-impl"><a class="src rightside" href="../../../src/keos/sync/atomic.rs.html#1054-1058">Source</a><a href="#method.from" class="anchor">§</a><h4 class="code-header">fn <a class="fn">from</a>(v: u32) -&gt; Self</h4></section></summary><div class="docblock"><p>Converts an <code>u32</code> into an <code>AtomicU32</code>.</p>
+</div></details></div></details></div><h2 id="synthetic-implementations" class="section-header">Auto Trait Implementations<a href="#synthetic-implementations" class="anchor">§</a></h2><div id="synthetic-implementations-list"><section id="impl-Freeze-for-AtomicU32" class="impl"><a href="#impl-Freeze-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl !Freeze for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section><section id="impl-RefUnwindSafe-for-AtomicU32" class="impl"><a href="#impl-RefUnwindSafe-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl RefUnwindSafe for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section><section id="impl-Send-for-AtomicU32" class="impl"><a href="#impl-Send-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl Send for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section><section id="impl-Sync-for-AtomicU32" class="impl"><a href="#impl-Sync-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl Sync for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section><section id="impl-Unpin-for-AtomicU32" class="impl"><a href="#impl-Unpin-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl Unpin for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section><section id="impl-UnwindSafe-for-AtomicU32" class="impl"><a href="#impl-UnwindSafe-for-AtomicU32" class="anchor">§</a><h3 class="code-header">impl UnwindSafe for <a class="struct" href="struct.AtomicU32.html" title="struct keos::sync::atomic::AtomicU32">AtomicU32</a></h3></section></div><h2 id="blanket-implementations" class="section-header">Blanket Implementations<a href="#blanket-implementations" class="anchor">§</a></h2><div id="blanket-implementations-list"><details class="toggle implementors-toggle"><summary><section id="impl-Any-for-T" class="impl"><a href="#impl-Any-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; Any for T<div class="where">where
+    T: 'static + ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.type_id" class="method trait-impl"><a href="#method.type_id" class="anchor">§</a><h4 class="code-header">fn <a class="fn">type_id</a>(&amp;self) -&gt; TypeId</h4></section></summary><div class='docblock'>Gets the <code>TypeId</code> of <code>self</code>. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-Borrow%3CT%3E-for-T" class="impl"><a href="#impl-Borrow%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; Borrow&lt;T&gt; for T<div class="where">where
+    T: ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.borrow" class="method trait-impl"><a href="#method.borrow" class="anchor">§</a><h4 class="code-header">fn <a class="fn">borrow</a>(&amp;self) -&gt; &amp;T</h4></section></summary><div class='docblock'>Immutably borrows from an owned value. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-BorrowMut%3CT%3E-for-T" class="impl"><a href="#impl-BorrowMut%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; BorrowMut&lt;T&gt; for T<div class="where">where
+    T: ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.borrow_mut" class="method trait-impl"><a href="#method.borrow_mut" class="anchor">§</a><h4 class="code-header">fn <a class="fn">borrow_mut</a>(&amp;mut self) -&gt; &amp;mut T</h4></section></summary><div class='docblock'>Mutably borrows from an owned value. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-From%3CT%3E-for-T" class="impl"><a href="#impl-From%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; From&lt;T&gt; for T</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.from-1" class="method trait-impl"><a href="#method.from-1" class="anchor">§</a><h4 class="code-header">fn <a class="fn">from</a>(t: T) -&gt; T</h4></section></summary><div class="docblock"><p>Returns the argument unchanged.</p>
+</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-Into%3CU%3E-for-T" class="impl"><a href="#impl-Into%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; Into&lt;U&gt; for T<div class="where">where
+    U: From&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.into" class="method trait-impl"><a href="#method.into" class="anchor">§</a><h4 class="code-header">fn <a class="fn">into</a>(self) -&gt; U</h4></section></summary><div class="docblock"><p>Calls <code>U::from(self)</code>.</p>
+<p>That is, this conversion is whatever the implementation of
+<code>[From]&lt;T&gt; for U</code> chooses to do.</p>
+</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-TryFrom%3CU%3E-for-T" class="impl"><a href="#impl-TryFrom%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; TryFrom&lt;U&gt; for T<div class="where">where
+    U: Into&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle" open><summary><section id="associatedtype.Error-1" class="associatedtype trait-impl"><a href="#associatedtype.Error-1" class="anchor">§</a><h4 class="code-header">type <a class="associatedtype">Error</a> = Infallible</h4></section></summary><div class='docblock'>The type returned in the event of a conversion error.</div></details><details class="toggle method-toggle" open><summary><section id="method.try_from" class="method trait-impl"><a href="#method.try_from" class="anchor">§</a><h4 class="code-header">fn <a class="fn">try_from</a>(value: U) -&gt; Result&lt;T, &lt;T as TryFrom&lt;U&gt;&gt;::Error&gt;</h4></section></summary><div class='docblock'>Performs the conversion.</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-TryInto%3CU%3E-for-T" class="impl"><a href="#impl-TryInto%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; TryInto&lt;U&gt; for T<div class="where">where
+    U: TryFrom&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle" open><summary><section id="associatedtype.Error" class="associatedtype trait-impl"><a href="#associatedtype.Error" class="anchor">§</a><h4 class="code-header">type <a class="associatedtype">Error</a> = &lt;U as TryFrom&lt;T&gt;&gt;::Error</h4></section></summary><div class='docblock'>The type returned in the event of a conversion error.</div></details><details class="toggle method-toggle" open><summary><section id="method.try_into" class="method trait-impl"><a href="#method.try_into" class="anchor">§</a><h4 class="code-header">fn <a class="fn">try_into</a>(self) -&gt; Result&lt;U, &lt;U as TryFrom&lt;T&gt;&gt;::Error&gt;</h4></section></summary><div class='docblock'>Performs the conversion.</div></details></div></details></div></section></div></main></body></html>

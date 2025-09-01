@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["serial"],"static":["SERIAL"],"struct":["Serial"],"trait":["Teletype"]};

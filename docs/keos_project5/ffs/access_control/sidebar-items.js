@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["BlockPointsTo","BlockPointsToReadGuard","BlockPointsToWriteGuard","TrackedInode","TrackedInodeReadGuard","TrackedInodeWriteGuard"],"trait":["MetaData"]};

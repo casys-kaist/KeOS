@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SyscallNumber"],"mod":["process","round_robin","sync"]};

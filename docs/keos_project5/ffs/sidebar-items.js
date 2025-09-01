@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["access_control","disk_layout","fs_objects","inode","journal","types"],"struct":["FastFileSystem","FastFileSystemInner","JournalIO"]};

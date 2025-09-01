@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Semaphore."><title>keos_project4::sync::semaphore - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../keos_project4/index.html">keos_<wbr>project4</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module semaphore</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#semaphore" title="Semaphore.">Semaphore.</a><ul><li><a href="#semaphore-in-keos" title="`Semaphore` in KeOS"><code>Semaphore</code> in KeOS</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="../index.html">In keos_<wbr>project4::<wbr>sync</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">keos_project4</a>::<wbr><a href="../index.html">sync</a></div><h1>Module <span>semaphore</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/keos_project4/sync/semaphore.rs.html#1-164">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="semaphore"><a class="doc-anchor" href="#semaphore">§</a>Semaphore.</h2>
+<p>A <strong>semaphore</strong> is a fundamental synchronization primitive used to regulate
+concurrent access to a finite set of resources. It maintains an internal
+count representing the number of available “permits.” Each permit grants a
+thread the right to access a shared resource. Semaphores are particularly
+well-suited for controlling resource allocation and coordinating
+thread execution in systems with bounded capacity constraints.</p>
+<p>Conceptually, a semaphore can be implemented using a combination of a
+mutex for mutual exclusion and a condition variable to support blocking and
+waking threads. This approach ensures thread-safe and efficient control over
+the internal permit count.</p>
+<p>Semaphores are widely used in operating systems to solve classic concurrency
+problems. One common example is the <strong>producer-consumer</strong> pattern, in which
+multiple threads coordinate access to a bounded buffer. A semaphore ensures
+that producers do not overfill the buffer and consumers do not read from an
+empty buffer.</p>
+<p>Another critical use case is <strong>event signaling</strong>. A semaphore initialized
+with zero permits can serve as a one-time or repeating signal, allowing one
+thread to notify another when a particular event has occurred.</p>
+<h3 id="semaphore-in-keos"><a class="doc-anchor" href="#semaphore-in-keos">§</a><code>Semaphore</code> in KeOS</h3>
+<p>In KeOS, the <a href="struct.Semaphore.html" title="struct keos_project4::sync::semaphore::Semaphore"><code>Semaphore</code></a> abstraction provides a clean and safe interface
+for controlling access to shared resources. <a href="struct.Semaphore.html" title="struct keos_project4::sync::semaphore::Semaphore"><code>Semaphore</code></a> is combined with a
+resource to protect. Threads can acquire a permit by calling
+<a href="struct.Semaphore.html#method.wait" title="method keos_project4::sync::semaphore::Semaphore::wait"><code>Semaphore::wait</code></a>, and release it either explicitly via
+<a href="struct.Semaphore.html#method.signal" title="method keos_project4::sync::semaphore::Semaphore::signal"><code>Semaphore::signal</code></a> or implicitly using the <a href="struct.SemaphorePermits.html" title="struct keos_project4::sync::semaphore::SemaphorePermits"><code>SemaphorePermits</code></a> RAII
+guard. This design encourages robust and leak-free resource management, even
+in the presence of early returns or panics.</p>
+<p>Key features of the <code>Semaphore</code> interface include:</p>
+<ul>
+<li>
+<p><a href="struct.Semaphore.html#method.wait" title="method keos_project4::sync::semaphore::Semaphore::wait"><code>Semaphore::wait()</code></a>: Decrements the permit count if a permit is
+available. If no permits remain, the calling thread blocks until one
+becomes available.</p>
+</li>
+<li>
+<p><a href="struct.Semaphore.html#method.signal" title="method keos_project4::sync::semaphore::Semaphore::signal"><code>Semaphore::signal()</code></a>: Increments the permit count and wakes one blocked
+thread, if any. This allows threads to proceed once a resource has been
+released or an event has been signaled.</p>
+</li>
+<li>
+<p><a href="struct.SemaphorePermits.html" title="struct keos_project4::sync::semaphore::SemaphorePermits"><code>SemaphorePermits</code></a>: An RAII-based wrapper that automatically calls
+<code>signal()</code> when dropped. This ensures that permits are always correctly
+released, even in the face of errors or control-flow disruptions.</p>
+</li>
+</ul>
+<p>By integrating semaphores into the KeOS kernel, you will gain a flexible and
+expressive tool for coordinating access to shared resources and implementing
+complex thread synchronization patterns.</p>
+<h5 id="usage-example"><a class="doc-anchor" href="#usage-example">§</a>Usage Example</h5>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>sema = Semaphore::new(<span class="number">3</span>, state); <span class="comment">// Allows up to 3 concurrent threads to the state
+
+// Acquire a permit (blocks if unavailable)
+</span><span class="kw">let </span>permit = sema.wait();
+
+<span class="comment">// Critical section (up to 3 threads can enter concurrently)
+</span>permit.work(); <span class="comment">// Call a method defined on the `state`.
+
+// Permit is automatically released when `permit` goes out of scope.
+// Otherwise, you can explicitly released it with `drop(permit)``</span></code></pre></div>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.Semaphore.html" title="struct keos_project4::sync::semaphore::Semaphore"><code>Semaphore</code></a></li>
+<li><a href="struct.Semaphore.html#method.new" title="associated function keos_project4::sync::semaphore::Semaphore::new"><code>Semaphore::new</code></a></li>
+<li><a href="struct.Semaphore.html#method.wait" title="method keos_project4::sync::semaphore::Semaphore::wait"><code>Semaphore::wait</code></a></li>
+<li><a href="struct.Semaphore.html#method.signal" title="method keos_project4::sync::semaphore::Semaphore::signal"><code>Semaphore::signal</code></a></li>
+</ul>
+<p>By implementing the all synchorinzation primitives, your KeOS kernel now
+ready to serve multi-threaded process in the next <a href="../../process/index.html" title="mod keos_project4::process"><code>section</code></a>.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Semaphore.html" title="struct keos_project4::sync::semaphore::Semaphore">Semaphore</a></dt><dd>Counting semaphore.</dd><dt><a class="struct" href="struct.SemaphorePermits.html" title="struct keos_project4::sync::semaphore::SemaphorePermits">Semaphore<wbr>Permits</a></dt><dd>An RAII implementation of a “scoped semaphore”. When this structure
+is dropped (falls out of scope), the semaphore will be signaled.</dd></dl></section></div></main></body></html>

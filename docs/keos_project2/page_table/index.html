@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Four-Level Page Table of x86_64"><title>keos_project2::page_table - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project2/index.html">keos_<wbr>project2</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module page_<wbr>table</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#four-level-page-table-of-x86_64" title="Four-Level Page Table of x86_64">Four-Level Page Table of x86_64</a><ul><li><a href="#virtual-memory" title="Virtual Memory">Virtual Memory</a></li><li><a href="#paging" title="Paging">Paging</a></li><li><a href="#paging-in-x86_64" title="Paging in x86_64">Paging in x86_64</a></li><li><a href="#managing-pagetable-in-keos" title="Managing `PageTable` in KeOS">Managing <code>PageTable</code> in KeOS</a></li><li><a href="#implementation-requirements" title="Implementation Requirements">Implementation Requirements</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project2</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project2</a></div><h1>Module <span>page_table</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project2/page_table.rs.html#1-464">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="four-level-page-table-of-x86_64"><a class="doc-anchor" href="#four-level-page-table-of-x86_64">§</a>Four-Level Page Table of x86_64</h2>
+<p>One of the main roles of an operating system is resource abstraction. An
+important resource in a computer system is memory. Each process operates in
+its own memory space, which must be isolated from other processes. For
+instance, your web browser should not have access to the memory used by your
+music player. To ensure such isolation, hardware introduces a memory
+protection mechanism that isolates the memory between processes.</p>
+<h3 id="virtual-memory"><a class="doc-anchor" href="#virtual-memory">§</a>Virtual Memory</h3>
+<p>The concept of virtual memory abstracts memory addresses from the underlying
+physical storage device. Instead of directly accessing the physical memory,
+addresses are translated through the Memory Management Unit (MMU). To
+distinguish between these two types of addresses:</p>
+<ul>
+<li>A <strong>virtual address</strong> is used by programs before translation.</li>
+<li>A <strong>physical address</strong> refers to the actual location in memory after
+translation.</li>
+</ul>
+<p>A key distinction between virtual and physical addresses is that physical
+addresses are unique and always refer to the same memory location. In
+contrast, virtual addresses can be mapped to the same physical address or
+different physical addresses at different times.</p>
+<h3 id="paging"><a class="doc-anchor" href="#paging">§</a>Paging</h3>
+<p>Paging is a memory management technique that divides both physical and
+virtual memory into small, fixed-size chunks called <strong>pages</strong>. Typically, a
+page is 4096 bytes in size. The mapping of physical and virtual memory is
+managed via a <strong>page table</strong>, with each entry representing a page. The
+active page table is typically managed through a special CPU register (e.g.,
+<code>cr3</code> in x86_64).</p>
+<p>For every memory access, the CPU translates the virtual address to a
+physical address using the page table. Since checking the page table for
+every conversion would be inefficient, the CPU stores the results in a cache
+called the <strong>Translation Lookaside Buffer (TLB)</strong>.</p>
+<p>The TLB is a CPU cache that stores recent translations of virtual memory
+addresses to physical memory. The TLB is not updated automatically when the
+page table is modified, so the kernel must explicitly invalidate the TLB
+entries after a page table update. If you invalidate the entry, the kernel
+may be work with a stale memory.</p>
+<h3 id="paging-in-x86_64"><a class="doc-anchor" href="#paging-in-x86_64">§</a>Paging in x86_64</h3>
+<p>x86_64 uses 4096-byte pages and employs a 4-level page table. Each table is
+4096 bytes in size, which is the same size as the page, and each entry in
+the table is 8 bytes. This structure allows for a 48-bit physical address
+space to be covered by the page table.</p>
+<p>The virtual address in x86_64 can be broken down into the following levels:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="number">63          48 47            39 38            30 29            21 20         12 11         0
+</span>+-------------+----------------+----------------+----------------+-------------+------------+
+| Sign Extend |    Page-Map    | Page-Directory | Page-directory |  Page-Table |    Page    |
+|             | Level-<span class="number">4 </span>Offset |    Pointer     |     Offset     |   Offset    |   Offset   |
++-------------+----------------+----------------+----------------+-------------+------------+
+              |                |                |                |             |            |
+              +------- <span class="number">9 </span>------+------- <span class="number">9 </span>------+------- <span class="number">9 </span>------+----- <span class="number">9 </span>-----+---- <span class="number">12 </span>----+
+                                          Virtual Address</code></pre></div>
+<ul>
+<li>The <strong>sign extend</strong> portion represents the higher bits, ensuring proper
+sign extension for the full address.</li>
+<li>The Page Map Level 4 (PM4) identifies the highest-level page directory.</li>
+<li>The subsequent levels (Page Directory, Page Table) map smaller chunks of
+virtual memory to physical memory.</li>
+<li>The <strong>page offset</strong> specifies the position within the 4096-byte page.</li>
+</ul>
+<p>A page must be <strong>page-aligned</strong>, meaning the virtual address must be
+divisible by the page size (4096 bytes). The last 12 bits of the 64-bit
+virtual address represent the page <strong>offset</strong>, while the upper bits are used
+as indices for the page table.</p>
+<p>The page table also defines various attributes for each page, such as access
+permissions (e.g., read/write/user). Note that the attributes from all
+levels are <strong>AND</strong>ed together. This means attributes of the intermediate
+level must contain all possible attributes.</p>
+<p>In x86_64, the <code>invlpg</code> instruction invalidates a specific TLB entry based
+on the given virtual address. Note that the entire TLB is also flushed when
+the <code>cr3</code> register is reloaded.</p>
+<h3 id="managing-pagetable-in-keos"><a class="doc-anchor" href="#managing-pagetable-in-keos">§</a>Managing <a href="struct.PageTable.html" title="struct keos_project2::page_table::PageTable"><code>PageTable</code></a> in KeOS</h3>
+<p>You need to implement x86_64’s 4-level page table scheme. The core
+abstraction about page table is <a href="struct.PageTable.html" title="struct keos_project2::page_table::PageTable"><code>PageTable</code></a>. With this abstraction, you
+will implement page table walking, mapping, and unmapping. In addition to
+mapping and unmapping pages, the page table must be clear the entries when
+it deallocates an associated memory. This traverses the entire 4-level page
+table, unmapping each mapped virtual address and deallocating
+the corresponding physical pages. After calling this method, all page table
+levels—including the Page Directory Pointer Table (PDP), Page Directory
+(PD), and Page Table (PT)—will be deallocated, leaving only the root Page
+Map Level 4 (PML4).</p>
+<p>This <a href="struct.PageTable.html" title="struct keos_project2::page_table::PageTable"><code>PageTable</code></a> represents a page table of a user process. Each process
+has its own set of user pages, which reside below the kernel base address,
+where pml4 index is lower than <a href="../../keos/mm/page_table/struct.PageTableRoot.html#associatedconstant.KBASE" title="associated constant keos::mm::page_table::PageTableRoot::KBASE"><code>PageTableRoot::KBASE</code></a>. The set of
+kernel pages, however, is global and remains fixed in the virtual
+address space, regardless of the running process or thread. These pages are
+shared between multiple page tables, meaning that they <strong>MUST NOT</strong>
+deallocated in any cases.</p>
+<p>KeOS already provides several abstractions to work with page table.</p>
+<ul>
+<li>The virtual and physical addresses: <a href="../../keos/addressing/struct.Pa.html"><code>Pa</code></a> and <a href="../../keos/addressing/struct.Va.html"><code>Va</code></a>.</li>
+<li>The Memory Permission: <a href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission"><code>Permission</code></a>.</li>
+<li>Each table entry: <a href="../../keos/mm/page_table/struct.Pml4e.html" title="struct keos::mm::page_table::Pml4e"><code>Pml4e</code></a>, <a href="../../keos/mm/page_table/struct.Pdpe.html" title="struct keos::mm::page_table::Pdpe"><code>Pdpe</code></a>, <a href="../../keos/mm/page_table/struct.Pde.html" title="struct keos::mm::page_table::Pde"><code>Pde</code></a>, and <a href="../../keos/mm/page_table/struct.Pte.html" title="struct keos::mm::page_table::Pte"><code>Pte</code></a>.</li>
+<li>Flag of each table entry: <a href="../../keos/mm/page_table/struct.Pml4eFlags.html" title="struct keos::mm::page_table::Pml4eFlags"><code>Pml4eFlags</code></a>, <a href="../../keos/mm/page_table/struct.PdpeFlags.html" title="struct keos::mm::page_table::PdpeFlags"><code>PdpeFlags</code></a>, <a href="../../keos/mm/page_table/struct.PdeFlags.html" title="struct keos::mm::page_table::PdeFlags"><code>PdeFlags</code></a>, and
+<a href="../../keos/mm/page_table/struct.PteFlags.html" title="struct keos::mm::page_table::PteFlags"><code>PteFlags</code></a>.</li>
+<li>Invalidate a TLB entry: <a href="../../keos/mm/page_table/struct.StaleTLBEntry.html#method.invalidate" title="method keos::mm::page_table::StaleTLBEntry::invalidate"><code>StaleTLBEntry::invalidate</code></a>.</li>
+</ul>
+<h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
+<p>You need to implement the followings:</p>
+<ul>
+<li><a href="struct.PtIndices.html#method.from_va" title="associated function keos_project2::page_table::PtIndices::from_va"><code>PtIndices::from_va</code></a></li>
+<li><a href="struct.PageTable.html#method.do_map" title="method keos_project2::page_table::PageTable::do_map"><code>PageTable::do_map</code></a></li>
+<li><a href="struct.PageTable.html#method.unmap" title="method keos_project2::page_table::PageTable::unmap"><code>PageTable::unmap</code></a></li>
+<li><a href="struct.PageTable.html#method.walk" title="method keos_project2::page_table::PageTable::walk"><code>PageTable::walk</code></a></li>
+<li><a href="struct.PageTable.html#method.walk_mut" title="method keos_project2::page_table::PageTable::walk_mut"><code>PageTable::walk_mut</code></a></li>
+<li><a href="struct.PageTable.html#method.clear" title="method keos_project2::page_table::PageTable::clear"><code>PageTable::clear</code></a></li>
+</ul>
+<p>Make sure to implement the necessary functions for TLB
+invalidation, and ensure the correct handling of memory protection and
+access permissions for pages.</p>
+<p>By the end of this part, you will have built an essential component for
+memory management, ensuring that processes can access their memory securely
+and efficiently through the page table.
+When you finish implementing all tasks, move on to the next <a href="../mm_struct/index.html" title="mod keos_project2::mm_struct"><code>section</code></a>.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.PageTable.html" title="struct keos_project2::page_table::PageTable">Page<wbr>Table</a></dt><dd>Page Table Structure for x86_64 Architecture.</dd><dt><a class="struct" href="struct.PtIndices.html" title="struct keos_project2::page_table::PtIndices">PtIndices</a></dt><dd>Represents page table indices for a given virtual address (VA).</dd><dt><a class="struct" href="struct.Walked.html" title="struct keos_project2::page_table::Walked">Walked</a></dt><dd>A mutable reference to a page table entry (PTE) associated with a virtual
+address.</dd></dl></section></div></main></body></html>

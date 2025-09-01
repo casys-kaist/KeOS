@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Fast File System (FFS)."><title>keos_project5::ffs - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project5" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos_project5/index.html">keos_<wbr>project5</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module ffs</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#fast-file-system-ffs" title="Fast File System (FFS).">Fast File System (FFS).</a><ul><li><a href="#overview-of-the-keos-fast-file-system" title="Overview of the KeOS Fast File System">Overview of the KeOS Fast File System</a></li></ul></li></ul><h3><a href="#modules">Module Items</a></h3><ul class="block"><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos_<wbr>project5</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos_project5</a></div><h1>Module <span>ffs</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos_project5/ffs/mod.rs.html#1-667">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="fast-file-system-ffs"><a class="doc-anchor" href="#fast-file-system-ffs">§</a>Fast File System (FFS).</h2>
+<p>In KeOS, the kernel utilizes multiple layers to implement file operations.
+Higher layers provide convenient abstractions such as buffered I/O, while
+the lowest layer is responsible for managing
+the on-disk layout through the File System.</p>
+<div class="example-wrap"><pre class="language-text"><code>┌─────────────────────────────┐
+│ keos::fs::RegularFile       │
+│ - Top-level API for File    │
+└─────────────┬───────────────┘
+              │
+┌─────────────▼───────────────────┐
+│ keos::fs::traits::RegularFile   │
+│ - Block-based buffer            │
+│ - Block-level R/W interface     │
+└─────────────┬───────────────────┘
+              │
+┌─────────────▼─────────────────────────┐
+│ pagecache::overlaying::RegularFile    │
+│ - Cache-managed file access           │
+└─────────────┬─────────────────────────┘
+              │
+┌─────────────▼─────────────────────────┐
+│ Filesystem-specific RegularFile       │
+│ - Primitive block ops on filesystem   │
+└─────────────┬─────────────────────────┘
+              │
+┌─────────────▼─────────────────────────┐
+│ Inode                                 │
+│ - Conduct the disk-level operation    │
+└───────────────────────────────────────┘</code></pre></div>
+<p>This project focuses on implementing the File System, the lowest level in
+the hierarchy. Here, you will build the abstractions that directly manage
+on-disk inodes and blocks, forming the foundation of all higher-level file
+operations.</p>
+<p>A <strong>file system</strong> is a fundamental component of any operating system,
+responsible for managing how data is stored, organized, and accessed on
+persistent storage devices such as hard drives or solid-state drives. It
+provides a hierarchical abstraction of files and directories, enabling users
+and programs to interact with stored data through well-defined interfaces
+while abstracting away low-level hardware details. The file system ensures
+data integrity, persistence, and consistency, even in the face of system
+crashes or concurrent access.</p>
+<p>While simple file systems may achieve functional correctness, they often
+suffer from performance limitations, such as poor spatial locality,
+excessive fragmentation, and inefficient handling of metadata. These issues
+become increasingly problematic as file systems scale in size and
+complexity.</p>
+<p>The <strong>Fast File System (FFS)</strong> was developed to address these
+shortcomings. It incorporates layout and allocation strategies aimed at
+improving throughput, minimizing seek time, and optimizing disk utilization.
+Key features include.</p>
+<p>In this project, you will implement the simplified version of Fast File
+System: <strong>No error handling</strong> and <strong>I/O optimizations</strong>.</p>
+<h3 id="overview-of-the-keos-fast-file-system"><a class="doc-anchor" href="#overview-of-the-keos-fast-file-system">§</a>Overview of the KeOS Fast File System</h3>
+<p>The following diagram depicts the disk layout of the FFS:</p>
+<div class="example-wrap"><pre class="language-text"><code>           +────────────────────+
+           │ Superblock         │
+           +────────────────────+
+           │ Inode Bitmap       │
+           +────────────────────+
+           │ Block Bitmap       │
+Journal ──-+────────────────────+
+  │        │ JournalSB          │
+  │        +────────────────────+
+  │        │ TxBegin            │
+  │        │ Journal Block[0]   │
+  │        │ Journal Block[1]   │
+  │        │   ...              │
+  │        │ TxEnd              │
+  └─────── +────────────────────+
+           │ Inodes             │
+           +────────────────────+
+           │ Data Blocks        │
+           │ ...                │
+           +────────────────────+</code></pre></div>
+<p>The following list describes each parts of the FFS disk layout:</p>
+<ul>
+<li><strong>Superblock</strong> – Global filesystem metadata: block size, counts, offsets,
+and identifiers.</li>
+<li><strong>Inode Bitmap</strong> – Tracks which inodes are allocated or free.</li>
+<li><strong>Block Bitmap</strong> – Tracks which data blocks are allocated or free.</li>
+<li><strong>Journal</strong> – Transactional log ensuring crash consistency.</li>
+<li><strong>Inodes</strong> – The inode table storing metadata and block pointers for files
+and directories.</li>
+<li><strong>Data Blocks</strong> – The actual contents of files and directories.</li>
+</ul>
+<p>Now, start with the implementation of <a href="inode/index.html" title="mod keos_project5::ffs::inode"><code>inode</code></a>.</p>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="access_control/index.html" title="mod keos_project5::ffs::access_control">access_<wbr>control</a></dt><dd>Metadata access and synchronization primitives for the filesystem.</dd><dt><a class="mod" href="disk_layout/index.html" title="mod keos_project5::ffs::disk_layout">disk_<wbr>layout</a></dt><dd><strong>on-disk layout</strong> of the file system’s metadata structures.</dd><dt><a class="mod" href="fs_objects/index.html" title="mod keos_project5::ffs::fs_objects">fs_<wbr>objects</a></dt><dd>File system objects.</dd><dt><a class="mod" href="inode/index.html" title="mod keos_project5::ffs::inode">inode</a></dt><dd>Inode abstraction.</dd><dt><a class="mod" href="journal/index.html" title="mod keos_project5::ffs::journal">journal</a></dt><dd>Journaling for Crash Consistency.</dd><dt><a class="mod" href="types/index.html" title="mod keos_project5::ffs::types">types</a></dt><dd>Core type definitions for the filesystem.</dd></dl><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.FastFileSystem.html" title="struct keos_project5::ffs::FastFileSystem">Fast<wbr>File<wbr>System</a></dt><dd>A reference-counted wrapper around <a href="struct.FastFileSystemInner.html" title="struct keos_project5::ffs::FastFileSystemInner"><code>FastFileSystemInner</code></a>.</dd><dt><a class="struct" href="struct.FastFileSystemInner.html" title="struct keos_project5::ffs::FastFileSystemInner">Fast<wbr>File<wbr>System<wbr>Inner</a></dt><dd>Represents the internal structure of a Fast File System (FFS).</dd><dt><a class="struct" href="struct.JournalIO.html" title="struct keos_project5::ffs::JournalIO">JournalIO</a></dt><dd>A handle for performing journal I/O operations.</dd></dl></section></div></main></body></html>
