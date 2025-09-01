@@ -28,7 +28,7 @@ You will implement the concepts covered in the class on each project, reinforcin
 4. **Process Management** – Advanced multi-threaded and process control
 5. **File System** – File system with Journaling
 
-For detailed instructions and documentation, refer to the [KeOS Manual](https://casys-kaist.github.io/KeOS).
+For detailed instructions and documentation, refer to the [KeOS Manual](https://casys-kaist.github.io/KeOS/keos).
 
 ## Getting Started
 ```bash
