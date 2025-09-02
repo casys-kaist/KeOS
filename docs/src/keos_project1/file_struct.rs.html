@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `keos-project1/src/file_struct.rs`."><title>file_struct.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project1" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">keos_project1/</div>file_struct.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! # File state of a process.
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `keos-project1/src/file_struct.rs`."><title>file_struct.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos_project1" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../../static.files/storage-e2aeef58.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">keos_project1/</div>file_struct.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! # File state of a process.
 <a href=#2 id=2 data-nosnippet>2</a>//!
 <a href=#3 id=3 data-nosnippet>3</a>//! One of the kernel's primary responsibilities is managing process states.
 <a href=#4 id=4 data-nosnippet>4</a>//! A process is an instance of a program being executed, abstracting a machine
@@ -302,7 +302,7 @@
 <a href=#302 id=302 data-nosnippet>302</a><span class="doccomment">/// Represents an index into a process’s file descriptor table.
 <a href=#303 id=303 data-nosnippet>303</a>///
 <a href=#304 id=304 data-nosnippet>304</a>/// In most operating systems, each process maintains a **file descriptor
-<a href=#305 id=305 data-nosnippet>305</a>/// table** that maps small integers (file descriptors) to open file objects.  
+<a href=#305 id=305 data-nosnippet>305</a>/// table** that maps small integers (file descriptors) to open file objects.
 <a href=#306 id=306 data-nosnippet>306</a>/// A [`FileDescriptor`] is a wrapper around an `i32` that provides
 <a href=#307 id=307 data-nosnippet>307</a>/// stronger type safety when handling these indices in the kernel.
 <a href=#308 id=308 data-nosnippet>308</a></span><span class="attr">#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
@@ -380,7 +380,7 @@
 <a href=#380 id=380 data-nosnippet>380</a>    <span class="doccomment">/// Installs a [`File`] into the process’s file descriptor table.
 <a href=#381 id=381 data-nosnippet>381</a>    ///
 <a href=#382 id=382 data-nosnippet>382</a>    /// This method assigns the lowest available file descriptor number to
-<a href=#383 id=383 data-nosnippet>383</a>    /// `file` and returns it as a [`FileDescriptor`].  
+<a href=#383 id=383 data-nosnippet>383</a>    /// `file` and returns it as a [`FileDescriptor`].
 <a href=#384 id=384 data-nosnippet>384</a>    /// The descriptor can then be used by the process to perform I/O operations
 <a href=#385 id=385 data-nosnippet>385</a>    /// such as `read`, `write`, `stat`, or `close`.
 <a href=#386 id=386 data-nosnippet>386</a>    ///
@@ -514,17 +514,18 @@
 <a href=#514 id=514 data-nosnippet>514</a>    </span><span class="doccomment">/// Pipes are unidirectional communication channels commonly used for IPC.
 <a href=#515 id=515 data-nosnippet>515</a>    /// Data written to `pipefd[1]` can be read from `pipefd[0]`.
 <a href=#516 id=516 data-nosnippet>516</a>    ///
-<a href=#517 id=517 data-nosnippet>517</a>    /// A process that read from pipe must wait if there are no bytes to be read.
-<a href=#518 id=518 data-nosnippet>518</a>    /// 
-<a href=#519 id=519 data-nosnippet>519</a>    /// # Syscall API
-<a href=#520 id=520 data-nosnippet>520</a>    /// ```c
-<a href=#521 id=521 data-nosnippet>521</a>    /// int pipe(int pipefd[2]);
-<a href=#522 id=522 data-nosnippet>522</a>    /// ```
-<a href=#523 id=523 data-nosnippet>523</a>    /// - `pipefd`: An array of two file descriptors, where `pipefd[0]` is for
-<a href=#524 id=524 data-nosnippet>524</a>    ///   reading and `pipefd[1]` is for writing.
-<a href=#525 id=525 data-nosnippet>525</a>    ///
-<a href=#526 id=526 data-nosnippet>526</a>    /// Returns 0 if success.
-<a href=#527 id=527 data-nosnippet>527</a>    </span><span class="kw">pub fn </span>pipe(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>SyscallAbi) -&gt; <span class="prelude-ty">Result</span>&lt;usize, KernelError&gt; {
-<a href=#528 id=528 data-nosnippet>528</a>        <span class="macro">todo!</span>()
-<a href=#529 id=529 data-nosnippet>529</a>    }
-<a href=#530 id=530 data-nosnippet>530</a>}</code></pre></div></section></main></body></html>
+<a href=#517 id=517 data-nosnippet>517</a>    /// A process that read from pipe must wait if there are no bytes to be
+<a href=#518 id=518 data-nosnippet>518</a>    /// read.
+<a href=#519 id=519 data-nosnippet>519</a>    ///
+<a href=#520 id=520 data-nosnippet>520</a>    /// # Syscall API
+<a href=#521 id=521 data-nosnippet>521</a>    /// ```c
+<a href=#522 id=522 data-nosnippet>522</a>    /// int pipe(int pipefd[2]);
+<a href=#523 id=523 data-nosnippet>523</a>    /// ```
+<a href=#524 id=524 data-nosnippet>524</a>    /// - `pipefd`: An array of two file descriptors, where `pipefd[0]` is for
+<a href=#525 id=525 data-nosnippet>525</a>    ///   reading and `pipefd[1]` is for writing.
+<a href=#526 id=526 data-nosnippet>526</a>    ///
+<a href=#527 id=527 data-nosnippet>527</a>    /// Returns 0 if success.
+<a href=#528 id=528 data-nosnippet>528</a>    </span><span class="kw">pub fn </span>pipe(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>SyscallAbi) -&gt; <span class="prelude-ty">Result</span>&lt;usize, KernelError&gt; {
+<a href=#529 id=529 data-nosnippet>529</a>        <span class="macro">todo!</span>()
+<a href=#530 id=530 data-nosnippet>530</a>    }
+<a href=#531 id=531 data-nosnippet>531</a>}</code></pre></div></section></main></body></html>

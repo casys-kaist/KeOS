@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/ljhhasang/new-cs330-project.code/keos/src/lang/panicking.rs`."><title>panicking.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">keos/lang/</div>panicking.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! KEOS panic handler.
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/ljhhasang/new-cs330-project.code/keos/src/lang/panicking.rs`."><title>panicking.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../../../static.files/storage-e2aeef58.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">keos/lang/</div>panicking.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! KEOS panic handler.
 <a href=#2 id=2 data-nosnippet>2</a></span><span class="kw">use </span><span class="kw">crate</span>::thread::STACK_SIZE;
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span>abyss::{
 <a href=#4 id=4 data-nosnippet>4</a>    dev::x86_64::apic::{IPIDest, Mode, send_ipi},
@@ -122,9 +122,9 @@
 <a href=#122 id=122 data-nosnippet>122</a></span><span class="kw">fn </span>panic(info: <span class="kw-2">&amp;</span>core::panic::PanicInfo) -&gt; ! {
 <a href=#123 id=123 data-nosnippet>123</a>    <span class="comment">// Disabling preempt before we go on.
 <a href=#124 id=124 data-nosnippet>124</a>    </span><span class="kw">let </span>_cli = ManuallyDrop::new(InterruptGuard::new());
-<a href=#125 id=125 data-nosnippet>125</a>    
+<a href=#125 id=125 data-nosnippet>125</a>
 <a href=#126 id=126 data-nosnippet>126</a>    <span class="kw">match </span><span class="kw">crate</span>::PANIC_DEPTH.fetch_add(<span class="number">1</span>, Ordering::SeqCst) {
-<a href=#127 id=127 data-nosnippet>127</a>        <span class="number">0 </span>=&gt; {},
+<a href=#127 id=127 data-nosnippet>127</a>        <span class="number">0 </span>=&gt; {}
 <a href=#128 id=128 data-nosnippet>128</a>        <span class="number">1 </span>=&gt; {
 <a href=#129 id=129 data-nosnippet>129</a>            <span class="kw">unsafe </span>{
 <a href=#130 id=130 data-nosnippet>130</a>                abyss::kprint::force_unlock_serial();
@@ -134,160 +134,158 @@
 <a href=#134 id=134 data-nosnippet>134</a>            <span class="kw">unsafe </span>{
 <a href=#135 id=135 data-nosnippet>135</a>                abyss::x86_64::power_control::power_off();
 <a href=#136 id=136 data-nosnippet>136</a>            }
-<a href=#137 id=137 data-nosnippet>137</a>        },
-<a href=#138 id=138 data-nosnippet>138</a>        <span class="kw">_ </span>=&gt; {
-<a href=#139 id=139 data-nosnippet>139</a>            <span class="kw">unsafe </span>{
-<a href=#140 id=140 data-nosnippet>140</a>                abyss::x86_64::power_control::power_off();
-<a href=#141 id=141 data-nosnippet>141</a>            }
-<a href=#142 id=142 data-nosnippet>142</a>        }
-<a href=#143 id=143 data-nosnippet>143</a>    }
-<a href=#144 id=144 data-nosnippet>144</a>    <span class="comment">// Asserting expected NMI for every CPU except the faulting CPU.
-<a href=#145 id=145 data-nosnippet>145</a>    //
-<a href=#146 id=146 data-nosnippet>146</a>    // # Safety
-<a href=#147 id=147 data-nosnippet>147</a>    // NEVER use print!() or println!() before force serial unlock
-<a href=#148 id=148 data-nosnippet>148</a>    </span>NMI_EXPECTED_PANICKING.store(<span class="bool-val">true</span>, Ordering::SeqCst);
-<a href=#149 id=149 data-nosnippet>149</a>    <span class="kw">for </span>(cpuid, is_online) <span class="kw">in </span>abyss::boot::ONLINE_CPU
-<a href=#150 id=150 data-nosnippet>150</a>        .iter()
-<a href=#151 id=151 data-nosnippet>151</a>        .enumerate()
-<a href=#152 id=152 data-nosnippet>152</a>        .filter(|(id, o)| o.load(Ordering::SeqCst) &amp;&amp; <span class="kw-2">*</span>id != cpuid())
-<a href=#153 id=153 data-nosnippet>153</a>    {
-<a href=#154 id=154 data-nosnippet>154</a>        <span class="kw">unsafe </span>{
-<a href=#155 id=155 data-nosnippet>155</a>            send_ipi(IPIDest::Cpu(cpuid), Mode::Nmi);
-<a href=#156 id=156 data-nosnippet>156</a>        }
-<a href=#157 id=157 data-nosnippet>157</a>        is_online.store(<span class="bool-val">false</span>, Ordering::SeqCst);
-<a href=#158 id=158 data-nosnippet>158</a>    }
-<a href=#159 id=159 data-nosnippet>159</a>    <span class="comment">// Forcefully remove kprint serial lock to prevent deadlock.
-<a href=#160 id=160 data-nosnippet>160</a>    </span><span class="kw">unsafe </span>{
-<a href=#161 id=161 data-nosnippet>161</a>        abyss::kprint::force_unlock_serial();
-<a href=#162 id=162 data-nosnippet>162</a>    }
-<a href=#163 id=163 data-nosnippet>163</a>    <span class="kw">fn </span>panic_internal_poweroff(has_non_kernel_addr: bool) -&gt; ! {
-<a href=#164 id=164 data-nosnippet>164</a>        <span class="kw">if </span>has_non_kernel_addr {
-<a href=#165 id=165 data-nosnippet>165</a>            <span class="macro">println!</span>(<span class="string">"\nWARNING: Non-kernel address detected in the backtrace.\n"</span>);
-<a href=#166 id=166 data-nosnippet>166</a>            <span class="macro">println!</span>(
-<a href=#167 id=167 data-nosnippet>167</a>                <span class="string">"It indicates that some of addresses above are either user program's or even completely wrong."
-<a href=#168 id=168 data-nosnippet>168</a>            </span>);
-<a href=#169 id=169 data-nosnippet>169</a>            <span class="macro">println!</span>(
-<a href=#170 id=170 data-nosnippet>170</a>                <span class="string">"For details, please refer to `Debugging a User Process` chapter of the KeOS documentation."
-<a href=#171 id=171 data-nosnippet>171</a>            </span>);
-<a href=#172 id=172 data-nosnippet>172</a>        }
-<a href=#173 id=173 data-nosnippet>173</a>        <span class="macro">println!</span>(<span class="string">"\nShutting down the system in few moment..."</span>);
-<a href=#174 id=174 data-nosnippet>174</a>        <span class="kw">for _ in </span><span class="number">0</span>..<span class="number">50 </span>{
-<a href=#175 id=175 data-nosnippet>175</a>            <span class="kw">fn </span>init_pit(val: u16) {
-<a href=#176 id=176 data-nosnippet>176</a>                <span class="comment">// Calibrate through the PIT
-<a href=#177 id=177 data-nosnippet>177</a>                // Set the Gate high, disable speaker
-<a href=#178 id=178 data-nosnippet>178</a>                </span><span class="kw">let </span>chan2_gate = Pio::new(<span class="number">0x61</span>);
-<a href=#179 id=179 data-nosnippet>179</a>                chan2_gate.write_u8((chan2_gate.read_u8() &amp; !<span class="number">0x2</span>) | <span class="number">1</span>);
-<a href=#180 id=180 data-nosnippet>180</a>                <span class="comment">// Counter 2, mode 0 (one-shot), binary count
-<a href=#181 id=181 data-nosnippet>181</a>                </span>Pio::new(<span class="number">0x43</span>).write_u8(<span class="number">0xb0</span>);
-<a href=#182 id=182 data-nosnippet>182</a>                Pio::new(<span class="number">0x42</span>).write_u8(val <span class="kw">as </span>u8); <span class="comment">// low byte
-<a href=#183 id=183 data-nosnippet>183</a>                </span>Pio::new(<span class="number">0x42</span>).write_u8((val &gt;&gt; <span class="number">8</span>) <span class="kw">as </span>u8); <span class="comment">// high byte
-<a href=#184 id=184 data-nosnippet>184</a>            </span>}
-<a href=#185 id=185 data-nosnippet>185</a>            init_pit(<span class="number">0xFFFF</span>);
-<a href=#186 id=186 data-nosnippet>186</a>
-<a href=#187 id=187 data-nosnippet>187</a>            <span class="kw">loop </span>{
-<a href=#188 id=188 data-nosnippet>188</a>                <span class="kw">fn </span>read_pit() -&gt; u16 {
-<a href=#189 id=189 data-nosnippet>189</a>                    <span class="kw">let </span>low = Pio::new(<span class="number">0x42</span>).read_u8() <span class="kw">as </span>u16;
-<a href=#190 id=190 data-nosnippet>190</a>                    <span class="kw">let </span>high = Pio::new(<span class="number">0x42</span>).read_u8() <span class="kw">as </span>u16;
-<a href=#191 id=191 data-nosnippet>191</a>                    low | high &lt;&lt; <span class="number">8
-<a href=#192 id=192 data-nosnippet>192</a>                </span>}
-<a href=#193 id=193 data-nosnippet>193</a>                <span class="kw">if </span>read_pit() == <span class="number">0 </span>{
-<a href=#194 id=194 data-nosnippet>194</a>                    <span class="kw">break</span>;
-<a href=#195 id=195 data-nosnippet>195</a>                }
-<a href=#196 id=196 data-nosnippet>196</a>            }
-<a href=#197 id=197 data-nosnippet>197</a>        }
-<a href=#198 id=198 data-nosnippet>198</a>        <span class="kw">unsafe </span>{
-<a href=#199 id=199 data-nosnippet>199</a>            abyss::x86_64::power_control::power_off();
-<a href=#200 id=200 data-nosnippet>200</a>        }
-<a href=#201 id=201 data-nosnippet>201</a>    }
+<a href=#137 id=137 data-nosnippet>137</a>        }
+<a href=#138 id=138 data-nosnippet>138</a>        <span class="kw">_ </span>=&gt; <span class="kw">unsafe </span>{
+<a href=#139 id=139 data-nosnippet>139</a>            abyss::x86_64::power_control::power_off();
+<a href=#140 id=140 data-nosnippet>140</a>        },
+<a href=#141 id=141 data-nosnippet>141</a>    }
+<a href=#142 id=142 data-nosnippet>142</a>    <span class="comment">// Asserting expected NMI for every CPU except the faulting CPU.
+<a href=#143 id=143 data-nosnippet>143</a>    //
+<a href=#144 id=144 data-nosnippet>144</a>    // # Safety
+<a href=#145 id=145 data-nosnippet>145</a>    // NEVER use print!() or println!() before force serial unlock
+<a href=#146 id=146 data-nosnippet>146</a>    </span>NMI_EXPECTED_PANICKING.store(<span class="bool-val">true</span>, Ordering::SeqCst);
+<a href=#147 id=147 data-nosnippet>147</a>    <span class="kw">for </span>(cpuid, is_online) <span class="kw">in </span>abyss::boot::ONLINE_CPU
+<a href=#148 id=148 data-nosnippet>148</a>        .iter()
+<a href=#149 id=149 data-nosnippet>149</a>        .enumerate()
+<a href=#150 id=150 data-nosnippet>150</a>        .filter(|(id, o)| o.load(Ordering::SeqCst) &amp;&amp; <span class="kw-2">*</span>id != cpuid())
+<a href=#151 id=151 data-nosnippet>151</a>    {
+<a href=#152 id=152 data-nosnippet>152</a>        <span class="kw">unsafe </span>{
+<a href=#153 id=153 data-nosnippet>153</a>            send_ipi(IPIDest::Cpu(cpuid), Mode::Nmi);
+<a href=#154 id=154 data-nosnippet>154</a>        }
+<a href=#155 id=155 data-nosnippet>155</a>        is_online.store(<span class="bool-val">false</span>, Ordering::SeqCst);
+<a href=#156 id=156 data-nosnippet>156</a>    }
+<a href=#157 id=157 data-nosnippet>157</a>    <span class="comment">// Forcefully remove kprint serial lock to prevent deadlock.
+<a href=#158 id=158 data-nosnippet>158</a>    </span><span class="kw">unsafe </span>{
+<a href=#159 id=159 data-nosnippet>159</a>        abyss::kprint::force_unlock_serial();
+<a href=#160 id=160 data-nosnippet>160</a>    }
+<a href=#161 id=161 data-nosnippet>161</a>    <span class="kw">fn </span>panic_internal_poweroff(has_non_kernel_addr: bool) -&gt; ! {
+<a href=#162 id=162 data-nosnippet>162</a>        <span class="kw">if </span>has_non_kernel_addr {
+<a href=#163 id=163 data-nosnippet>163</a>            <span class="macro">println!</span>(<span class="string">"\nWARNING: Non-kernel address detected in the backtrace.\n"</span>);
+<a href=#164 id=164 data-nosnippet>164</a>            <span class="macro">println!</span>(
+<a href=#165 id=165 data-nosnippet>165</a>                <span class="string">"It indicates that some of addresses above are either user program's or even completely wrong."
+<a href=#166 id=166 data-nosnippet>166</a>            </span>);
+<a href=#167 id=167 data-nosnippet>167</a>            <span class="macro">println!</span>(
+<a href=#168 id=168 data-nosnippet>168</a>                <span class="string">"For details, please refer to `Debugging a User Process` chapter of the KeOS documentation."
+<a href=#169 id=169 data-nosnippet>169</a>            </span>);
+<a href=#170 id=170 data-nosnippet>170</a>        }
+<a href=#171 id=171 data-nosnippet>171</a>        <span class="macro">println!</span>(<span class="string">"\nShutting down the system in few moment..."</span>);
+<a href=#172 id=172 data-nosnippet>172</a>        <span class="kw">for _ in </span><span class="number">0</span>..<span class="number">50 </span>{
+<a href=#173 id=173 data-nosnippet>173</a>            <span class="kw">fn </span>init_pit(val: u16) {
+<a href=#174 id=174 data-nosnippet>174</a>                <span class="comment">// Calibrate through the PIT
+<a href=#175 id=175 data-nosnippet>175</a>                // Set the Gate high, disable speaker
+<a href=#176 id=176 data-nosnippet>176</a>                </span><span class="kw">let </span>chan2_gate = Pio::new(<span class="number">0x61</span>);
+<a href=#177 id=177 data-nosnippet>177</a>                chan2_gate.write_u8((chan2_gate.read_u8() &amp; !<span class="number">0x2</span>) | <span class="number">1</span>);
+<a href=#178 id=178 data-nosnippet>178</a>                <span class="comment">// Counter 2, mode 0 (one-shot), binary count
+<a href=#179 id=179 data-nosnippet>179</a>                </span>Pio::new(<span class="number">0x43</span>).write_u8(<span class="number">0xb0</span>);
+<a href=#180 id=180 data-nosnippet>180</a>                Pio::new(<span class="number">0x42</span>).write_u8(val <span class="kw">as </span>u8); <span class="comment">// low byte
+<a href=#181 id=181 data-nosnippet>181</a>                </span>Pio::new(<span class="number">0x42</span>).write_u8((val &gt;&gt; <span class="number">8</span>) <span class="kw">as </span>u8); <span class="comment">// high byte
+<a href=#182 id=182 data-nosnippet>182</a>            </span>}
+<a href=#183 id=183 data-nosnippet>183</a>            init_pit(<span class="number">0xFFFF</span>);
+<a href=#184 id=184 data-nosnippet>184</a>
+<a href=#185 id=185 data-nosnippet>185</a>            <span class="kw">loop </span>{
+<a href=#186 id=186 data-nosnippet>186</a>                <span class="kw">fn </span>read_pit() -&gt; u16 {
+<a href=#187 id=187 data-nosnippet>187</a>                    <span class="kw">let </span>low = Pio::new(<span class="number">0x42</span>).read_u8() <span class="kw">as </span>u16;
+<a href=#188 id=188 data-nosnippet>188</a>                    <span class="kw">let </span>high = Pio::new(<span class="number">0x42</span>).read_u8() <span class="kw">as </span>u16;
+<a href=#189 id=189 data-nosnippet>189</a>                    low | high &lt;&lt; <span class="number">8
+<a href=#190 id=190 data-nosnippet>190</a>                </span>}
+<a href=#191 id=191 data-nosnippet>191</a>                <span class="kw">if </span>read_pit() == <span class="number">0 </span>{
+<a href=#192 id=192 data-nosnippet>192</a>                    <span class="kw">break</span>;
+<a href=#193 id=193 data-nosnippet>193</a>                }
+<a href=#194 id=194 data-nosnippet>194</a>            }
+<a href=#195 id=195 data-nosnippet>195</a>        }
+<a href=#196 id=196 data-nosnippet>196</a>        <span class="kw">unsafe </span>{
+<a href=#197 id=197 data-nosnippet>197</a>            abyss::x86_64::power_control::power_off();
+<a href=#198 id=198 data-nosnippet>198</a>        }
+<a href=#199 id=199 data-nosnippet>199</a>    }
+<a href=#200 id=200 data-nosnippet>200</a>
+<a href=#201 id=201 data-nosnippet>201</a>    <span class="kw">let </span>frame = StackFrame::current();
 <a href=#202 id=202 data-nosnippet>202</a>
-<a href=#203 id=203 data-nosnippet>203</a>    <span class="kw">let </span>frame = StackFrame::current();
-<a href=#204 id=204 data-nosnippet>204</a>
-<a href=#205 id=205 data-nosnippet>205</a>    <span class="kw">if unsafe </span>{ ((frame.sp() &amp; !(STACK_SIZE - <span class="number">1</span>)) <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">crate</span>::thread::ThreadStack).as_mut() }
-<a href=#206 id=206 data-nosnippet>206</a>        .map(|stack| stack.magic == <span class="kw">crate</span>::thread::THREAD_MAGIC)
-<a href=#207 id=207 data-nosnippet>207</a>        .unwrap_or(<span class="bool-val">false</span>)
-<a href=#208 id=208 data-nosnippet>208</a>    {
-<a href=#209 id=209 data-nosnippet>209</a>        <span class="kw">crate</span>::thread::with_current(|th| {
-<a href=#210 id=210 data-nosnippet>210</a>            <span class="macro">println!</span>(
-<a href=#211 id=211 data-nosnippet>211</a>                <span class="string">"\n\nKeOS thread '{}' [core #{}, tid #{}] {}\n"</span>,
-<a href=#212 id=212 data-nosnippet>212</a>                th.name,
-<a href=#213 id=213 data-nosnippet>213</a>                abyss::x86_64::intrinsics::cpuid(),
-<a href=#214 id=214 data-nosnippet>214</a>                th.tid,
-<a href=#215 id=215 data-nosnippet>215</a>                info
-<a href=#216 id=216 data-nosnippet>216</a>            );
-<a href=#217 id=217 data-nosnippet>217</a>        });
-<a href=#218 id=218 data-nosnippet>218</a>    } <span class="kw">else </span>{
-<a href=#219 id=219 data-nosnippet>219</a>        <span class="macro">println!</span>(
-<a href=#220 id=220 data-nosnippet>220</a>            <span class="string">"\n\nKeOS thread '&lt;unknown&gt;' [core #{}, tid #?] {}\n"</span>,
-<a href=#221 id=221 data-nosnippet>221</a>            abyss::x86_64::intrinsics::cpuid(),
-<a href=#222 id=222 data-nosnippet>222</a>            info
-<a href=#223 id=223 data-nosnippet>223</a>        );
-<a href=#224 id=224 data-nosnippet>224</a>    }
-<a href=#225 id=225 data-nosnippet>225</a>
-<a href=#226 id=226 data-nosnippet>226</a>    <span class="macro">println!</span>(<span class="string">"Stack Backtrace: "</span>);
-<a href=#227 id=227 data-nosnippet>227</a>    <span class="kw">let </span><span class="kw-2">mut </span>state = (-<span class="number">2</span>, <span class="bool-val">false</span>);
-<a href=#228 id=228 data-nosnippet>228</a>    <span class="kw">let </span>sp_hi = frame.sp() &amp; !(STACK_SIZE - <span class="number">1</span>);
-<a href=#229 id=229 data-nosnippet>229</a>    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="kw">unsafe </span>{
-<a href=#230 id=230 data-nosnippet>230</a>        UnwindBacktrace::new(
-<a href=#231 id=231 data-nosnippet>231</a>            frame,
-<a href=#232 id=232 data-nosnippet>232</a>            sp_hi..sp_hi + STACK_SIZE,
-<a href=#233 id=233 data-nosnippet>233</a>            DwarfReader::from_peeker(EhFrameReader::start(), EhFrameReader),
-<a href=#234 id=234 data-nosnippet>234</a>        )
-<a href=#235 id=235 data-nosnippet>235</a>        .run(<span class="kw-2">&amp;mut </span>state, |state, this, <span class="kw">_</span>| {
-<a href=#236 id=236 data-nosnippet>236</a>            do_backtrace(state, <span class="kw-2">&amp;</span>this.frame)
-<a href=#237 id=237 data-nosnippet>237</a>        })
-<a href=#238 id=238 data-nosnippet>238</a>    } {
-<a href=#239 id=239 data-nosnippet>239</a>        <span class="macro">println!</span>(<span class="string">"** Backtrace Failed: {:?}"</span>, e);
-<a href=#240 id=240 data-nosnippet>240</a>    }
-<a href=#241 id=241 data-nosnippet>241</a>    <span class="kw">if let </span><span class="prelude-val">Some</span>(trap_frame) = <span class="kw">unsafe </span>{ kernel_gs::current().interrupt_frame.as_ref() } {
-<a href=#242 id=242 data-nosnippet>242</a>        <span class="macro">println!</span>(<span class="string">"Triggered by event at: "</span>);
-<a href=#243 id=243 data-nosnippet>243</a>        <span class="kw">let </span>frame = trap_frame.to_stack_frame();
-<a href=#244 id=244 data-nosnippet>244</a>        <span class="kw">let </span>sp_hi = frame.sp() &amp; !(STACK_SIZE - <span class="number">1</span>);
-<a href=#245 id=245 data-nosnippet>245</a>        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="kw">unsafe </span>{
-<a href=#246 id=246 data-nosnippet>246</a>            UnwindBacktrace::new(
-<a href=#247 id=247 data-nosnippet>247</a>                frame,
-<a href=#248 id=248 data-nosnippet>248</a>                sp_hi..sp_hi + STACK_SIZE,
-<a href=#249 id=249 data-nosnippet>249</a>                DwarfReader::from_peeker(EhFrameReader::start(), EhFrameReader),
-<a href=#250 id=250 data-nosnippet>250</a>            )
-<a href=#251 id=251 data-nosnippet>251</a>            .run(<span class="kw-2">&amp;mut </span>state, |depth, this, <span class="kw">_</span>| {
-<a href=#252 id=252 data-nosnippet>252</a>                do_backtrace(depth, <span class="kw-2">&amp;</span>this.frame)
-<a href=#253 id=253 data-nosnippet>253</a>            })
-<a href=#254 id=254 data-nosnippet>254</a>        } {
-<a href=#255 id=255 data-nosnippet>255</a>            <span class="macro">println!</span>(<span class="string">"** Backtrace Failed: {:?}"</span>, e);
-<a href=#256 id=256 data-nosnippet>256</a>        }
-<a href=#257 id=257 data-nosnippet>257</a>    }
-<a href=#258 id=258 data-nosnippet>258</a>    panic_internal_poweroff(state.<span class="number">1</span>)
-<a href=#259 id=259 data-nosnippet>259</a>}
-<a href=#260 id=260 data-nosnippet>260</a>
-<a href=#261 id=261 data-nosnippet>261</a><span class="doccomment">/// Load debugging symbols from kernel image
-<a href=#262 id=262 data-nosnippet>262</a></span><span class="attr">#[allow(clippy::result_unit_err)]
-<a href=#263 id=263 data-nosnippet>263</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>load_debug_infos() -&gt; bool {
-<a href=#264 id=264 data-nosnippet>264</a>    <span class="kw">use </span>object::{Object, ObjectSection};
-<a href=#265 id=265 data-nosnippet>265</a>    <span class="kw">let </span><span class="prelude-val">Some</span>(kernel_disk) = abyss::dev::get_bdev(<span class="number">0</span>) <span class="kw">else </span>{
-<a href=#266 id=266 data-nosnippet>266</a>        <span class="kw">return </span><span class="bool-val">false</span>;
-<a href=#267 id=267 data-nosnippet>267</a>    };
-<a href=#268 id=268 data-nosnippet>268</a>    <span class="kw">let </span>image_size = kernel_disk.block_cnt() * kernel_disk.block_size();
-<a href=#269 id=269 data-nosnippet>269</a>    <span class="kw">let </span><span class="kw-2">mut </span>kernel_image = <span class="macro">alloc::vec!</span>[<span class="number">0u8</span>; image_size].into_boxed_slice();
-<a href=#270 id=270 data-nosnippet>270</a>    <span class="kw">if </span>kernel_disk
-<a href=#271 id=271 data-nosnippet>271</a>        .read_bios(<span class="kw-2">&amp;mut </span><span class="prelude-val">Some</span>((<span class="number">0</span>, kernel_image.as_mut())).into_iter())
-<a href=#272 id=272 data-nosnippet>272</a>        .is_err()
-<a href=#273 id=273 data-nosnippet>273</a>    {
-<a href=#274 id=274 data-nosnippet>274</a>        <span class="kw">return </span><span class="bool-val">false</span>;
-<a href=#275 id=275 data-nosnippet>275</a>    }
-<a href=#276 id=276 data-nosnippet>276</a>    <span class="kw">let </span><span class="prelude-val">Ok</span>(kernel) = object::File::parse(kernel_image.as_ref()) <span class="kw">else </span>{
-<a href=#277 id=277 data-nosnippet>277</a>        <span class="kw">return </span><span class="bool-val">false</span>;
-<a href=#278 id=278 data-nosnippet>278</a>    };
-<a href=#279 id=279 data-nosnippet>279</a>    <span class="kw">let </span><span class="prelude-val">Ok</span>(dwarf): <span class="prelude-ty">Result</span>&lt;<span class="kw">_</span>, ()&gt; = gimli::Dwarf::load(|id| {
-<a href=#280 id=280 data-nosnippet>280</a>        <span class="kw">let </span>data = kernel
-<a href=#281 id=281 data-nosnippet>281</a>            .section_by_name(id.name())
-<a href=#282 id=282 data-nosnippet>282</a>            .and_then(|section| section.uncompressed_data().ok())
-<a href=#283 id=283 data-nosnippet>283</a>            .unwrap_or(Cow::Borrowed(<span class="kw-2">&amp;</span>[]));
-<a href=#284 id=284 data-nosnippet>284</a>        <span class="kw">let </span>data: Arc&lt;[u8]&gt; = Arc::from(data.as_ref());
-<a href=#285 id=285 data-nosnippet>285</a>        <span class="prelude-val">Ok</span>(gimli::EndianArcSlice::new(data, gimli::LittleEndian))
-<a href=#286 id=286 data-nosnippet>286</a>    }) <span class="kw">else </span>{
-<a href=#287 id=287 data-nosnippet>287</a>        <span class="kw">return </span><span class="bool-val">false</span>;
-<a href=#288 id=288 data-nosnippet>288</a>    };
-<a href=#289 id=289 data-nosnippet>289</a>    <span class="kw">unsafe </span>{
-<a href=#290 id=290 data-nosnippet>290</a>        DEBUG_CONTEXT = Context::from_dwarf(dwarf).ok();
-<a href=#291 id=291 data-nosnippet>291</a>        DEBUG_CONTEXT.is_some()
-<a href=#292 id=292 data-nosnippet>292</a>    }
-<a href=#293 id=293 data-nosnippet>293</a>}</code></pre></div></section></main></body></html>
+<a href=#203 id=203 data-nosnippet>203</a>    <span class="kw">if unsafe </span>{ ((frame.sp() &amp; !(STACK_SIZE - <span class="number">1</span>)) <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">crate</span>::thread::ThreadStack).as_mut() }
+<a href=#204 id=204 data-nosnippet>204</a>        .map(|stack| stack.magic == <span class="kw">crate</span>::thread::THREAD_MAGIC)
+<a href=#205 id=205 data-nosnippet>205</a>        .unwrap_or(<span class="bool-val">false</span>)
+<a href=#206 id=206 data-nosnippet>206</a>    {
+<a href=#207 id=207 data-nosnippet>207</a>        <span class="kw">crate</span>::thread::with_current(|th| {
+<a href=#208 id=208 data-nosnippet>208</a>            <span class="macro">println!</span>(
+<a href=#209 id=209 data-nosnippet>209</a>                <span class="string">"\n\nKeOS thread '{}' [core #{}, tid #{}] {}\n"</span>,
+<a href=#210 id=210 data-nosnippet>210</a>                th.name,
+<a href=#211 id=211 data-nosnippet>211</a>                abyss::x86_64::intrinsics::cpuid(),
+<a href=#212 id=212 data-nosnippet>212</a>                th.tid,
+<a href=#213 id=213 data-nosnippet>213</a>                info
+<a href=#214 id=214 data-nosnippet>214</a>            );
+<a href=#215 id=215 data-nosnippet>215</a>        });
+<a href=#216 id=216 data-nosnippet>216</a>    } <span class="kw">else </span>{
+<a href=#217 id=217 data-nosnippet>217</a>        <span class="macro">println!</span>(
+<a href=#218 id=218 data-nosnippet>218</a>            <span class="string">"\n\nKeOS thread '&lt;unknown&gt;' [core #{}, tid #?] {}\n"</span>,
+<a href=#219 id=219 data-nosnippet>219</a>            abyss::x86_64::intrinsics::cpuid(),
+<a href=#220 id=220 data-nosnippet>220</a>            info
+<a href=#221 id=221 data-nosnippet>221</a>        );
+<a href=#222 id=222 data-nosnippet>222</a>    }
+<a href=#223 id=223 data-nosnippet>223</a>
+<a href=#224 id=224 data-nosnippet>224</a>    <span class="macro">println!</span>(<span class="string">"Stack Backtrace: "</span>);
+<a href=#225 id=225 data-nosnippet>225</a>    <span class="kw">let </span><span class="kw-2">mut </span>state = (-<span class="number">2</span>, <span class="bool-val">false</span>);
+<a href=#226 id=226 data-nosnippet>226</a>    <span class="kw">let </span>sp_hi = frame.sp() &amp; !(STACK_SIZE - <span class="number">1</span>);
+<a href=#227 id=227 data-nosnippet>227</a>    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="kw">unsafe </span>{
+<a href=#228 id=228 data-nosnippet>228</a>        UnwindBacktrace::new(
+<a href=#229 id=229 data-nosnippet>229</a>            frame,
+<a href=#230 id=230 data-nosnippet>230</a>            sp_hi..sp_hi + STACK_SIZE,
+<a href=#231 id=231 data-nosnippet>231</a>            DwarfReader::from_peeker(EhFrameReader::start(), EhFrameReader),
+<a href=#232 id=232 data-nosnippet>232</a>        )
+<a href=#233 id=233 data-nosnippet>233</a>        .run(<span class="kw-2">&amp;mut </span>state, |state, this, <span class="kw">_</span>| {
+<a href=#234 id=234 data-nosnippet>234</a>            do_backtrace(state, <span class="kw-2">&amp;</span>this.frame)
+<a href=#235 id=235 data-nosnippet>235</a>        })
+<a href=#236 id=236 data-nosnippet>236</a>    } {
+<a href=#237 id=237 data-nosnippet>237</a>        <span class="macro">println!</span>(<span class="string">"** Backtrace Failed: {:?}"</span>, e);
+<a href=#238 id=238 data-nosnippet>238</a>    }
+<a href=#239 id=239 data-nosnippet>239</a>    <span class="kw">if let </span><span class="prelude-val">Some</span>(trap_frame) = <span class="kw">unsafe </span>{ kernel_gs::current().interrupt_frame.as_ref() } {
+<a href=#240 id=240 data-nosnippet>240</a>        <span class="macro">println!</span>(<span class="string">"Triggered by event at: "</span>);
+<a href=#241 id=241 data-nosnippet>241</a>        <span class="kw">let </span>frame = trap_frame.to_stack_frame();
+<a href=#242 id=242 data-nosnippet>242</a>        <span class="kw">let </span>sp_hi = frame.sp() &amp; !(STACK_SIZE - <span class="number">1</span>);
+<a href=#243 id=243 data-nosnippet>243</a>        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="kw">unsafe </span>{
+<a href=#244 id=244 data-nosnippet>244</a>            UnwindBacktrace::new(
+<a href=#245 id=245 data-nosnippet>245</a>                frame,
+<a href=#246 id=246 data-nosnippet>246</a>                sp_hi..sp_hi + STACK_SIZE,
+<a href=#247 id=247 data-nosnippet>247</a>                DwarfReader::from_peeker(EhFrameReader::start(), EhFrameReader),
+<a href=#248 id=248 data-nosnippet>248</a>            )
+<a href=#249 id=249 data-nosnippet>249</a>            .run(<span class="kw-2">&amp;mut </span>state, |depth, this, <span class="kw">_</span>| {
+<a href=#250 id=250 data-nosnippet>250</a>                do_backtrace(depth, <span class="kw-2">&amp;</span>this.frame)
+<a href=#251 id=251 data-nosnippet>251</a>            })
+<a href=#252 id=252 data-nosnippet>252</a>        } {
+<a href=#253 id=253 data-nosnippet>253</a>            <span class="macro">println!</span>(<span class="string">"** Backtrace Failed: {:?}"</span>, e);
+<a href=#254 id=254 data-nosnippet>254</a>        }
+<a href=#255 id=255 data-nosnippet>255</a>    }
+<a href=#256 id=256 data-nosnippet>256</a>    panic_internal_poweroff(state.<span class="number">1</span>)
+<a href=#257 id=257 data-nosnippet>257</a>}
+<a href=#258 id=258 data-nosnippet>258</a>
+<a href=#259 id=259 data-nosnippet>259</a><span class="doccomment">/// Load debugging symbols from kernel image
+<a href=#260 id=260 data-nosnippet>260</a></span><span class="attr">#[allow(clippy::result_unit_err)]
+<a href=#261 id=261 data-nosnippet>261</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>load_debug_infos() -&gt; bool {
+<a href=#262 id=262 data-nosnippet>262</a>    <span class="kw">use </span>object::{Object, ObjectSection};
+<a href=#263 id=263 data-nosnippet>263</a>    <span class="kw">let </span><span class="prelude-val">Some</span>(kernel_disk) = abyss::dev::get_bdev(<span class="number">0</span>) <span class="kw">else </span>{
+<a href=#264 id=264 data-nosnippet>264</a>        <span class="kw">return </span><span class="bool-val">false</span>;
+<a href=#265 id=265 data-nosnippet>265</a>    };
+<a href=#266 id=266 data-nosnippet>266</a>    <span class="kw">let </span>image_size = kernel_disk.block_cnt() * kernel_disk.block_size();
+<a href=#267 id=267 data-nosnippet>267</a>    <span class="kw">let </span><span class="kw-2">mut </span>kernel_image = <span class="macro">alloc::vec!</span>[<span class="number">0u8</span>; image_size].into_boxed_slice();
+<a href=#268 id=268 data-nosnippet>268</a>    <span class="kw">if </span>kernel_disk
+<a href=#269 id=269 data-nosnippet>269</a>        .read_bios(<span class="kw-2">&amp;mut </span><span class="prelude-val">Some</span>((<span class="number">0</span>, kernel_image.as_mut())).into_iter())
+<a href=#270 id=270 data-nosnippet>270</a>        .is_err()
+<a href=#271 id=271 data-nosnippet>271</a>    {
+<a href=#272 id=272 data-nosnippet>272</a>        <span class="kw">return </span><span class="bool-val">false</span>;
+<a href=#273 id=273 data-nosnippet>273</a>    }
+<a href=#274 id=274 data-nosnippet>274</a>    <span class="kw">let </span><span class="prelude-val">Ok</span>(kernel) = object::File::parse(kernel_image.as_ref()) <span class="kw">else </span>{
+<a href=#275 id=275 data-nosnippet>275</a>        <span class="kw">return </span><span class="bool-val">false</span>;
+<a href=#276 id=276 data-nosnippet>276</a>    };
+<a href=#277 id=277 data-nosnippet>277</a>    <span class="kw">let </span><span class="prelude-val">Ok</span>(dwarf): <span class="prelude-ty">Result</span>&lt;<span class="kw">_</span>, ()&gt; = gimli::Dwarf::load(|id| {
+<a href=#278 id=278 data-nosnippet>278</a>        <span class="kw">let </span>data = kernel
+<a href=#279 id=279 data-nosnippet>279</a>            .section_by_name(id.name())
+<a href=#280 id=280 data-nosnippet>280</a>            .and_then(|section| section.uncompressed_data().ok())
+<a href=#281 id=281 data-nosnippet>281</a>            .unwrap_or(Cow::Borrowed(<span class="kw-2">&amp;</span>[]));
+<a href=#282 id=282 data-nosnippet>282</a>        <span class="kw">let </span>data: Arc&lt;[u8]&gt; = Arc::from(data.as_ref());
+<a href=#283 id=283 data-nosnippet>283</a>        <span class="prelude-val">Ok</span>(gimli::EndianArcSlice::new(data, gimli::LittleEndian))
+<a href=#284 id=284 data-nosnippet>284</a>    }) <span class="kw">else </span>{
+<a href=#285 id=285 data-nosnippet>285</a>        <span class="kw">return </span><span class="bool-val">false</span>;
+<a href=#286 id=286 data-nosnippet>286</a>    };
+<a href=#287 id=287 data-nosnippet>287</a>    <span class="kw">unsafe </span>{
+<a href=#288 id=288 data-nosnippet>288</a>        DEBUG_CONTEXT = Context::from_dwarf(dwarf).ok();
+<a href=#289 id=289 data-nosnippet>289</a>        DEBUG_CONTEXT.is_some()
+<a href=#290 id=290 data-nosnippet>290</a>    }
+<a href=#291 id=291 data-nosnippet>291</a>}</code></pre></div></section></main></body></html>

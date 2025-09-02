@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `keos-project4/src/sync/mutex.rs`."><title>mutex.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-069232aa.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (425a9c0a0 2025-08-17)" data-channel="nightly" data-search-js="search-b069538f.js" data-settings-js="settings-5514c975.js" ><script src="../../../static.files/storage-68b7e25d.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">keos_project4/sync/</div>mutex.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! # Mutex.
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `keos-project4/src/sync/mutex.rs`."><title>mutex.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="keos_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../../../static.files/storage-e2aeef58.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">keos_project4/sync/</div>mutex.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! # Mutex.
 <a href=#2 id=2 data-nosnippet>2</a>//!
 <a href=#3 id=3 data-nosnippet>3</a>//! Mutex is a synchronization primitive that allows **only one thread at a
 <a href=#4 id=4 data-nosnippet>4</a>//! time** to access a critical section of code, protecting shared resources
@@ -53,7 +53,7 @@
 <a href=#53 id=53 data-nosnippet>53</a>/// This mutex will block threads waiting for the lock to become available.
 <a href=#54 id=54 data-nosnippet>54</a>/// The mutex can be created via a [`new`] constructor. Each spinlock has a
 <a href=#55 id=55 data-nosnippet>55</a>/// type parameter which represents the data that it is protecting. The data can
-<a href=#56 id=56 data-nosnippet>56</a>/// only be accessed through the RAII guards returned from [`lock`] and
+<a href=#56 id=56 data-nosnippet>56</a>/// only be accessed through the guards returned from [`lock`] and
 <a href=#57 id=57 data-nosnippet>57</a>/// [`try_lock`], which guarantees that the data is only ever accessed when the
 <a href=#58 id=58 data-nosnippet>58</a>/// mutex is locked.
 <a href=#59 id=59 data-nosnippet>59</a>///
@@ -129,7 +129,7 @@
 <a href=#129 id=129 data-nosnippet>129</a>    ///
 <a href=#130 id=130 data-nosnippet>130</a>    /// This function will block the local thread until it is available to
 <a href=#131 id=131 data-nosnippet>131</a>    /// acquire the mutex. Upon returning, the thread is the only thread
-<a href=#132 id=132 data-nosnippet>132</a>    /// with the lock held. An RAII guard is returned to allow scoped unlock
+<a href=#132 id=132 data-nosnippet>132</a>    /// with the lock held. An guard is returned to allow scoped unlock
 <a href=#133 id=133 data-nosnippet>133</a>    /// of the lock. When the guard goes out of scope, the mutex will be
 <a href=#134 id=134 data-nosnippet>134</a>    /// unlocked.
 <a href=#135 id=135 data-nosnippet>135</a>    ///
@@ -158,132 +158,131 @@
 <a href=#158 id=158 data-nosnippet>158</a>    <span class="doccomment">/// Attempts to acquire this lock.
 <a href=#159 id=159 data-nosnippet>159</a>    ///
 <a href=#160 id=160 data-nosnippet>160</a>    /// If the lock could not be acquired at this time, then [`Err`] is
-<a href=#161 id=161 data-nosnippet>161</a>    /// returned. Otherwise, an RAII guard is returned. The lock will be
-<a href=#162 id=162 data-nosnippet>162</a>    /// unlocked when the guard is dropped.
-<a href=#163 id=163 data-nosnippet>163</a>    ///
-<a href=#164 id=164 data-nosnippet>164</a>    /// This function does not block.
-<a href=#165 id=165 data-nosnippet>165</a>    ///
-<a href=#166 id=166 data-nosnippet>166</a>    /// # Errors
-<a href=#167 id=167 data-nosnippet>167</a>    ///
-<a href=#168 id=168 data-nosnippet>168</a>    /// If the mutex could not be acquired because it is already locked, then
-<a href=#169 id=169 data-nosnippet>169</a>    /// this call will return the [`WouldBlock`] error.
-<a href=#170 id=170 data-nosnippet>170</a>    ///
-<a href=#171 id=171 data-nosnippet>171</a>    /// # Examples
-<a href=#172 id=172 data-nosnippet>172</a>    ///
-<a href=#173 id=173 data-nosnippet>173</a>    /// ```
-<a href=#174 id=174 data-nosnippet>174</a>    /// use keos::sync::Mutex;
-<a href=#175 id=175 data-nosnippet>175</a>    /// use alloc::sync::Arc;
-<a href=#176 id=176 data-nosnippet>176</a>    /// use keos::thread;
-<a href=#177 id=177 data-nosnippet>177</a>    ///
-<a href=#178 id=178 data-nosnippet>178</a>    /// let mutex = Arc::new(Mutex::new(0));
-<a href=#179 id=179 data-nosnippet>179</a>    /// let c_mutex = Arc::clone(&amp;spinlock);
-<a href=#180 id=180 data-nosnippet>180</a>    ///
-<a href=#181 id=181 data-nosnippet>181</a>    /// thread::spawn(move || {
-<a href=#182 id=182 data-nosnippet>182</a>    ///     let mut lock = c_mutex.try_lock();
-<a href=#183 id=183 data-nosnippet>183</a>    ///     if let Ok(ref mut mutex) = lock {
-<a href=#184 id=184 data-nosnippet>184</a>    ///         **mutex = 10;
-<a href=#185 id=185 data-nosnippet>185</a>    ///     } else {
-<a href=#186 id=186 data-nosnippet>186</a>    ///         println!("try_lock failed");
-<a href=#187 id=187 data-nosnippet>187</a>    ///     }
-<a href=#188 id=188 data-nosnippet>188</a>    /// }).join().expect("thread::spawn failed");
-<a href=#189 id=189 data-nosnippet>189</a>    /// assert_eq!(*mutex.lock().unwrap(), 10);
-<a href=#190 id=190 data-nosnippet>190</a>    /// ```
-<a href=#191 id=191 data-nosnippet>191</a>    </span><span class="kw">pub fn </span>try_lock(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;MutexGuard&lt;<span class="lifetime">'_</span>, T&gt;, WouldBlock&gt; {
-<a href=#192 id=192 data-nosnippet>192</a>        <span class="kw">if let </span><span class="prelude-val">Ok</span>(guard) = <span class="self">self</span>.t.try_lock() {
-<a href=#193 id=193 data-nosnippet>193</a>            <span class="prelude-val">Ok</span>(MutexGuard {
-<a href=#194 id=194 data-nosnippet>194</a>                guard: <span class="prelude-val">Some</span>(guard),
-<a href=#195 id=195 data-nosnippet>195</a>                lock: <span class="self">self</span>,
-<a href=#196 id=196 data-nosnippet>196</a>            })
-<a href=#197 id=197 data-nosnippet>197</a>        } <span class="kw">else </span>{
-<a href=#198 id=198 data-nosnippet>198</a>            <span class="prelude-val">Err</span>(WouldBlock)
-<a href=#199 id=199 data-nosnippet>199</a>        }
-<a href=#200 id=200 data-nosnippet>200</a>    }
-<a href=#201 id=201 data-nosnippet>201</a>
-<a href=#202 id=202 data-nosnippet>202</a>    <span class="doccomment">/// Consumes this mutex, returning the underlying data.
-<a href=#203 id=203 data-nosnippet>203</a>    ///
-<a href=#204 id=204 data-nosnippet>204</a>    /// # Examples
-<a href=#205 id=205 data-nosnippet>205</a>    ///
-<a href=#206 id=206 data-nosnippet>206</a>    /// ```
-<a href=#207 id=207 data-nosnippet>207</a>    /// use keos::sync::Mutex;
-<a href=#208 id=208 data-nosnippet>208</a>    ///
-<a href=#209 id=209 data-nosnippet>209</a>    /// let mutex = Mutex::new(0);
-<a href=#210 id=210 data-nosnippet>210</a>    /// assert_eq!(mutex.into_inner().unwrap(), 0);
-<a href=#211 id=211 data-nosnippet>211</a>    /// ```
-<a href=#212 id=212 data-nosnippet>212</a>    </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; T
-<a href=#213 id=213 data-nosnippet>213</a>    <span class="kw">where
-<a href=#214 id=214 data-nosnippet>214</a>        </span>T: Sized,
-<a href=#215 id=215 data-nosnippet>215</a>    {
-<a href=#216 id=216 data-nosnippet>216</a>        <span class="self">self</span>.t.into_inner()
-<a href=#217 id=217 data-nosnippet>217</a>    }
-<a href=#218 id=218 data-nosnippet>218</a>}
-<a href=#219 id=219 data-nosnippet>219</a>
-<a href=#220 id=220 data-nosnippet>220</a><span class="kw">impl</span>&lt;T: Default&gt; Default <span class="kw">for </span>Mutex&lt;T&gt; {
-<a href=#221 id=221 data-nosnippet>221</a>    <span class="doccomment">/// Creates a `Mutex&lt;T&gt;`, with the `Default` value for T.
-<a href=#222 id=222 data-nosnippet>222</a>    </span><span class="kw">fn </span>default() -&gt; Mutex&lt;T&gt; {
-<a href=#223 id=223 data-nosnippet>223</a>        Mutex::new(Default::default())
-<a href=#224 id=224 data-nosnippet>224</a>    }
-<a href=#225 id=225 data-nosnippet>225</a>}
-<a href=#226 id=226 data-nosnippet>226</a>
-<a href=#227 id=227 data-nosnippet>227</a><span class="kw">impl</span>&lt;T&gt; Deref <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {
-<a href=#228 id=228 data-nosnippet>228</a>    <span class="kw">type </span>Target = T;
-<a href=#229 id=229 data-nosnippet>229</a>
-<a href=#230 id=230 data-nosnippet>230</a>    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
-<a href=#231 id=231 data-nosnippet>231</a>        <span class="self">self</span>.guard.as_ref().unwrap()
-<a href=#232 id=232 data-nosnippet>232</a>    }
-<a href=#233 id=233 data-nosnippet>233</a>}
-<a href=#234 id=234 data-nosnippet>234</a>
-<a href=#235 id=235 data-nosnippet>235</a><span class="kw">impl</span>&lt;T&gt; DerefMut <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {
-<a href=#236 id=236 data-nosnippet>236</a>    <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
-<a href=#237 id=237 data-nosnippet>237</a>        <span class="kw-2">&amp;mut *</span><span class="self">self</span>.guard.as_mut().unwrap()
-<a href=#238 id=238 data-nosnippet>238</a>    }
-<a href=#239 id=239 data-nosnippet>239</a>}
-<a href=#240 id=240 data-nosnippet>240</a>
-<a href=#241 id=241 data-nosnippet>241</a><span class="doccomment">/// An RAII implementation of a "scoped lock" of a mutex. When this structure
-<a href=#242 id=242 data-nosnippet>242</a>/// is dropped (falls out of scope) without unlocking, the panic occurs.
-<a href=#243 id=243 data-nosnippet>243</a>///
-<a href=#244 id=244 data-nosnippet>244</a>/// The lock must be explicitly unlocked by [`unlock`] method.
-<a href=#245 id=245 data-nosnippet>245</a>///
-<a href=#246 id=246 data-nosnippet>246</a>/// The data protected by the mutex can be accessed through this guard.
-<a href=#247 id=247 data-nosnippet>247</a>///
-<a href=#248 id=248 data-nosnippet>248</a>/// This structure is created by the [`lock`] and [`try_lock`] methods on
-<a href=#249 id=249 data-nosnippet>249</a>/// [`Mutex`].
-<a href=#250 id=250 data-nosnippet>250</a>///
-<a href=#251 id=251 data-nosnippet>251</a>/// [`lock`]: Mutex::lock
-<a href=#252 id=252 data-nosnippet>252</a>/// [`try_lock`]: Mutex::try_lock
-<a href=#253 id=253 data-nosnippet>253</a>/// [`unlock`]: MutexGuard::unlock
-<a href=#254 id=254 data-nosnippet>254</a></span><span class="kw">pub struct </span>MutexGuard&lt;<span class="lifetime">'a</span>, T: <span class="lifetime">'a</span>&gt; {
-<a href=#255 id=255 data-nosnippet>255</a>    guard: <span class="prelude-ty">Option</span>&lt;SpinLockGuard&lt;<span class="lifetime">'a</span>, T&gt;&gt;,
-<a href=#256 id=256 data-nosnippet>256</a>    lock: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Mutex&lt;T&gt;,
-<a href=#257 id=257 data-nosnippet>257</a>}
-<a href=#258 id=258 data-nosnippet>258</a>
-<a href=#259 id=259 data-nosnippet>259</a><span class="kw">impl</span>&lt;T&gt; !Send <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {}
-<a href=#260 id=260 data-nosnippet>260</a><span class="kw">unsafe impl</span>&lt;T: Sync&gt; Sync <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {}
-<a href=#261 id=261 data-nosnippet>261</a>
-<a href=#262 id=262 data-nosnippet>262</a><span class="kw">impl</span>&lt;T&gt; MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {
-<a href=#263 id=263 data-nosnippet>263</a>    <span class="doccomment">/// Releases the underlying [`Mutex`].
-<a href=#264 id=264 data-nosnippet>264</a>    ///
-<a href=#265 id=265 data-nosnippet>265</a>    /// As the guard does **not** automatically release the lock on drop,
-<a href=#266 id=266 data-nosnippet>266</a>    /// the caller must explicitly invoke [`unlock`] to mark the lock
-<a href=#267 id=267 data-nosnippet>267</a>    /// as available again.
-<a href=#268 id=268 data-nosnippet>268</a>    ///
-<a href=#269 id=269 data-nosnippet>269</a>    /// # Example
-<a href=#270 id=270 data-nosnippet>270</a>    /// ```
-<a href=#271 id=271 data-nosnippet>271</a>    /// let lock = Mutex::new(123);
-<a href=#272 id=272 data-nosnippet>272</a>    /// let guard = lock.lock();
-<a href=#273 id=273 data-nosnippet>273</a>    ///
-<a href=#274 id=274 data-nosnippet>274</a>    /// // Work with the locked data...
-<a href=#275 id=275 data-nosnippet>275</a>    ///
-<a href=#276 id=276 data-nosnippet>276</a>    /// // Explicitly release the lock.
-<a href=#277 id=277 data-nosnippet>277</a>    /// guard.unlock();
-<a href=#278 id=278 data-nosnippet>278</a>    /// ```
-<a href=#279 id=279 data-nosnippet>279</a>    /// [`unlock`]: MutexGuard::unlock
-<a href=#280 id=280 data-nosnippet>280</a>    </span><span class="kw">pub fn </span>unlock(<span class="kw-2">mut </span><span class="self">self</span>) {
-<a href=#281 id=281 data-nosnippet>281</a>        <span class="macro">todo!</span>()
-<a href=#282 id=282 data-nosnippet>282</a>    }
-<a href=#283 id=283 data-nosnippet>283</a>}
-<a href=#284 id=284 data-nosnippet>284</a>
-<a href=#285 id=285 data-nosnippet>285</a><span class="kw">impl</span>&lt;T&gt; Drop <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {
-<a href=#286 id=286 data-nosnippet>286</a>    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-<a href=#287 id=287 data-nosnippet>287</a>        <span class="macro">panic!</span>(<span class="string">"`.unlock()` must be explicitly called for MutexGuard."</span>);
-<a href=#288 id=288 data-nosnippet>288</a>    }
-<a href=#289 id=289 data-nosnippet>289</a>}</code></pre></div></section></main></body></html>
+<a href=#161 id=161 data-nosnippet>161</a>    /// returned. Otherwise, an guard is returned.
+<a href=#162 id=162 data-nosnippet>162</a>    ///
+<a href=#163 id=163 data-nosnippet>163</a>    /// This function does not block.
+<a href=#164 id=164 data-nosnippet>164</a>    ///
+<a href=#165 id=165 data-nosnippet>165</a>    /// # Errors
+<a href=#166 id=166 data-nosnippet>166</a>    ///
+<a href=#167 id=167 data-nosnippet>167</a>    /// If the mutex could not be acquired because it is already locked, then
+<a href=#168 id=168 data-nosnippet>168</a>    /// this call will return the [`WouldBlock`] error.
+<a href=#169 id=169 data-nosnippet>169</a>    ///
+<a href=#170 id=170 data-nosnippet>170</a>    /// # Examples
+<a href=#171 id=171 data-nosnippet>171</a>    ///
+<a href=#172 id=172 data-nosnippet>172</a>    /// ```
+<a href=#173 id=173 data-nosnippet>173</a>    /// use keos::sync::Mutex;
+<a href=#174 id=174 data-nosnippet>174</a>    /// use alloc::sync::Arc;
+<a href=#175 id=175 data-nosnippet>175</a>    /// use keos::thread;
+<a href=#176 id=176 data-nosnippet>176</a>    ///
+<a href=#177 id=177 data-nosnippet>177</a>    /// let mutex = Arc::new(Mutex::new(0));
+<a href=#178 id=178 data-nosnippet>178</a>    /// let c_mutex = Arc::clone(&amp;spinlock);
+<a href=#179 id=179 data-nosnippet>179</a>    ///
+<a href=#180 id=180 data-nosnippet>180</a>    /// thread::spawn(move || {
+<a href=#181 id=181 data-nosnippet>181</a>    ///     let mut lock = c_mutex.try_lock();
+<a href=#182 id=182 data-nosnippet>182</a>    ///     if let Ok(ref mut mutex) = lock {
+<a href=#183 id=183 data-nosnippet>183</a>    ///         **mutex = 10;
+<a href=#184 id=184 data-nosnippet>184</a>    ///     } else {
+<a href=#185 id=185 data-nosnippet>185</a>    ///         println!("try_lock failed");
+<a href=#186 id=186 data-nosnippet>186</a>    ///     }
+<a href=#187 id=187 data-nosnippet>187</a>    /// }).join().expect("thread::spawn failed");
+<a href=#188 id=188 data-nosnippet>188</a>    /// assert_eq!(*mutex.lock().unwrap(), 10);
+<a href=#189 id=189 data-nosnippet>189</a>    /// ```
+<a href=#190 id=190 data-nosnippet>190</a>    </span><span class="kw">pub fn </span>try_lock(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;MutexGuard&lt;<span class="lifetime">'_</span>, T&gt;, WouldBlock&gt; {
+<a href=#191 id=191 data-nosnippet>191</a>        <span class="kw">if let </span><span class="prelude-val">Ok</span>(guard) = <span class="self">self</span>.t.try_lock() {
+<a href=#192 id=192 data-nosnippet>192</a>            <span class="prelude-val">Ok</span>(MutexGuard {
+<a href=#193 id=193 data-nosnippet>193</a>                guard: <span class="prelude-val">Some</span>(guard),
+<a href=#194 id=194 data-nosnippet>194</a>                lock: <span class="self">self</span>,
+<a href=#195 id=195 data-nosnippet>195</a>            })
+<a href=#196 id=196 data-nosnippet>196</a>        } <span class="kw">else </span>{
+<a href=#197 id=197 data-nosnippet>197</a>            <span class="prelude-val">Err</span>(WouldBlock)
+<a href=#198 id=198 data-nosnippet>198</a>        }
+<a href=#199 id=199 data-nosnippet>199</a>    }
+<a href=#200 id=200 data-nosnippet>200</a>
+<a href=#201 id=201 data-nosnippet>201</a>    <span class="doccomment">/// Consumes this mutex, returning the underlying data.
+<a href=#202 id=202 data-nosnippet>202</a>    ///
+<a href=#203 id=203 data-nosnippet>203</a>    /// # Examples
+<a href=#204 id=204 data-nosnippet>204</a>    ///
+<a href=#205 id=205 data-nosnippet>205</a>    /// ```
+<a href=#206 id=206 data-nosnippet>206</a>    /// use keos::sync::Mutex;
+<a href=#207 id=207 data-nosnippet>207</a>    ///
+<a href=#208 id=208 data-nosnippet>208</a>    /// let mutex = Mutex::new(0);
+<a href=#209 id=209 data-nosnippet>209</a>    /// assert_eq!(mutex.into_inner().unwrap(), 0);
+<a href=#210 id=210 data-nosnippet>210</a>    /// ```
+<a href=#211 id=211 data-nosnippet>211</a>    </span><span class="kw">pub fn </span>into_inner(<span class="self">self</span>) -&gt; T
+<a href=#212 id=212 data-nosnippet>212</a>    <span class="kw">where
+<a href=#213 id=213 data-nosnippet>213</a>        </span>T: Sized,
+<a href=#214 id=214 data-nosnippet>214</a>    {
+<a href=#215 id=215 data-nosnippet>215</a>        <span class="self">self</span>.t.into_inner()
+<a href=#216 id=216 data-nosnippet>216</a>    }
+<a href=#217 id=217 data-nosnippet>217</a>}
+<a href=#218 id=218 data-nosnippet>218</a>
+<a href=#219 id=219 data-nosnippet>219</a><span class="kw">impl</span>&lt;T: Default&gt; Default <span class="kw">for </span>Mutex&lt;T&gt; {
+<a href=#220 id=220 data-nosnippet>220</a>    <span class="doccomment">/// Creates a `Mutex&lt;T&gt;`, with the `Default` value for T.
+<a href=#221 id=221 data-nosnippet>221</a>    </span><span class="kw">fn </span>default() -&gt; Mutex&lt;T&gt; {
+<a href=#222 id=222 data-nosnippet>222</a>        Mutex::new(Default::default())
+<a href=#223 id=223 data-nosnippet>223</a>    }
+<a href=#224 id=224 data-nosnippet>224</a>}
+<a href=#225 id=225 data-nosnippet>225</a>
+<a href=#226 id=226 data-nosnippet>226</a><span class="kw">impl</span>&lt;T&gt; Deref <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#227 id=227 data-nosnippet>227</a>    <span class="kw">type </span>Target = T;
+<a href=#228 id=228 data-nosnippet>228</a>
+<a href=#229 id=229 data-nosnippet>229</a>    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
+<a href=#230 id=230 data-nosnippet>230</a>        <span class="self">self</span>.guard.as_ref().unwrap()
+<a href=#231 id=231 data-nosnippet>231</a>    }
+<a href=#232 id=232 data-nosnippet>232</a>}
+<a href=#233 id=233 data-nosnippet>233</a>
+<a href=#234 id=234 data-nosnippet>234</a><span class="kw">impl</span>&lt;T&gt; DerefMut <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#235 id=235 data-nosnippet>235</a>    <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
+<a href=#236 id=236 data-nosnippet>236</a>        <span class="kw-2">&amp;mut *</span><span class="self">self</span>.guard.as_mut().unwrap()
+<a href=#237 id=237 data-nosnippet>237</a>    }
+<a href=#238 id=238 data-nosnippet>238</a>}
+<a href=#239 id=239 data-nosnippet>239</a>
+<a href=#240 id=240 data-nosnippet>240</a><span class="doccomment">/// An implementation of a "scoped lock" of a mutex. When this structure
+<a href=#241 id=241 data-nosnippet>241</a>/// is dropped (falls out of scope) without unlocking, the panic occurs.
+<a href=#242 id=242 data-nosnippet>242</a>///
+<a href=#243 id=243 data-nosnippet>243</a>/// The lock must be explicitly unlocked by [`unlock`] method.
+<a href=#244 id=244 data-nosnippet>244</a>///
+<a href=#245 id=245 data-nosnippet>245</a>/// The data protected by the mutex can be accessed through this guard.
+<a href=#246 id=246 data-nosnippet>246</a>///
+<a href=#247 id=247 data-nosnippet>247</a>/// This structure is created by the [`lock`] and [`try_lock`] methods on
+<a href=#248 id=248 data-nosnippet>248</a>/// [`Mutex`].
+<a href=#249 id=249 data-nosnippet>249</a>///
+<a href=#250 id=250 data-nosnippet>250</a>/// [`lock`]: Mutex::lock
+<a href=#251 id=251 data-nosnippet>251</a>/// [`try_lock`]: Mutex::try_lock
+<a href=#252 id=252 data-nosnippet>252</a>/// [`unlock`]: MutexGuard::unlock
+<a href=#253 id=253 data-nosnippet>253</a></span><span class="kw">pub struct </span>MutexGuard&lt;<span class="lifetime">'a</span>, T: <span class="lifetime">'a</span>&gt; {
+<a href=#254 id=254 data-nosnippet>254</a>    guard: <span class="prelude-ty">Option</span>&lt;SpinLockGuard&lt;<span class="lifetime">'a</span>, T&gt;&gt;,
+<a href=#255 id=255 data-nosnippet>255</a>    lock: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Mutex&lt;T&gt;,
+<a href=#256 id=256 data-nosnippet>256</a>}
+<a href=#257 id=257 data-nosnippet>257</a>
+<a href=#258 id=258 data-nosnippet>258</a><span class="kw">impl</span>&lt;T&gt; !Send <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {}
+<a href=#259 id=259 data-nosnippet>259</a><span class="kw">unsafe impl</span>&lt;T: Sync&gt; Sync <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {}
+<a href=#260 id=260 data-nosnippet>260</a>
+<a href=#261 id=261 data-nosnippet>261</a><span class="kw">impl</span>&lt;T&gt; MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#262 id=262 data-nosnippet>262</a>    <span class="doccomment">/// Releases the underlying [`Mutex`].
+<a href=#263 id=263 data-nosnippet>263</a>    ///
+<a href=#264 id=264 data-nosnippet>264</a>    /// As the guard does **not** automatically release the lock on drop,
+<a href=#265 id=265 data-nosnippet>265</a>    /// the caller must explicitly invoke [`unlock`] to mark the lock
+<a href=#266 id=266 data-nosnippet>266</a>    /// as available again.
+<a href=#267 id=267 data-nosnippet>267</a>    ///
+<a href=#268 id=268 data-nosnippet>268</a>    /// # Example
+<a href=#269 id=269 data-nosnippet>269</a>    /// ```
+<a href=#270 id=270 data-nosnippet>270</a>    /// let lock = Mutex::new(123);
+<a href=#271 id=271 data-nosnippet>271</a>    /// let guard = lock.lock();
+<a href=#272 id=272 data-nosnippet>272</a>    ///
+<a href=#273 id=273 data-nosnippet>273</a>    /// // Work with the locked data...
+<a href=#274 id=274 data-nosnippet>274</a>    ///
+<a href=#275 id=275 data-nosnippet>275</a>    /// // Explicitly release the lock.
+<a href=#276 id=276 data-nosnippet>276</a>    /// guard.unlock();
+<a href=#277 id=277 data-nosnippet>277</a>    /// ```
+<a href=#278 id=278 data-nosnippet>278</a>    /// [`unlock`]: MutexGuard::unlock
+<a href=#279 id=279 data-nosnippet>279</a>    </span><span class="kw">pub fn </span>unlock(<span class="kw-2">mut </span><span class="self">self</span>) {
+<a href=#280 id=280 data-nosnippet>280</a>        <span class="macro">todo!</span>()
+<a href=#281 id=281 data-nosnippet>281</a>    }
+<a href=#282 id=282 data-nosnippet>282</a>}
+<a href=#283 id=283 data-nosnippet>283</a>
+<a href=#284 id=284 data-nosnippet>284</a><span class="kw">impl</span>&lt;T&gt; Drop <span class="kw">for </span>MutexGuard&lt;<span class="lifetime">'_</span>, T&gt; {
+<a href=#285 id=285 data-nosnippet>285</a>    <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+<a href=#286 id=286 data-nosnippet>286</a>        <span class="macro">panic!</span>(<span class="string">"`.unlock()` must be explicitly called for MutexGuard."</span>);
+<a href=#287 id=287 data-nosnippet>287</a>    }
+<a href=#288 id=288 data-nosnippet>288</a>}</code></pre></div></section></main></body></html>
