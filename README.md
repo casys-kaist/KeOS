@@ -34,7 +34,7 @@ For detailed instructions and documentation, refer to the [KeOS Manual](https://
 ```bash
 $ mkdir keos
 $ cd keos
-$ curl https://raw.githubusercontent.com/casys-kaist/KeOS/refs/heads/main/install.sh | sh
+$ curl https://raw.githubusercontent.com/casys-kaist/KeOS/refs/heads/main/scripts/install.sh | sh
 ```
 
 ## Related Projects
