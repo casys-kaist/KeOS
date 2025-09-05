@@ -26,7 +26,7 @@ an array of logical block addresses in a separate block.</p>
 blocks.</p>
 <p>This allows for even larger file sizes by introducing an extra level
 of indirection.</p>
-</div><h2 id="implementations" class="section-header">Implementations<a href="#implementations" class="anchor">§</a></h2><div id="implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-Inode" class="impl"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#191-348">Source</a><a href="#impl-Inode" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode">Inode</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.from_disk_layout" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#206-222">Source</a><h4 class="code-header">pub(crate) fn <a href="#method.from_disk_layout" class="fn">from_disk_layout</a>(inode: &amp;<a class="struct" href="../disk_layout/struct.Inode.html" title="struct keos_project5::ffs::disk_layout::Inode">Inode</a>) -&gt; Result&lt;Self, <a class="enum" href="../../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Constructs an in-memory <a href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode"><code>Inode</code></a> from its on-disk representation.</p>
+</div><h2 id="implementations" class="section-header">Implementations<a href="#implementations" class="anchor">§</a></h2><div id="implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-Inode" class="impl"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#191-347">Source</a><a href="#impl-Inode" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode">Inode</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.from_disk_layout" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#206-221">Source</a><h4 class="code-header">pub(crate) fn <a href="#method.from_disk_layout" class="fn">from_disk_layout</a>(inode: &amp;<a class="struct" href="../disk_layout/struct.Inode.html" title="struct keos_project5::ffs::disk_layout::Inode">Inode</a>) -&gt; Result&lt;Self, <a class="enum" href="../../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Constructs an in-memory <a href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode"><code>Inode</code></a> from its on-disk representation.</p>
 <h5 id="arguments"><a class="doc-anchor" href="#arguments">§</a>Arguments</h5>
 <ul>
 <li><code>inode</code>: A reference to the <a href="../disk_layout/struct.Inode.html" title="struct keos_project5::ffs::disk_layout::Inode"><code>disk_layout::Inode</code></a> structure loaded
@@ -41,12 +41,12 @@ data.</li>
 <p>This function performs necessary validation and translation between the
 raw on-disk layout and the structured, in-memory format used by the
 filesystem.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.into_disk_format" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#230-245">Source</a><h4 class="code-header">pub fn <a href="#method.into_disk_format" class="fn">into_disk_format</a>(&amp;self) -&gt; <a class="struct" href="../disk_layout/struct.Inode.html" title="struct keos_project5::ffs::disk_layout::Inode">Inode</a></h4></section></summary><div class="docblock"><p>Converts the in-memory <a href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode"><code>Inode</code></a> structure into its on-disk
+</div></details><details class="toggle method-toggle" open><summary><section id="method.into_disk_format" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#229-244">Source</a><h4 class="code-header">pub fn <a href="#method.into_disk_format" class="fn">into_disk_format</a>(&amp;self) -&gt; <a class="struct" href="../disk_layout/struct.Inode.html" title="struct keos_project5::ffs::disk_layout::Inode">Inode</a></h4></section></summary><div class="docblock"><p>Converts the in-memory <a href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode"><code>Inode</code></a> structure into its on-disk
 representation.</p>
 <p>This is used when persisting an inode to disk, typically during
 checkpointing or journal submission. The returned <a href="../disk_layout/struct.Inode.html" title="struct keos_project5::ffs::disk_layout::Inode"><code>disk_layout::Inode</code></a>
 struct matches the format expected by the on-disk inode array.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.new" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#260-274">Source</a><h4 class="code-header">pub(crate) fn <a href="#method.new" class="fn">new</a>(ino: <a class="struct" href="../../../keos/fs/struct.InodeNumber.html" title="struct keos::fs::InodeNumber">InodeNumber</a>, is_dir: bool) -&gt; Self</h4></section></summary><div class="docblock"><p>Creates a new in-memory <a href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode"><code>Inode</code></a> instance.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.new" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#259-273">Source</a><h4 class="code-header">pub(crate) fn <a href="#method.new" class="fn">new</a>(ino: <a class="struct" href="../../../keos/fs/struct.InodeNumber.html" title="struct keos::fs::InodeNumber">InodeNumber</a>, is_dir: bool) -&gt; Self</h4></section></summary><div class="docblock"><p>Creates a new in-memory <a href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode"><code>Inode</code></a> instance.</p>
 <p>This function is used to initialize a fresh inode in memory before it is
 ever written to disk. It sets the inode number and whether the inode
 represents a directory.</p>
@@ -58,7 +58,7 @@ represents a directory.</p>
 </ul>
 <h5 id="returns-1"><a class="doc-anchor" href="#returns-1">§</a>Returns</h5>
 <p>A new <a href="struct.Inode.html" title="struct keos_project5::ffs::inode::Inode"><code>Inode</code></a> instance ready to be inserted into the inode table.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#287-296">Source</a><h4 class="code-header">pub fn <a href="#method.get" class="fn">get</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#286-295">Source</a><h4 class="code-header">pub fn <a href="#method.get" class="fn">get</a>(
     &amp;self,
     ffs: &amp;<a class="struct" href="../struct.FastFileSystemInner.html" title="struct keos_project5::ffs::FastFileSystemInner">FastFileSystemInner</a>,
     fba: <a class="struct" href="../../../keos/fs/struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber">FileBlockNumber</a>,
@@ -75,7 +75,7 @@ stored.</li>
 <li><code>Err(KernelError)</code>: If the block is not allocated or the block number
 is out of bounds.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.grow" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#313-321">Source</a><h4 class="code-header">pub fn <a href="#method.grow" class="fn">grow</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.grow" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#312-320">Source</a><h4 class="code-header">pub fn <a href="#method.grow" class="fn">grow</a>(
     &amp;mut self,
     ffs: &amp;<a class="struct" href="../struct.FastFileSystemInner.html" title="struct keos_project5::ffs::FastFileSystemInner">FastFileSystemInner</a>,
     until: <a class="struct" href="../../../keos/fs/struct.FileBlockNumber.html" title="struct keos::fs::FileBlockNumber">FileBlockNumber</a>,
@@ -96,7 +96,7 @@ should grow to cover.</li>
 <p>This function ensures that all blocks up to <code>until</code> are allocated,
 performing allocation of direct and indirect blocks as needed. The
 transaction log is updated to support crash consistency.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.zeroify" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#326-347">Source</a><h4 class="code-header">pub fn <a href="#method.zeroify" class="fn">zeroify</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.zeroify" class="method"><a class="src rightside" href="../../../src/keos_project5/ffs/inode.rs.html#325-346">Source</a><h4 class="code-header">pub fn <a href="#method.zeroify" class="fn">zeroify</a>(
     ino: &amp;mut <a class="struct" href="../access_control/struct.TrackedInodeWriteGuard.html" title="struct keos_project5::ffs::access_control::TrackedInodeWriteGuard">TrackedInodeWriteGuard</a>&lt;'_, '_, '_, '_&gt;,
     tx: &amp;<a class="struct" href="../journal/struct.RunningTransaction.html" title="struct keos_project5::ffs::journal::RunningTransaction">RunningTransaction</a>&lt;'_&gt;,
     ffs: &amp;<a class="struct" href="../struct.FastFileSystemInner.html" title="struct keos_project5::ffs::FastFileSystemInner">FastFileSystemInner</a>,

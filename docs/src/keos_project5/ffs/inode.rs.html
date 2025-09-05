@@ -218,131 +218,130 @@
 <a href=#218 id=218 data-nosnippet>218</a>            iblock: inode.iblock,
 <a href=#219 id=219 data-nosnippet>219</a>            diblock: inode.diblock,
 <a href=#220 id=220 data-nosnippet>220</a>        })
-<a href=#221 id=221 data-nosnippet>221</a>        .inspect(|ino| <span class="macro">debug!</span>(<span class="string">"{:?}"</span>, ino))
-<a href=#222 id=222 data-nosnippet>222</a>    }
-<a href=#223 id=223 data-nosnippet>223</a>
-<a href=#224 id=224 data-nosnippet>224</a>    <span class="doccomment">/// Converts the in-memory [`Inode`] structure into its on-disk
-<a href=#225 id=225 data-nosnippet>225</a>    /// representation.
-<a href=#226 id=226 data-nosnippet>226</a>    ///
-<a href=#227 id=227 data-nosnippet>227</a>    /// This is used when persisting an inode to disk, typically during
-<a href=#228 id=228 data-nosnippet>228</a>    /// checkpointing or journal submission. The returned [`disk_layout::Inode`]
-<a href=#229 id=229 data-nosnippet>229</a>    /// struct matches the format expected by the on-disk inode array.
-<a href=#230 id=230 data-nosnippet>230</a>    </span><span class="kw">pub fn </span>into_disk_format(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; disk_layout::Inode {
-<a href=#231 id=231 data-nosnippet>231</a>        disk_layout::Inode {
-<a href=#232 id=232 data-nosnippet>232</a>            magic: <span class="kw-2">*</span><span class="string">b"KeOSFFSI"</span>,
-<a href=#233 id=233 data-nosnippet>233</a>            ino: <span class="prelude-val">Some</span>(<span class="self">self</span>.ino),
-<a href=#234 id=234 data-nosnippet>234</a>            ftype: <span class="kw">match </span><span class="self">self</span>.ftype {
-<a href=#235 id=235 data-nosnippet>235</a>                FileType::RegularFile =&gt; <span class="number">0</span>,
-<a href=#236 id=236 data-nosnippet>236</a>                FileType::Directory =&gt; <span class="number">1</span>,
-<a href=#237 id=237 data-nosnippet>237</a>            },
-<a href=#238 id=238 data-nosnippet>238</a>            size: <span class="self">self</span>.size <span class="kw">as </span>u64,
-<a href=#239 id=239 data-nosnippet>239</a>            link_count: <span class="self">self</span>.link_count <span class="kw">as </span>u64,
-<a href=#240 id=240 data-nosnippet>240</a>            dblocks: <span class="self">self</span>.dblocks,
-<a href=#241 id=241 data-nosnippet>241</a>            iblock: <span class="self">self</span>.iblock,
-<a href=#242 id=242 data-nosnippet>242</a>            diblock: <span class="self">self</span>.diblock,
-<a href=#243 id=243 data-nosnippet>243</a>            _pad: [<span class="number">0</span>; <span class="number">112</span>],
-<a href=#244 id=244 data-nosnippet>244</a>        }
-<a href=#245 id=245 data-nosnippet>245</a>    }
-<a href=#246 id=246 data-nosnippet>246</a>
-<a href=#247 id=247 data-nosnippet>247</a>    <span class="doccomment">/// Creates a new in-memory [`Inode`] instance.
-<a href=#248 id=248 data-nosnippet>248</a>    ///
-<a href=#249 id=249 data-nosnippet>249</a>    /// This function is used to initialize a fresh inode in memory before it is
-<a href=#250 id=250 data-nosnippet>250</a>    /// ever written to disk. It sets the inode number and whether the inode
-<a href=#251 id=251 data-nosnippet>251</a>    /// represents a directory.
-<a href=#252 id=252 data-nosnippet>252</a>    ///
-<a href=#253 id=253 data-nosnippet>253</a>    /// # Parameters
-<a href=#254 id=254 data-nosnippet>254</a>    /// - `ino`: The inode number.
-<a href=#255 id=255 data-nosnippet>255</a>    /// - `is_dir`: Whether this inode represents a directory (`true`) or a file
-<a href=#256 id=256 data-nosnippet>256</a>    ///   (`false`).
-<a href=#257 id=257 data-nosnippet>257</a>    ///
-<a href=#258 id=258 data-nosnippet>258</a>    /// # Returns
-<a href=#259 id=259 data-nosnippet>259</a>    /// A new [`Inode`] instance ready to be inserted into the inode table.
-<a href=#260 id=260 data-nosnippet>260</a>    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(ino: InodeNumber, is_dir: bool) -&gt; <span class="self">Self </span>{
-<a href=#261 id=261 data-nosnippet>261</a>        <span class="self">Self </span>{
-<a href=#262 id=262 data-nosnippet>262</a>            ino,
-<a href=#263 id=263 data-nosnippet>263</a>            ftype: <span class="kw">if </span>is_dir {
-<a href=#264 id=264 data-nosnippet>264</a>                FileType::Directory
-<a href=#265 id=265 data-nosnippet>265</a>            } <span class="kw">else </span>{
-<a href=#266 id=266 data-nosnippet>266</a>                FileType::RegularFile
-<a href=#267 id=267 data-nosnippet>267</a>            },
-<a href=#268 id=268 data-nosnippet>268</a>            size: <span class="number">0</span>,
-<a href=#269 id=269 data-nosnippet>269</a>            link_count: <span class="number">0</span>,
-<a href=#270 id=270 data-nosnippet>270</a>            dblocks: [<span class="prelude-val">None</span>; <span class="number">12</span>],
-<a href=#271 id=271 data-nosnippet>271</a>            iblock: <span class="prelude-val">None</span>,
-<a href=#272 id=272 data-nosnippet>272</a>            diblock: <span class="prelude-val">None</span>,
-<a href=#273 id=273 data-nosnippet>273</a>        }
-<a href=#274 id=274 data-nosnippet>274</a>    }
-<a href=#275 id=275 data-nosnippet>275</a>
-<a href=#276 id=276 data-nosnippet>276</a>    <span class="doccomment">/// Retrieves the logical block address (LBA) corresponding to a file block.
-<a href=#277 id=277 data-nosnippet>277</a>    ///
-<a href=#278 id=278 data-nosnippet>278</a>    /// # Arguments
-<a href=#279 id=279 data-nosnippet>279</a>    /// - `ffs`: Reference to the file system.
-<a href=#280 id=280 data-nosnippet>280</a>    /// - `fba`: [`FileBlockNumber`], relative to the beginning of the file.
-<a href=#281 id=281 data-nosnippet>281</a>    ///
-<a href=#282 id=282 data-nosnippet>282</a>    /// # Returns
-<a href=#283 id=283 data-nosnippet>283</a>    /// - `Ok(lba)`: The logical block address where the specified file block is
-<a href=#284 id=284 data-nosnippet>284</a>    ///   stored.
-<a href=#285 id=285 data-nosnippet>285</a>    /// - `Err(KernelError)`: If the block is not allocated or the block number
-<a href=#286 id=286 data-nosnippet>286</a>    ///   is out of bounds.
-<a href=#287 id=287 data-nosnippet>287</a>    </span><span class="kw">pub fn </span>get(
-<a href=#288 id=288 data-nosnippet>288</a>        <span class="kw-2">&amp;</span><span class="self">self</span>,
-<a href=#289 id=289 data-nosnippet>289</a>        ffs: <span class="kw-2">&amp;</span>FastFileSystemInner,
-<a href=#290 id=290 data-nosnippet>290</a>        fba: FileBlockNumber,
-<a href=#291 id=291 data-nosnippet>291</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;LogicalBlockAddress&gt;, KernelError&gt; {
-<a href=#292 id=292 data-nosnippet>292</a>        <span class="kw">if </span><span class="number">0x1000 </span>* fba.<span class="number">0 </span>&gt;= <span class="self">self</span>.size {
-<a href=#293 id=293 data-nosnippet>293</a>            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
-<a href=#294 id=294 data-nosnippet>294</a>        }
-<a href=#295 id=295 data-nosnippet>295</a>        <span class="macro">todo!</span>()
-<a href=#296 id=296 data-nosnippet>296</a>    }
-<a href=#297 id=297 data-nosnippet>297</a>
-<a href=#298 id=298 data-nosnippet>298</a>    <span class="doccomment">/// Grows the inode to include at least the given number of file blocks.
-<a href=#299 id=299 data-nosnippet>299</a>    ///
-<a href=#300 id=300 data-nosnippet>300</a>    /// # Arguments
-<a href=#301 id=301 data-nosnippet>301</a>    /// - `ffs`: Reference to the file system.
-<a href=#302 id=302 data-nosnippet>302</a>    /// - `until`: The target [`FileBlockNumber`] (inclusive) that the inode
-<a href=#303 id=303 data-nosnippet>303</a>    ///   should grow to cover.
-<a href=#304 id=304 data-nosnippet>304</a>    /// - `tx`: The running transaction used to log allocation changes.
-<a href=#305 id=305 data-nosnippet>305</a>    ///
-<a href=#306 id=306 data-nosnippet>306</a>    /// # Returns
-<a href=#307 id=307 data-nosnippet>307</a>    /// - `Ok(())`: If the inode was successfully extended.
-<a href=#308 id=308 data-nosnippet>308</a>    /// - `Err(KernelError)`: If allocation fails or the inode cannot be grown.
-<a href=#309 id=309 data-nosnippet>309</a>    ///
-<a href=#310 id=310 data-nosnippet>310</a>    /// This function ensures that all blocks up to `until` are allocated,
-<a href=#311 id=311 data-nosnippet>311</a>    /// performing allocation of direct and indirect blocks as needed. The
-<a href=#312 id=312 data-nosnippet>312</a>    /// transaction log is updated to support crash consistency.
-<a href=#313 id=313 data-nosnippet>313</a>    </span><span class="kw">pub fn </span>grow(
-<a href=#314 id=314 data-nosnippet>314</a>        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-<a href=#315 id=315 data-nosnippet>315</a>        ffs: <span class="kw-2">&amp;</span>FastFileSystemInner,
-<a href=#316 id=316 data-nosnippet>316</a>        until: FileBlockNumber,
-<a href=#317 id=317 data-nosnippet>317</a>        tx: <span class="kw-2">&amp;</span>RunningTransaction,
-<a href=#318 id=318 data-nosnippet>318</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), KernelError&gt; {
-<a href=#319 id=319 data-nosnippet>319</a>        <span class="comment">// Hint: use [`FastFileSystemInner::allocate_block`] to allocate an free block.
-<a href=#320 id=320 data-nosnippet>320</a>        </span><span class="macro">todo!</span>()
-<a href=#321 id=321 data-nosnippet>321</a>    }
-<a href=#322 id=322 data-nosnippet>322</a>
-<a href=#323 id=323 data-nosnippet>323</a>    <span class="doccomment">/// Deallocate inner blocks and set the inode's size to zero.
-<a href=#324 id=324 data-nosnippet>324</a>    ///
-<a href=#325 id=325 data-nosnippet>325</a>    /// Note that submitting the InodeWriteGuard is the caller's responsibility.
-<a href=#326 id=326 data-nosnippet>326</a>    </span><span class="kw">pub fn </span>zeroify(
-<a href=#327 id=327 data-nosnippet>327</a>        ino: <span class="kw-2">&amp;mut </span>TrackedInodeWriteGuard,
-<a href=#328 id=328 data-nosnippet>328</a>        tx: <span class="kw-2">&amp;</span>RunningTransaction,
-<a href=#329 id=329 data-nosnippet>329</a>        ffs: <span class="kw-2">&amp;</span>FastFileSystemInner,
-<a href=#330 id=330 data-nosnippet>330</a>    ) {
-<a href=#331 id=331 data-nosnippet>331</a>        <span class="kw">let </span><span class="kw-2">mut </span>sb = ffs.sb.write(tx);
-<a href=#332 id=332 data-nosnippet>332</a>        <span class="kw">for </span>fba <span class="kw">in </span><span class="number">0</span>..(ino.size.div_ceil(<span class="number">0x1000</span>)) {
-<a href=#333 id=333 data-nosnippet>333</a>            <span class="kw">let </span>lba = ino.get(ffs, FileBlockNumber(fba)).unwrap().unwrap();
-<a href=#334 id=334 data-nosnippet>334</a>
-<a href=#335 id=335 data-nosnippet>335</a>            <span class="kw">let </span>(b_lba, offset) = lba.into_bitmap_lba_offset(ffs).unwrap();
-<a href=#336 id=336 data-nosnippet>336</a>            <span class="kw">let </span>bitmap = disk_layout::BlockBitmap::load(ffs, b_lba).unwrap();
-<a href=#337 id=337 data-nosnippet>337</a>
-<a href=#338 id=338 data-nosnippet>338</a>            <span class="kw">let </span><span class="kw-2">mut </span>guard = bitmap.write(tx);
-<a href=#339 id=339 data-nosnippet>339</a>            <span class="macro">assert!</span>(guard.deallocate(offset));
-<a href=#340 id=340 data-nosnippet>340</a>            guard.submit();
-<a href=#341 id=341 data-nosnippet>341</a>
-<a href=#342 id=342 data-nosnippet>342</a>            sb.block_count_inused -= <span class="number">1</span>;
-<a href=#343 id=343 data-nosnippet>343</a>        }
-<a href=#344 id=344 data-nosnippet>344</a>
-<a href=#345 id=345 data-nosnippet>345</a>        sb.submit();
-<a href=#346 id=346 data-nosnippet>346</a>        ino.size = <span class="number">0</span>;
-<a href=#347 id=347 data-nosnippet>347</a>    }
-<a href=#348 id=348 data-nosnippet>348</a>}</code></pre></div></section></main></body></html>
+<a href=#221 id=221 data-nosnippet>221</a>    }
+<a href=#222 id=222 data-nosnippet>222</a>
+<a href=#223 id=223 data-nosnippet>223</a>    <span class="doccomment">/// Converts the in-memory [`Inode`] structure into its on-disk
+<a href=#224 id=224 data-nosnippet>224</a>    /// representation.
+<a href=#225 id=225 data-nosnippet>225</a>    ///
+<a href=#226 id=226 data-nosnippet>226</a>    /// This is used when persisting an inode to disk, typically during
+<a href=#227 id=227 data-nosnippet>227</a>    /// checkpointing or journal submission. The returned [`disk_layout::Inode`]
+<a href=#228 id=228 data-nosnippet>228</a>    /// struct matches the format expected by the on-disk inode array.
+<a href=#229 id=229 data-nosnippet>229</a>    </span><span class="kw">pub fn </span>into_disk_format(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; disk_layout::Inode {
+<a href=#230 id=230 data-nosnippet>230</a>        disk_layout::Inode {
+<a href=#231 id=231 data-nosnippet>231</a>            magic: <span class="kw-2">*</span><span class="string">b"KeOSFFSI"</span>,
+<a href=#232 id=232 data-nosnippet>232</a>            ino: <span class="prelude-val">Some</span>(<span class="self">self</span>.ino),
+<a href=#233 id=233 data-nosnippet>233</a>            ftype: <span class="kw">match </span><span class="self">self</span>.ftype {
+<a href=#234 id=234 data-nosnippet>234</a>                FileType::RegularFile =&gt; <span class="number">0</span>,
+<a href=#235 id=235 data-nosnippet>235</a>                FileType::Directory =&gt; <span class="number">1</span>,
+<a href=#236 id=236 data-nosnippet>236</a>            },
+<a href=#237 id=237 data-nosnippet>237</a>            size: <span class="self">self</span>.size <span class="kw">as </span>u64,
+<a href=#238 id=238 data-nosnippet>238</a>            link_count: <span class="self">self</span>.link_count <span class="kw">as </span>u64,
+<a href=#239 id=239 data-nosnippet>239</a>            dblocks: <span class="self">self</span>.dblocks,
+<a href=#240 id=240 data-nosnippet>240</a>            iblock: <span class="self">self</span>.iblock,
+<a href=#241 id=241 data-nosnippet>241</a>            diblock: <span class="self">self</span>.diblock,
+<a href=#242 id=242 data-nosnippet>242</a>            _pad: [<span class="number">0</span>; <span class="number">112</span>],
+<a href=#243 id=243 data-nosnippet>243</a>        }
+<a href=#244 id=244 data-nosnippet>244</a>    }
+<a href=#245 id=245 data-nosnippet>245</a>
+<a href=#246 id=246 data-nosnippet>246</a>    <span class="doccomment">/// Creates a new in-memory [`Inode`] instance.
+<a href=#247 id=247 data-nosnippet>247</a>    ///
+<a href=#248 id=248 data-nosnippet>248</a>    /// This function is used to initialize a fresh inode in memory before it is
+<a href=#249 id=249 data-nosnippet>249</a>    /// ever written to disk. It sets the inode number and whether the inode
+<a href=#250 id=250 data-nosnippet>250</a>    /// represents a directory.
+<a href=#251 id=251 data-nosnippet>251</a>    ///
+<a href=#252 id=252 data-nosnippet>252</a>    /// # Parameters
+<a href=#253 id=253 data-nosnippet>253</a>    /// - `ino`: The inode number.
+<a href=#254 id=254 data-nosnippet>254</a>    /// - `is_dir`: Whether this inode represents a directory (`true`) or a file
+<a href=#255 id=255 data-nosnippet>255</a>    ///   (`false`).
+<a href=#256 id=256 data-nosnippet>256</a>    ///
+<a href=#257 id=257 data-nosnippet>257</a>    /// # Returns
+<a href=#258 id=258 data-nosnippet>258</a>    /// A new [`Inode`] instance ready to be inserted into the inode table.
+<a href=#259 id=259 data-nosnippet>259</a>    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(ino: InodeNumber, is_dir: bool) -&gt; <span class="self">Self </span>{
+<a href=#260 id=260 data-nosnippet>260</a>        <span class="self">Self </span>{
+<a href=#261 id=261 data-nosnippet>261</a>            ino,
+<a href=#262 id=262 data-nosnippet>262</a>            ftype: <span class="kw">if </span>is_dir {
+<a href=#263 id=263 data-nosnippet>263</a>                FileType::Directory
+<a href=#264 id=264 data-nosnippet>264</a>            } <span class="kw">else </span>{
+<a href=#265 id=265 data-nosnippet>265</a>                FileType::RegularFile
+<a href=#266 id=266 data-nosnippet>266</a>            },
+<a href=#267 id=267 data-nosnippet>267</a>            size: <span class="number">0</span>,
+<a href=#268 id=268 data-nosnippet>268</a>            link_count: <span class="number">0</span>,
+<a href=#269 id=269 data-nosnippet>269</a>            dblocks: [<span class="prelude-val">None</span>; <span class="number">12</span>],
+<a href=#270 id=270 data-nosnippet>270</a>            iblock: <span class="prelude-val">None</span>,
+<a href=#271 id=271 data-nosnippet>271</a>            diblock: <span class="prelude-val">None</span>,
+<a href=#272 id=272 data-nosnippet>272</a>        }
+<a href=#273 id=273 data-nosnippet>273</a>    }
+<a href=#274 id=274 data-nosnippet>274</a>
+<a href=#275 id=275 data-nosnippet>275</a>    <span class="doccomment">/// Retrieves the logical block address (LBA) corresponding to a file block.
+<a href=#276 id=276 data-nosnippet>276</a>    ///
+<a href=#277 id=277 data-nosnippet>277</a>    /// # Arguments
+<a href=#278 id=278 data-nosnippet>278</a>    /// - `ffs`: Reference to the file system.
+<a href=#279 id=279 data-nosnippet>279</a>    /// - `fba`: [`FileBlockNumber`], relative to the beginning of the file.
+<a href=#280 id=280 data-nosnippet>280</a>    ///
+<a href=#281 id=281 data-nosnippet>281</a>    /// # Returns
+<a href=#282 id=282 data-nosnippet>282</a>    /// - `Ok(lba)`: The logical block address where the specified file block is
+<a href=#283 id=283 data-nosnippet>283</a>    ///   stored.
+<a href=#284 id=284 data-nosnippet>284</a>    /// - `Err(KernelError)`: If the block is not allocated or the block number
+<a href=#285 id=285 data-nosnippet>285</a>    ///   is out of bounds.
+<a href=#286 id=286 data-nosnippet>286</a>    </span><span class="kw">pub fn </span>get(
+<a href=#287 id=287 data-nosnippet>287</a>        <span class="kw-2">&amp;</span><span class="self">self</span>,
+<a href=#288 id=288 data-nosnippet>288</a>        ffs: <span class="kw-2">&amp;</span>FastFileSystemInner,
+<a href=#289 id=289 data-nosnippet>289</a>        fba: FileBlockNumber,
+<a href=#290 id=290 data-nosnippet>290</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;LogicalBlockAddress&gt;, KernelError&gt; {
+<a href=#291 id=291 data-nosnippet>291</a>        <span class="kw">if </span><span class="number">0x1000 </span>* fba.<span class="number">0 </span>&gt;= <span class="self">self</span>.size {
+<a href=#292 id=292 data-nosnippet>292</a>            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+<a href=#293 id=293 data-nosnippet>293</a>        }
+<a href=#294 id=294 data-nosnippet>294</a>        <span class="macro">todo!</span>()
+<a href=#295 id=295 data-nosnippet>295</a>    }
+<a href=#296 id=296 data-nosnippet>296</a>
+<a href=#297 id=297 data-nosnippet>297</a>    <span class="doccomment">/// Grows the inode to include at least the given number of file blocks.
+<a href=#298 id=298 data-nosnippet>298</a>    ///
+<a href=#299 id=299 data-nosnippet>299</a>    /// # Arguments
+<a href=#300 id=300 data-nosnippet>300</a>    /// - `ffs`: Reference to the file system.
+<a href=#301 id=301 data-nosnippet>301</a>    /// - `until`: The target [`FileBlockNumber`] (inclusive) that the inode
+<a href=#302 id=302 data-nosnippet>302</a>    ///   should grow to cover.
+<a href=#303 id=303 data-nosnippet>303</a>    /// - `tx`: The running transaction used to log allocation changes.
+<a href=#304 id=304 data-nosnippet>304</a>    ///
+<a href=#305 id=305 data-nosnippet>305</a>    /// # Returns
+<a href=#306 id=306 data-nosnippet>306</a>    /// - `Ok(())`: If the inode was successfully extended.
+<a href=#307 id=307 data-nosnippet>307</a>    /// - `Err(KernelError)`: If allocation fails or the inode cannot be grown.
+<a href=#308 id=308 data-nosnippet>308</a>    ///
+<a href=#309 id=309 data-nosnippet>309</a>    /// This function ensures that all blocks up to `until` are allocated,
+<a href=#310 id=310 data-nosnippet>310</a>    /// performing allocation of direct and indirect blocks as needed. The
+<a href=#311 id=311 data-nosnippet>311</a>    /// transaction log is updated to support crash consistency.
+<a href=#312 id=312 data-nosnippet>312</a>    </span><span class="kw">pub fn </span>grow(
+<a href=#313 id=313 data-nosnippet>313</a>        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+<a href=#314 id=314 data-nosnippet>314</a>        ffs: <span class="kw-2">&amp;</span>FastFileSystemInner,
+<a href=#315 id=315 data-nosnippet>315</a>        until: FileBlockNumber,
+<a href=#316 id=316 data-nosnippet>316</a>        tx: <span class="kw-2">&amp;</span>RunningTransaction,
+<a href=#317 id=317 data-nosnippet>317</a>    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), KernelError&gt; {
+<a href=#318 id=318 data-nosnippet>318</a>        <span class="comment">// Hint: use [`FastFileSystemInner::allocate_block`] to allocate an free block.
+<a href=#319 id=319 data-nosnippet>319</a>        </span><span class="macro">todo!</span>()
+<a href=#320 id=320 data-nosnippet>320</a>    }
+<a href=#321 id=321 data-nosnippet>321</a>
+<a href=#322 id=322 data-nosnippet>322</a>    <span class="doccomment">/// Deallocate inner blocks and set the inode's size to zero.
+<a href=#323 id=323 data-nosnippet>323</a>    ///
+<a href=#324 id=324 data-nosnippet>324</a>    /// Note that submitting the InodeWriteGuard is the caller's responsibility.
+<a href=#325 id=325 data-nosnippet>325</a>    </span><span class="kw">pub fn </span>zeroify(
+<a href=#326 id=326 data-nosnippet>326</a>        ino: <span class="kw-2">&amp;mut </span>TrackedInodeWriteGuard,
+<a href=#327 id=327 data-nosnippet>327</a>        tx: <span class="kw-2">&amp;</span>RunningTransaction,
+<a href=#328 id=328 data-nosnippet>328</a>        ffs: <span class="kw-2">&amp;</span>FastFileSystemInner,
+<a href=#329 id=329 data-nosnippet>329</a>    ) {
+<a href=#330 id=330 data-nosnippet>330</a>        <span class="kw">let </span><span class="kw-2">mut </span>sb = ffs.sb.write(tx);
+<a href=#331 id=331 data-nosnippet>331</a>        <span class="kw">for </span>fba <span class="kw">in </span><span class="number">0</span>..(ino.size.div_ceil(<span class="number">0x1000</span>)) {
+<a href=#332 id=332 data-nosnippet>332</a>            <span class="kw">let </span>lba = ino.get(ffs, FileBlockNumber(fba)).unwrap().unwrap();
+<a href=#333 id=333 data-nosnippet>333</a>
+<a href=#334 id=334 data-nosnippet>334</a>            <span class="kw">let </span>(b_lba, offset) = lba.into_bitmap_lba_offset(ffs).unwrap();
+<a href=#335 id=335 data-nosnippet>335</a>            <span class="kw">let </span>bitmap = disk_layout::BlockBitmap::load(ffs, b_lba).unwrap();
+<a href=#336 id=336 data-nosnippet>336</a>
+<a href=#337 id=337 data-nosnippet>337</a>            <span class="kw">let </span><span class="kw-2">mut </span>guard = bitmap.write(tx);
+<a href=#338 id=338 data-nosnippet>338</a>            <span class="macro">assert!</span>(guard.deallocate(offset));
+<a href=#339 id=339 data-nosnippet>339</a>            guard.submit();
+<a href=#340 id=340 data-nosnippet>340</a>
+<a href=#341 id=341 data-nosnippet>341</a>            sb.block_count_inused -= <span class="number">1</span>;
+<a href=#342 id=342 data-nosnippet>342</a>        }
+<a href=#343 id=343 data-nosnippet>343</a>
+<a href=#344 id=344 data-nosnippet>344</a>        sb.submit();
+<a href=#345 id=345 data-nosnippet>345</a>        ino.size = <span class="number">0</span>;
+<a href=#346 id=346 data-nosnippet>346</a>    }
+<a href=#347 id=347 data-nosnippet>347</a>}</code></pre></div></section></main></body></html>
