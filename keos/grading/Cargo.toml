@@ -1,0 +1,8 @@
+[package]
+name = "grading"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+keos = { path = "../../keos" }
+grading_derive = { path = "grading-derive" }

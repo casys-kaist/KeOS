@@ -1,0 +1,65 @@
+{
+    "whitelist": [
+        "src/syscall.rs",
+        "src/file_struct.rs"
+    ],
+    "rubrics": {
+        "syscall": {
+            "score": 14,
+            "tests": {
+                "syscall::open_normal": {},
+                "syscall::open_invalid": {},
+                "syscall::read_normal": {},
+                "syscall::read_truncate": {},
+                "syscall::write_normal": {},
+                "syscall::write_sync": {},
+                "syscall::write_persistence": {},
+                "syscall::seek_begin": {},
+                "syscall::seek_current": {},
+                "syscall::seek_end": {},
+                "syscall::seek_beyond_eof": {},
+                "syscall::tell_basic": {},
+                "syscall::tell_write": {},
+                "syscall::close": {}
+            }
+        },
+        "stdio": {
+            "score": 16,
+            "tests": {
+                "syscall::stdio_normal": {},
+                "syscall::stdio_partial": {},
+                "syscall::stdout_normal": {},
+                "syscall::stdout_empty": {},
+                "syscall::stdout_invalid": {},
+                "syscall::stderr_normal": {},
+                "syscall::stderr_empty": {},
+                "syscall::stderr_invalid": {}
+            }
+        },
+        "pipe": {
+            "score": 7,
+            "tests": {
+                "syscall::pipe_normal": {},
+                "syscall::pipe_partial": {}
+            }
+        },
+        "syscall_errors": {
+            "score": 13,
+            "tests": {
+                "syscall::read_error_bad_fd": {},
+                "syscall::read_error_bad_mode": {},
+                "syscall::read_error_bad_address": {},
+                "syscall::write_error_bad_fd": {},
+                "syscall::write_error_bad_mode": {},
+                "syscall::write_error_bad_address": {},
+                "syscall::seek_error_stdio": {},
+                "syscall::seek_error_bad_fd": {},
+                "syscall::seek_error_bad_whence": {},
+                "syscall::tell_error_stdio": {},
+                "syscall::tell_error_bad_fd": {},
+                "syscall::pipe_error_bad_direction": {},
+                "syscall::pipe_error_bad_address": {}
+            }
+        }
+    }
+}

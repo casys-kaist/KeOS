@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+
+members = [
+  "keos-project1",
+  "keos-project1/grader",
+  "keos-project2",
+  "keos-project2/grader",
+  "keos-project3",
+  "keos-project3/grader",
+  "keos-project4",
+  "keos-project4/grader",
+  "keos-project5",
+  "keos-project5/grader",
+]

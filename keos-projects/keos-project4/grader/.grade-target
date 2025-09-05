@@ -1,0 +1,86 @@
+{
+    "whitelist": [
+        "src/sync/mutex.rs",
+        "src/sync/condition_variable.rs",
+        "src/sync/semaphore.rs",
+        "src/process.rs",
+        "src/round_robin.rs"
+    ],
+    "rubrics": {
+        "round_robin": {
+            "score": 32,
+            "tests": {
+                "round_robin::functionality": {},
+                "round_robin::balance": {},
+                "round_robin::balance2": {},
+                "round_robin::affinity": {}
+            }
+        },
+        "mutex": {
+            "score": 6,
+            "tests": {
+                "sync::mutex::smoke": {
+                    "timeout": 60
+                },
+                "sync::mutex::smoke_many": {
+                    "timeout": 60
+                },
+                "sync::mutex::parking": {}
+            }
+        },
+        "semaphore": {
+            "score": 10,
+            "tests": {
+                "sync::semaphore::sema_0": {},
+                "sync::semaphore::sema_1": {},
+                "sync::semaphore::sema_2": {},
+                "sync::semaphore::exec_order": {},
+                "sync::semaphore::n_permits": {}
+            }
+        },
+        "condition_variable": {
+            "score": 10,
+            "tests": {
+                "sync::condition_variable::bounded_buffer_1": {},
+                "sync::condition_variable::bounded_buffer_2": {}
+            }
+        },
+        "userprog-base": {
+            "score": 22,
+            "tests": {
+                "userprog::arg_parse": {},
+                "userprog::sys_open": {},
+                "userprog::sys_read": {},
+                "userprog::sys_read_error": {},
+                "userprog::sys_write": {},
+                "userprog::sys_write_error": {},
+                "userprog::sys_seek": {},
+                "userprog::sys_seek_error": {},
+                "userprog::sys_tell": {},
+                "userprog::sys_tell_error": {},
+                "userprog::sys_stdio_1": {},
+                "userprog::sys_stdio_2": {},
+                "userprog::sys_stdout": {},
+                "userprog::sys_stderr": {},
+                "userprog::sys_pipe": {},
+                "userprog::mm_mmap": {},
+                "userprog::mm_mmap_error_protection": {},
+                "userprog::mm_mmap_error_protection_exec": {},
+                "userprog::mm_munmap": {},
+                "userprog::mm_munmap_error": {},
+                "userprog::bad_addr_1": {},
+                "userprog::bad_code_write": {}
+            }
+        },
+        "userprog-threading": {
+            "score": 20,
+            "tests": {
+                "userprog::thread_create": {},
+                "userprog::thread_join_err": {},
+                "userprog::thread_join_chain": {},
+                "userprog::thread_join_complex": {},
+                "userprog::thread_mm_shared": {}
+            }
+        }
+    }
+}

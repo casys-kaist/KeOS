@@ -1,0 +1,9 @@
+PRETTY_NAME="KAIST educational Operating System"
+NAME="KeOS"
+VERSION="1.0"
+VERSION_ID="1.0"
+VERSION_CODENAME=cs330
+ID=keos
+HOME_URL="https://github.com/casys-kaist/KeOS.git"
+SUPPORT_URL="https://github.com/casys-kaist/KeOS.git"
+BUG_REPORT_URL="https://github.com/casys-kaist/KeOS.git"

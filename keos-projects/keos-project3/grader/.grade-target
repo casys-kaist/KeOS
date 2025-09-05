@@ -1,0 +1,58 @@
+{
+    "whitelist": [
+        "src/fork.rs",
+        "src/lazy_pager.rs"
+    ],
+    "rubrics": {
+        "lazy_paging": {
+            "score": 24,
+            "tests": {
+                "mm_struct::do_mmap": {},
+                "mm_struct::access_ok_normal":{},
+                "mm_struct::access_ok_invalid":{},
+                "mm_struct::bad_addr_0":{}
+            }
+        },
+        "userprog": {
+            "score": 26,
+            "tests": {
+                "userprog::arg_parse": {},
+                "userprog::sys_open": {},
+                "userprog::sys_read": {},
+                "userprog::sys_read_error": {},
+                "userprog::sys_write": {},
+                "userprog::sys_write_error": {},
+                "userprog::sys_seek": {},
+                "userprog::sys_seek_error": {},
+                "userprog::sys_tell": {},
+                "userprog::sys_tell_error": {},
+                "userprog::sys_stdio_1": {},
+                "userprog::sys_stdio_2": {},
+                "userprog::sys_stdout": {},
+                "userprog::sys_stderr": {},
+                "userprog::sys_pipe": {},
+                "userprog::mm_mmap": {},
+                "userprog::mm_munmap": {},
+                "userprog::mm_munmap2": {},
+                "userprog::mm_mmap_error_bad_addr": {},
+                "userprog::mm_mmap_error_bad_fd": {},
+                "userprog::mm_mmap_error_protection": {},
+                "userprog::mm_munmap_error_bad_addr": {},
+                "userprog::mm_munmap_error_double_free": {},
+                "userprog::mm_munmap_error_unaligned": {},
+                "userprog::bad_addr_1": {},
+                "userprog::bad_code_write": {}
+            }
+        },
+        "copy-on-write": {
+            "score": 50,
+            "tests": {
+                "userprog_part_2::fork": {},
+                "userprog_part_2::cow": {},
+                "userprog_part_2::cow_perm": {},
+                "userprog_part_2::cow_sys": {},
+                "userprog_part_2::fork2": {}
+            }
+        }
+    }
+}

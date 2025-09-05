@@ -1,0 +1,22 @@
+[unstable]
+build-std = ["core", "compiler_builtins", "alloc"]
+build-std-features = ["compiler-builtins-mem"]
+
+[alias]
+grade = ["run", "--", "grade"]
+
+[build]
+rustflags = [
+  "-C", "force-frame-pointers=yes",
+  "-C", "panic=unwind",
+  "-C", "link_dead_code=yes",
+]
+target = "./.cargo/x86_64-unknown-keos.json"
+
+[target."x86_64-unknown-keos"]
+runner = ".cargo/run.py"
+rustflags=[
+  "-C", "target-feature=+cmpxchg16b",
+  "-C", "link-args=-T.cargo/binder.ld",
+  "-Z", "emit-stack-sizes",
+]

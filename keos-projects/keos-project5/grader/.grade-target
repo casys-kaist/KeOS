@@ -1,0 +1,283 @@
+{
+    "whitelist": [
+        "src/page_cache/mod.rs",
+        "src/ffs/inode.rs",
+        "src/ffs/journal.rs",
+        "src/ffs/fs_objects.rs",
+        "src/advanced_file_structs.rs"
+    ],
+    "rubrics": {
+        "page_cache": {
+            "score": 20,
+            "tests": {
+                "page_cache::simplefs": {},
+                "page_cache::readahead": {}
+            }
+        },
+        "fastfilesystem-no-journal": {
+            "score": 26,
+            "tests": {
+                "ffs_no_journal::root": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::root_open_self": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::root_open_absent": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::add_file": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::ib": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::dib": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ],
+                    "timeout": 120
+                },
+                "ffs_no_journal::add_directory": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::file_in_dir": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::remove_file": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::read_dir": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::remove_dir": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::remove_root": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs_no_journal::simple_elf": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                }
+            }
+        },
+        "fastfilesystem": {
+            "score": 13,
+            "tests": {
+                "ffs::root": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::root_open_self": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::root_open_absent": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::add_file": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::ib": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::dib": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ],
+                    "timeout": 120
+                },
+                "ffs::add_directory": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::file_in_dir": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::remove_file": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::read_dir": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::remove_dir": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::remove_root": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "ffs::simple_elf": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                }
+            }
+        },
+        "ffs-journal-recovery": {
+            "score": 13,
+            "tests": {
+                "journal::recovery": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                }
+            }
+        },
+        "page_cache-ffs": {
+            "score": 4,
+            "tests": {
+                "page_cache::fastfilesystem": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "page_cache::readahead_ffs": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                }
+            }
+        },
+        "advanced_file_syscall": {
+            "score": 12,
+            "tests": {
+                "syscall_part_2::open_dir": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "syscall_part_2::dir_rw": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "syscall_part_2::dir_seek": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "syscall_part_2::create": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "syscall_part_2::unlink": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "syscall_part_2::chdir": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                }
+            }
+        },
+        "userprog": {
+            "score": 12,
+            "tests": {
+                "userprog::sha256sum": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "userprog::ls": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "userprog::tar": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ]
+                },
+                "userprog::tar_gen": {
+                    "post-hook": [
+                        "../../.cargo/validate-tar.sh"
+                    ]
+                }
+            }
+        }
+    }
+}

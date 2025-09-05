@@ -1,0 +1,18 @@
+[package]
+name = "project5-grader"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+keos = { path ="../../../keos" }
+simple_fs = { path = "../../../fs/simple_fs", features = ["keos_binder"] }
+keos-project1 = { path ="../../keos-project1" }
+keos-project2 = { path ="../../keos-project2" }
+keos-project3 = { path ="../../keos-project3" }
+keos-project4 = { path ="../../keos-project4" }
+keos-project5 = { path ="../../keos-project5" }
+
+grading = { path = "../../../keos/grading" }
+
+[build-dependencies]
+simple_fs = { path = "../../../fs/simple_fs" }

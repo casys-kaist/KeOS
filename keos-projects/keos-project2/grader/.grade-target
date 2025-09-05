@@ -1,0 +1,64 @@
+{
+    "whitelist": [
+        "src/page_table.rs",
+        "src/mm_struct.rs",
+        "src/eager_pager.rs",
+        "src/loader/mod.rs",
+        "src/loader/elf.rs",
+        "src/loader/stack_builder.rs"
+    ],
+    "rubrics": {
+        "page_table": {
+            "score": 30,
+            "tests": {
+                "page_table::simple": {
+                    "timeout": 60
+                },
+                "page_table::simple2": {},
+                "page_table::free": {},
+                "page_table::error": {},
+                "page_table::complicate": {}
+            }
+        },
+        "mm_struct": {
+            "score": 18,
+            "tests": {
+                "mm_struct::do_mmap": {},
+                "mm_struct::access_ok_normal": {},
+                "mm_struct::access_ok_invalid": {},
+                "mm_struct::bad_addr_0": {}
+            }
+        },
+        "userprog": {
+            "score": 52,
+            "tests": {
+                "userprog::arg_parse": {},
+                "userprog::sys_open": {},
+                "userprog::sys_read": {},
+                "userprog::sys_read_error": {},
+                "userprog::sys_write": {},
+                "userprog::sys_write_error": {},
+                "userprog::sys_seek": {},
+                "userprog::sys_seek_error": {},
+                "userprog::sys_tell": {},
+                "userprog::sys_tell_error": {},
+                "userprog::sys_stdio_1": {},
+                "userprog::sys_stdio_2": {},
+                "userprog::sys_stdout": {},
+                "userprog::sys_stderr": {},
+                "userprog::sys_pipe": {},
+                "userprog::mm_mmap": {},
+                "userprog::mm_munmap": {},
+                "userprog::mm_munmap2": {},
+                "userprog::mm_mmap_error_bad_addr": {},
+                "userprog::mm_mmap_error_bad_fd": {},
+                "userprog::mm_mmap_error_protection": {},
+                "userprog::mm_munmap_error_bad_addr": {},
+                "userprog::mm_munmap_error_double_free": {},
+                "userprog::mm_munmap_error_unaligned": {},
+                "userprog::bad_addr_1": {},
+                "userprog::bad_code_write": {}
+            }
+        }
+    }
+}

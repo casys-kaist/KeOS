@@ -1,0 +1,9 @@
+[package]
+name = "keos-project1"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bitflags = "1.2.1"
+
+keos = { path ="../../keos" }

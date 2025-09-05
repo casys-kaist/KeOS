@@ -1,0 +1,15 @@
+[package]
+name = "simple_fs"
+version = "0.1.0"
+edition = "2024"
+
+[dev-dependencies]
+rand = { version = "*" }
+
+[dependencies]
+abyss = { path = "../../keos/abyss", optional = true }
+keos = { path = "../../keos", optional = true }
+
+[features]
+default = []
+keos_binder = ["abyss", "keos"]
