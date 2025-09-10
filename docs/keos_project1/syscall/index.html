@@ -40,12 +40,12 @@ are the key details:</p>
 </ol>
 <h3 id="handling-system-call-in-keos"><a class="doc-anchor" href="#handling-system-call-in-keos">§</a>Handling System Call in KeOS</h3>
 <p>When the <code>syscall</code> instruction is invoked, the KeOS kernel serves the
-requests by calling the <a href="../../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> method with the state of the CPU
-captured in a structure called <a href="../../../keos/syscall/struct.Registers.html"><code>Registers</code></a>. This structure contains the
+requests by calling the <a href="../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> method with the state of the CPU
+captured in a structure called <a href="../../keos/syscall/struct.Registers.html"><code>Registers</code></a>. This structure contains the
 state of all registers, which is accessible to the handler and allows for
 the manipulation of register values (including the return value) within the
 handler.</p>
-<p>On the beginning of the <a href="../../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> method, KeOS parses the arguments
+<p>On the beginning of the <a href="../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> method, KeOS parses the arguments
 of the system call by calling the <a href="struct.SyscallAbi.html#method.from_registers" title="associated function keos_project1::syscall::SyscallAbi::from_registers"><code>SyscallAbi::from_registers</code></a>, which is
 currently marked with <code>todo!()</code>. Your job is to extend this to retrieve
 system call number and arguments according to the abi.</p>
@@ -79,13 +79,13 @@ kernel memory.</li>
 <p>During the execution of a function, you might confront the errors. In such
 cases, you should <strong>never</strong> handle the errors by panicking the kernel.
 Instead, you propagates the error with <code>?</code> operator to the
-<a href="../../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a>, which conveys the error code to the userspace. Consult
+<a href="../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a>, which conveys the error code to the userspace. Consult
 with <a href="https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html"><code>RustBook</code></a> for how to use <code>?</code> operator.</p>
 <h4 id="returning-value-to-user"><a class="doc-anchor" href="#returning-value-to-user">§</a>Returning Value to User</h4>
-<p>The epilog of the <a href="../../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> captures both the result and error of
+<p>The epilog of the <a href="../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> captures both the result and error of
 the function, interprets them in to the <code>usize</code>, and return the values into
 the user space. You can update the user program’s registers by directly
-modify the fields of <a href="../../../keos/syscall/struct.Registers.html"><code>Registers</code></a> captured in the <a href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a>.</p>
+modify the fields of <a href="../../keos/syscall/struct.Registers.html"><code>Registers</code></a> captured in the <a href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a>.</p>
 <h3 id="implementation-requirements"><a class="doc-anchor" href="#implementation-requirements">§</a>Implementation Requirements</h3>
 <p>You need to implement the followings:</p>
 <ul>

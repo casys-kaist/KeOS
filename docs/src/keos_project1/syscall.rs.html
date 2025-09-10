@@ -103,8 +103,8 @@
 <a href=#103 id=103 data-nosnippet>103</a>//!
 <a href=#104 id=104 data-nosnippet>104</a>//! After implementing both methods, move on to the next [`Section`].
 <a href=#105 id=105 data-nosnippet>105</a>//!
-<a href=#106 id=106 data-nosnippet>106</a>//! [`Task::syscall`]: ../../../keos/task/trait.Task.html#tymethod.syscall
-<a href=#107 id=107 data-nosnippet>107</a>//! [`Registers`]: ../../../keos/syscall/struct.Registers.html
+<a href=#106 id=106 data-nosnippet>106</a>//! [`Task::syscall`]: ../../keos/task/trait.Task.html#tymethod.syscall
+<a href=#107 id=107 data-nosnippet>107</a>//! [`Registers`]: ../../keos/syscall/struct.Registers.html
 <a href=#108 id=108 data-nosnippet>108</a>//! [`RustBook`]: &lt;https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html&gt;
 <a href=#109 id=109 data-nosnippet>109</a>//! [`Section`]: crate::file_struct
 <a href=#110 id=110 data-nosnippet>110</a>
@@ -122,7 +122,7 @@
 <a href=#122 id=122 data-nosnippet>122</a>/// parameters and return values, making it easier to implement and handle
 <a href=#123 id=123 data-nosnippet>123</a>/// system calls in the kernel.
 <a href=#124 id=124 data-nosnippet>124</a>///
-<a href=#125 id=125 data-nosnippet>125</a>/// [`Registers`]: ../../../keos/syscall/struct.Registers.html
+<a href=#125 id=125 data-nosnippet>125</a>/// [`Registers`]: ../../keos/syscall/struct.Registers.html
 <a href=#126 id=126 data-nosnippet>126</a></span><span class="kw">pub struct </span>SyscallAbi&lt;<span class="lifetime">'a</span>&gt; {
 <a href=#127 id=127 data-nosnippet>127</a>    <span class="doccomment">/// The system call number that identifies the requested system service.
 <a href=#128 id=128 data-nosnippet>128</a>    </span><span class="kw">pub </span>sysno: usize,
@@ -160,7 +160,7 @@
 <a href=#160 id=160 data-nosnippet>160</a>    /// Returns an instance of [`SyscallAbi`] populated with the system call
 <a href=#161 id=161 data-nosnippet>161</a>    /// number and arguments extracted from the provided registers.
 <a href=#162 id=162 data-nosnippet>162</a>    ///
-<a href=#163 id=163 data-nosnippet>163</a>    /// [`Registers`]: ../../../keos/syscall/struct.Registers.html
+<a href=#163 id=163 data-nosnippet>163</a>    /// [`Registers`]: ../../keos/syscall/struct.Registers.html
 <a href=#164 id=164 data-nosnippet>164</a>    </span><span class="kw">pub fn </span>from_registers(regs: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Registers) -&gt; <span class="self">Self </span>{
 <a href=#165 id=165 data-nosnippet>165</a>        <span class="macro">todo!</span>()
 <a href=#166 id=166 data-nosnippet>166</a>    }

@@ -12,7 +12,7 @@
 arguments and return values in the context of the system call handler. It
 stores the system call number and up to six arguments that are passed to the
 kernel during a system call, as well as a mutable reference to the CPU
-registers (<a href="../../../keos/syscall/struct.Registers.html"><code>Registers</code></a>) which hold the current state of the system call.</p>
+registers (<a href="../../keos/syscall/struct.Registers.html"><code>Registers</code></a>) which hold the current state of the system call.</p>
 <p>The <a href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a> struct abstracts away the management of system call
 parameters and return values, making it easier to implement and handle
 system calls in the kernel.</p>
@@ -28,10 +28,10 @@ state of the CPU registers. It is used to manipulate the system
 call return value and access any state needed for the call.</p>
 </div><h2 id="implementations" class="section-header">Implementations<a href="#implementations" class="anchor">§</a></h2><div id="implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-SyscallAbi%3C'a%3E" class="impl"><a class="src rightside" href="../../src/keos_project1/syscall.rs.html#147-184">Source</a><a href="#impl-SyscallAbi%3C'a%3E" class="anchor">§</a><h3 class="code-header">impl&lt;'a&gt; <a class="struct" href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'a&gt;</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.from_registers" class="method"><a class="src rightside" href="../../src/keos_project1/syscall.rs.html#164-166">Source</a><h4 class="code-header">pub fn <a href="#method.from_registers" class="fn">from_registers</a>(regs: &amp;'a mut Registers) -&gt; Self</h4></section></summary><div class="docblock"><p>Constructs a <a href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a> instance from the provided registers.</p>
 <p>This function extracts the system call number and arguments from the
-<a href="../../../keos/syscall/struct.Registers.html"><code>Registers</code></a> struct and initializes a new <a href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a> struct.</p>
+<a href="../../keos/syscall/struct.Registers.html"><code>Registers</code></a> struct and initializes a new <a href="struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi"><code>SyscallAbi</code></a> struct.</p>
 <h5 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h5>
 <ul>
-<li><code>regs</code>: A mutable reference to the <a href="../../../keos/syscall/struct.Registers.html"><code>Registers</code></a> structure that
+<li><code>regs</code>: A mutable reference to the <a href="../../keos/syscall/struct.Registers.html"><code>Registers</code></a> structure that
 contains the current state of the CPU registers.</li>
 </ul>
 <h5 id="returns"><a class="doc-anchor" href="#returns">§</a>Returns</h5>
