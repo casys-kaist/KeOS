@@ -210,7 +210,7 @@ impl<P: Pager> MmStruct<P> {
     /// - `addr`: Desired starting address of the mapping (must be page-aligned
     ///   and non-zero).
     /// - `length`: Number of bytes to map (must be non-zero).
-    /// - `prot`: Desired memory protection flags (currently ignored).
+    /// - `prot`: Desired memory protection flags.
     /// - `fd`: File descriptor of the file to be mapped.
     /// - `offset`: Offset in the file where mapping should begin.
     ///

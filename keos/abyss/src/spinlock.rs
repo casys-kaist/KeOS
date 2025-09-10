@@ -119,10 +119,17 @@ impl<T: ?Sized> SpinLock<T> {
     /// ```
     #[track_caller]
     pub fn lock(&self) -> SpinLockGuard<'_, T> {
-        let guard = crate::interrupt::InterruptGuard::new();
-        while self.locked.fetch_or(true, Ordering::SeqCst) {
+        let guard = loop {
+            let guard = crate::interrupt::InterruptGuard::new();
+
             core::hint::spin_loop();
-        }
+            if !self.locked.fetch_or(true, Ordering::SeqCst) {
+                break guard;
+            }
+
+            drop(guard);
+        };
+
         SpinLockGuard {
             caller: core::panic::Location::caller(),
             lock: self,

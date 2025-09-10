@@ -263,6 +263,7 @@ pub mod semaphore {
     }
 
     pub fn sema_1() {
+        keos::println!();
         const COUNT: u32 = 16;
         let sema = Arc::new(Semaphore::new(1, ()));
         let ready_counter = Arc::new(AtomicU32::new(0));
@@ -290,8 +291,29 @@ pub mod semaphore {
         while counter.load(Ordering::SeqCst) < COUNT {
             expected_cnt += 1;
             sema.signal();
-            for _ in 0..10000 {
-                core::hint::spin_loop();
+            {
+                let mut prime_count = 0;
+                for num in 2..1000000 {
+                    let mut is_prime = true;
+
+                    let mut i = 2;
+                    while i * i <= num {
+                        if num % i == 0 {
+                            is_prime = false;
+                            break;
+                        }
+                        i += 1;
+                    }
+
+                    if is_prime {
+                        prime_count += 1;
+                    }
+                }
+
+                keos::println!(
+                    "Waiting for a thread to wake. Number of primes found: {}",
+                    prime_count
+                );
             }
 
             assert_eq!(counter.load(Ordering::SeqCst), expected_cnt);
@@ -299,6 +321,7 @@ pub mod semaphore {
     }
 
     pub fn sema_2() {
+        keos::println!();
         const COUNT: u32 = 16;
         let sema = Arc::new(Semaphore::new(2, ()));
         let ready_counter = Arc::new(AtomicU32::new(0));
@@ -327,8 +350,29 @@ pub mod semaphore {
             expected_cnt += 2;
             sema.signal();
             sema.signal();
-            for _ in 0..10000 {
-                core::hint::spin_loop();
+            {
+                let mut prime_count = 0;
+                for num in 2..1000000 {
+                    let mut is_prime = true;
+
+                    let mut i = 2;
+                    while i * i <= num {
+                        if num % i == 0 {
+                            is_prime = false;
+                            break;
+                        }
+                        i += 1;
+                    }
+
+                    if is_prime {
+                        prime_count += 1;
+                    }
+                }
+
+                keos::println!(
+                    "Waiting for threads to wake. Number of primes found: {}",
+                    prime_count
+                );
             }
 
             assert_eq!(counter.load(Ordering::SeqCst), expected_cnt);

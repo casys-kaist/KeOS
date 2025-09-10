@@ -3,6 +3,9 @@ name = "simple_fs"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+test = false
+
 [dev-dependencies]
 rand = { version = "*" }
 

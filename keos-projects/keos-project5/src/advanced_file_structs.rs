@@ -11,13 +11,13 @@
 //!
 //! ## Implementation Requirements
 //! You need to implement the followings:
-//! - [`FileStruct::create`]
-//! - [`FileStruct::mkdir`]
-//! - [`FileStruct::unlink`]
-//! - [`FileStruct::chdir`]
-//! - [`FileStruct::readdir`]
-//! - [`FileStruct::stat`]
-//! - [`FileStruct::fsync`]
+//! - [`AdvancedFileStructs::create`]
+//! - [`AdvancedFileStructs::mkdir`]
+//! - [`AdvancedFileStructs::unlink`]
+//! - [`AdvancedFileStructs::chdir`]
+//! - [`AdvancedFileStructs::readdir`]
+//! - [`AdvancedFileStructs::stat`]
+//! - [`AdvancedFileStructs::fsync`]
 //!
 //! # Final Remarks
 //! 🎉 Congratulations! By completing this section, you have successfully

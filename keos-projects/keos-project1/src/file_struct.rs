@@ -166,7 +166,7 @@
 //! [`uaccess`]: keos::syscall::uaccess
 //! [`UserPtrRO`]: keos::syscall::uaccess::UserPtrRO
 //! [`UserPtrWO`]: keos::syscall::uaccess::UserPtrWO
-//! [`UserCString`]: keos::syscall::uaccess::UserPtrWO
+//! [`UserCString`]: keos::syscall::uaccess::UserCString
 //! [`UserU8SliceRO`]: keos::syscall::uaccess::UserU8SliceRO
 //! [`UserU8SliceWO`]: keos::syscall::uaccess::UserU8SliceWO
 //! [`alloc::collections`]: <https://doc.rust-lang.org/alloc/collections/index.html>

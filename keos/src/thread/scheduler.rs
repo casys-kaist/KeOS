@@ -1,7 +1,7 @@
 //! Thread scheduler
 
 use super::{ParkHandle, STACK_SIZE, THREAD_MAGIC, Thread, ThreadStack, ThreadState};
-use abyss::{spinlock::SpinLock, x86_64::Rflags};
+use abyss::spinlock::SpinLock;
 use alloc::boxed::Box;
 use core::{arch::asm, sync::atomic::AtomicBool};
 
@@ -158,11 +158,6 @@ pub(crate) fn idle(core_id: usize) -> ! {
         if let Some(th) = scheduler.next_to_run() {
             th.run();
         }
-
-        if Rflags::read().contains(Rflags::IF) {
-            unsafe {
-                asm!("sti", "hlt");
-            }
-        }
+        unsafe { asm!("sti", "hlt", "cli") }
     }
 }

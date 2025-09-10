@@ -11,10 +11,10 @@
         "page_table": {
             "score": 30,
             "tests": {
-                "page_table::simple": {
+                "page_table::simple": {},
+                "page_table::simple2": {
                     "timeout": 60
                 },
-                "page_table::simple2": {},
                 "page_table::free": {},
                 "page_table::error": {},
                 "page_table::complicate": {}

@@ -284,18 +284,20 @@ impl Thread {
     pub(crate) unsafe fn do_run(&mut self) {
         unsafe {
             let _p = abyss::interrupt::InterruptGuard::new();
-            let next_sp = self.sp;
-            let current_sp = with_current(|th| {
-                while self.running_cpu.load(Ordering::SeqCst) != -1 {
-                    core::hint::spin_loop()
-                }
-                &mut th.sp as *mut usize
-            });
-            assert_eq!(
-                abyss::interrupt::InterruptState::current(),
-                abyss::interrupt::InterruptState::Off
-            );
-            context_switch_trampoline(current_sp, next_sp)
+            if with_current(|current| current as *const _ as usize != self as *const _ as usize) {
+                let next_sp = self.sp;
+                let current_sp = with_current(|th| {
+                    while self.running_cpu.load(Ordering::SeqCst) != -1 {
+                        core::hint::spin_loop()
+                    }
+                    &mut th.sp as *mut usize
+                });
+                assert_eq!(
+                    abyss::interrupt::InterruptState::current(),
+                    abyss::interrupt::InterruptState::Off
+                );
+                context_switch_trampoline(current_sp, next_sp)
+            }
         }
     }
 

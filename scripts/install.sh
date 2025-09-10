@@ -32,6 +32,7 @@ cat << EOF > .vscode/settings.json
         "${ROOT}/keos/abyss/Cargo.toml",
         "${ROOT}/fs/simple_fs/Cargo.toml",
     ],
+    "rust-analyzer.check.allTargets": false,
     "rust-analyzer.cargo.extraEnv": {
         "CARGO_BUILD_TARGET": "${ROOT}/keos-projects/.cargo/x86_64-unknown-keos.json"
     },

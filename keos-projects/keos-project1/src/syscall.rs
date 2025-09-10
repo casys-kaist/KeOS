@@ -103,8 +103,8 @@
 //!
 //! After implementing both methods, move on to the next [`Section`].
 //!
-//! [`Task::syscall`]: ../../../keos/task/trait.Task.html#tymethod.syscall
-//! [`Registers`]: ../../../keos/syscall/struct.Registers.html
+//! [`Task::syscall`]: ../../keos/task/trait.Task.html#tymethod.syscall
+//! [`Registers`]: ../../keos/syscall/struct.Registers.html
 //! [`RustBook`]: <https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html>
 //! [`Section`]: crate::file_struct
 
@@ -122,7 +122,7 @@ use keos::{KernelError, syscall::Registers};
 /// parameters and return values, making it easier to implement and handle
 /// system calls in the kernel.
 ///
-/// [`Registers`]: ../../../keos/syscall/struct.Registers.html
+/// [`Registers`]: ../../keos/syscall/struct.Registers.html
 pub struct SyscallAbi<'a> {
     /// The system call number that identifies the requested system service.
     pub sysno: usize,
@@ -160,7 +160,7 @@ impl<'a> SyscallAbi<'a> {
     /// Returns an instance of [`SyscallAbi`] populated with the system call
     /// number and arguments extracted from the provided registers.
     ///
-    /// [`Registers`]: ../../../keos/syscall/struct.Registers.html
+    /// [`Registers`]: ../../keos/syscall/struct.Registers.html
     pub fn from_registers(regs: &'a mut Registers) -> Self {
         todo!()
     }

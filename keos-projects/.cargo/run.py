@@ -516,7 +516,6 @@ def setup_gdb(run_command):
         gdbinit.write('symbol-file keos_kernel\n')
         gdbinit.write('set print frame-arguments all\n')
 
-    run_command.append('-s')
     run_command.append('-S')
 
     print('\n\033[46m\033[1;93mType \'gdb\' in this directory in separate terminal to start debugging session!\033[0m\n')

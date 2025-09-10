@@ -5,6 +5,7 @@ edition = "2024"
 
 [lib]
 proc-macro = true
+test = false
 
 [dependencies]
 quote = "1.0"
