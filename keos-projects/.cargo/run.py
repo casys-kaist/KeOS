@@ -396,13 +396,10 @@ def grade_single(run_command, target, cpu, mem, timeout, live):
 
             output = b''
             while p.poll() == None:
-                output += p.stdout.readline()
-                if 'Booting from DVD/CD...' in output.decode('utf-8'):
-                    break
-
-            output = b''
-            while p.poll() == None:
                 out = p.stdout.readline()
+                if b'\x1bc' in out:
+                    output = b''
+                    continue
                 sys.stdout.buffer.write(out)
                 sys.stdout.flush()
                 output += out

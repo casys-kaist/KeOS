@@ -11,8 +11,12 @@
             "score": 32,
             "tests": {
                 "round_robin::functionality": {},
-                "round_robin::balance": {},
-                "round_robin::balance2": {},
+                "round_robin::balance": {
+					"timeout": 60
+				},
+                "round_robin::balance2": {
+					"timeout": 60
+				},
                 "round_robin::affinity": {}
             }
         },
