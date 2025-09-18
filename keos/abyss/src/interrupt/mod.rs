@@ -159,7 +159,7 @@ impl Registers {
     ///
     /// # Example
     /// ```rust
-    /// let mut regs = Registers::new_for_user();
+    /// let mut regs = Registers::new();
     /// *regs.rip() = 0x400000; // Set entry point
     /// *regs.rsp() = 0x7FFFFFFFE000; // Set user stack pointer
     /// ```
@@ -194,7 +194,7 @@ impl Registers {
     ///
     /// # Example
     /// ```rust
-    /// let mut regs = Registers::new_for_user();
+    /// let mut regs = Registers::new();
     /// *regs.rip() = 0x400000; // Set the entry point
     /// ```
     pub fn rip(&mut self) -> &mut usize {
@@ -211,7 +211,7 @@ impl Registers {
     ///
     /// # Example
     /// ```rust
-    /// let mut regs = Registers::new_for_user();
+    /// let mut regs = Registers::new();
     /// *regs.rsp() = 0x7FFFFFFFE000; // Set the user stack pointer
     /// ```
     pub fn rsp(&mut self) -> &mut usize {
@@ -238,7 +238,7 @@ impl Registers {
     ///
     /// # Example Usage
     /// ```rust
-    /// let regs = Registers::new_for_user();
+    /// let regs = Registers::new();
     /// regs.launch(); // This function does not return
     /// unreachable!() // Execution will never reach here
     #[unsafe(naked)]

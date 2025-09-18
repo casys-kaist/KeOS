@@ -394,13 +394,41 @@ pub fn write_sync() {
 pub fn write_persistence() {
     let mut buf = [0u8; 24];
 
+    // Open the file in read-write mode.
+    let fd = syscall!(SyscallNumber::Open as usize, c"hello3".as_ptr(), 2);
+    assert!(fd >= 0, "File descriptor should be a valid number (>= 0).");
+
+    // Read the first 7 bytes and verify the initial content.
+    assert_eq!(
+        syscall!(SyscallNumber::Read as usize, fd, buf.as_mut_ptr(), 7),
+        7
+    );
+    assert_eq!(
+        &buf[0..7],
+        b"Welcome",
+        "Initial file content should be 'Welcome'."
+    );
+
+    // Seek to the beginning of the file.
+    assert_eq!(syscall!(SyscallNumber::Seek as usize, fd, 0, 0), 0);
+
+    // Write "Testing" to the file.
+    assert_eq!(
+        syscall!(SyscallNumber::Write as usize, fd, "Awesome".as_ptr(), 7),
+        7,
+        "Writing 7 bytes should return 7."
+    );
+
+    // Close the file descriptor.
+    assert_eq!(syscall!(SyscallNumber::Close as usize, fd), 0);
+
     // Reopen the file in read-write mode to ensure persistence.
-    let fd3 = syscall!(SyscallNumber::Open as usize, c"hello2".as_ptr(), 2);
-    assert!(fd3 >= 0, "Reopened file descriptor should be valid.");
+    let fd = syscall!(SyscallNumber::Open as usize, c"hello3".as_ptr(), 2);
+    assert!(fd >= 0, "Reopened file descriptor should be valid.");
 
     // Read the first 7 bytes again and ensure they match the updated content.
     assert_eq!(
-        syscall!(SyscallNumber::Read as usize, fd3, buf.as_mut_ptr(), 7),
+        syscall!(SyscallNumber::Read as usize, fd, buf.as_mut_ptr(), 7),
         7
     );
     assert_eq!(
@@ -410,16 +438,16 @@ pub fn write_persistence() {
     );
 
     // Seek to the beginning of the file again.
-    assert_eq!(syscall!(SyscallNumber::Seek as usize, fd3, 0, 0), 0);
+    assert_eq!(syscall!(SyscallNumber::Seek as usize, fd, 0, 0), 0);
 
     // Write using a buffer.
     assert_eq!(
-        syscall!(SyscallNumber::Write as usize, fd3, c"Welcome".as_ptr(), 7),
+        syscall!(SyscallNumber::Write as usize, fd, c"Welcome".as_ptr(), 7),
         7
     );
 
-    // Close the last file descriptor.
-    assert_eq!(syscall!(SyscallNumber::Close as usize, fd3), 0);
+    // Close the reopened file descriptor.
+    assert_eq!(syscall!(SyscallNumber::Close as usize, fd), 0);
 }
 
 /// Tests write error with invalid file descriptor.
@@ -714,7 +742,7 @@ pub fn tell_basic() {
     let mut buf = [0u8; 24];
 
     // Open the file in read/write mode.
-    let fd = syscall!(SyscallNumber::Open as usize, c"hello3".as_ptr(), 2);
+    let fd = syscall!(SyscallNumber::Open as usize, c"hello4".as_ptr(), 2);
     assert!(fd >= 0, "File descriptor should be a valid number (>= 0).");
 
     // The initial file offset should be 0.
@@ -757,7 +785,7 @@ pub fn tell_basic() {
 /// This test validates tell operations after writing and seeking.
 pub fn tell_write() {
     // Open the file in read/write mode.
-    let fd = syscall!(SyscallNumber::Open as usize, c"hello3".as_ptr(), 2);
+    let fd = syscall!(SyscallNumber::Open as usize, c"hello4".as_ptr(), 2);
     assert!(fd >= 0, "File descriptor should be a valid number (>= 0).");
 
     // Write new data to the file.

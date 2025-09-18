@@ -88,7 +88,7 @@
 //! cases, you should **never** handle the errors by panicking the kernel.
 //! Instead, you propagates the error with `?` operator to the
 //! [`Task::syscall`], which conveys the error code to the userspace. Consult
-//! with [`RustBook`] for how to use `?` operator.
+//! with [`Rust Book`] for how to use `?` operator.
 //!
 //! ### Returning Value to User
 //! The epilog of the [`Task::syscall`] captures both the result and error of
@@ -105,7 +105,7 @@
 //!
 //! [`Task::syscall`]: ../../keos/task/trait.Task.html#tymethod.syscall
 //! [`Registers`]: ../../keos/syscall/struct.Registers.html
-//! [`RustBook`]: <https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html>
+//! [`Rust Book`]: <https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html>
 //! [`Section`]: crate::file_struct
 
 use keos::{KernelError, syscall::Registers};

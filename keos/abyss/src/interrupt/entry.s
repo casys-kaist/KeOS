@@ -48,6 +48,7 @@
         mov [rsp], r15
         .cfi_offset r15, -0xb8
         mov rsi, [rsp + 0x78]
+        // see KernelGS structure for gs usage
         mov gs:[32], rsp
         mov rdi, rsp
         call \target
@@ -138,6 +139,7 @@
         mov [rsp], r15
         .cfi_offset r15, -0xb8
         mov rsi, [rsp + 0x88]
+        // see KernelGS structure for gs usage
         mov gs:[32], rsp
         mov rdi, rsp
         call \target

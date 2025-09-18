@@ -4,6 +4,7 @@
 
 **Note:** KeOS is an **individual project**. All work must be completed independently.
 
+<!-- Release Version: v1.0.4 (2025-09-18) -->
 
 ## Important Notes
 
@@ -37,5 +38,22 @@ $ cd keos
 $ curl https://raw.githubusercontent.com/casys-kaist/KeOS/refs/heads/main/scripts/install.sh | sh
 ```
 
+## Requirements
+ - **Processor**
+
+   A minimum of a 4-core x86_64 processor is required. The CPU must also have hardware virtualization enabled.
+    - **Intel**: Broadwell microarchitecture or newer.
+    - **AMD**: Zen 2 microarchitecture or newer.
+
+ - **Memory** (RAM)
+    - **Minimum**: 2 GiB or more
+    - **Optimal**: 4 GiB
+
+ - **Host OS**
+    - **Supported**: Ubuntu 24.04 LTS
+
 ## Related Projects
 - [KeV](https://github.com/casys-kaist/kev): KAIST educational Virtualization for `Special Topics in Computer Science <Virtualization> (CS492)`.
+
+## Ignore
+b7902a7412af5ddbe0da6399d1b89e0385d5c0bf5696ba54c35431eb98d5e37a

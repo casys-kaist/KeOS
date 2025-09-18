@@ -400,6 +400,11 @@ impl FileStruct {
     /// associating the file with the current process and prepares the file
     /// for subsequent operations.
     ///
+    /// # Errors
+    /// - Returns [`KernelError::InvalidArgument`] if unexpected access mode
+    ///   is provided.
+    /// - Propagates any errors from underlying APIs (e.g. [`uaccess`](keos::syscall::uaccess)).
+    /// 
     /// # Syscall API
     /// ```c
     /// int open(const char *pathname, int flags);
@@ -420,6 +425,13 @@ impl FileStruct {
     /// This function implements the system call for reading from an open file.
     /// It reads up to a specified number of bytes from the file and returns
     /// them to the user. The current file position is adjusted accordingly.
+    /// 
+    /// # Errors
+    /// - Returns [`KernelError::IsDirectory`] if the specified file is a directory.
+    /// - Returns [`KernelError::BrokenPipe`] if the specified file is a disconnected
+    ///   interprocesscommunication channel.
+    /// - Returns [`KernelError::BadFileDescriptor`] if the specified file descriptor is
+    ///   invalid.
     ///
     /// # Syscall API
     /// ```c
@@ -440,6 +452,14 @@ impl FileStruct {
     /// writes a specified number of bytes to the file, starting from the
     /// current file position. The file's state is updated accordingly.
     ///
+    /// # Errors
+    /// - Returns [`KernelError::IsDirectory`] if the specified file is a directory.
+    /// - Returns [`KernelError::BrokenPipe`] if the specified file is a disconnected
+    ///   interprocesscommunication channel.
+    /// - Returns [`KernelError::BadFileDescriptor`] if the specified file descriptor is
+    ///   invalid.
+    /// - Propagates any errors from underlying APIs (e.g. [`uaccess`](keos::syscall::uaccess)).
+    ///
     /// # Syscall API
     /// ```c
     /// ssize_t write(int fd, const void *buf, size_t count);
@@ -459,6 +479,15 @@ impl FileStruct {
     /// a specified position within the file. The position can be set
     /// relative to the beginning, current position, or end of the file.
     ///
+    /// # Errors
+    /// - Returns [`KernelError::InvalidArgument`] if the calculated position is
+    ///   invalid.
+    /// - Returns [`KernelError::InvalidArgument`] if the specified file is not a
+    ///  [`FileKind::RegularFile`].
+    /// - Returns [`KernelError::BadFileDescriptor`] if specified file descriptor is
+    ///   invalid.
+    /// - Propagates any errors from underlying APIs (e.g. [`uaccess`](keos::syscall::uaccess)).
+    /// 
     /// # Syscall API
     /// ```c
     /// off_t seek(int fd, off_t offset, int whence);
@@ -481,7 +510,13 @@ impl FileStruct {
     /// This function implements the system call for retrieving the current file
     /// pointer position. It allows the program to know where in the file
     /// the next operation will occur.
-    ///
+    /// 
+    /// # Errors
+    /// - Returns [`KernelError::InvalidArgument`] if the specified file is not a
+    ///   [`FileKind::RegularFile`].
+    /// - Returns [`KernelError::BadFileDescriptor`] if specified file descriptor is
+    ///   invalid.
+    /// 
     /// # Syscall API
     /// ```c
     /// off_t tell(int fd);
@@ -496,7 +531,11 @@ impl FileStruct {
     /// Closes an open file.
     ///
     /// This function implements the system call for closing an open file.
-    ///
+    /// 
+    /// # Errors
+    /// - Returns [`KernelError::BadFileDescriptor`] if specified file descriptor is
+    ///   invalid.
+    /// 
     /// # Syscall API
     /// ```c
     /// int close(int fd);
