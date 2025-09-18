@@ -437,76 +437,81 @@
 <a href=#437 id=437 data-nosnippet>437</a>
 <a href=#438 id=438 data-nosnippet>438</a>    <span class="doccomment">/// Removes a directory entry by name.
 <a href=#439 id=439 data-nosnippet>439</a>    ///
-<a href=#440 id=440 data-nosnippet>440</a>    /// Should be fail as [`KernelError::Busy`] when entry's Inode number
-<a href=#441 id=441 data-nosnippet>441</a>    /// is 1 as it means it's a root directory.
-<a href=#442 id=442 data-nosnippet>442</a>    ///
-<a href=#443 id=443 data-nosnippet>443</a>    /// # Parameters
-<a href=#444 id=444 data-nosnippet>444</a>    /// - `entry`: The name of the entry to remove.
-<a href=#445 id=445 data-nosnippet>445</a>    ///
-<a href=#446 id=446 data-nosnippet>446</a>    /// # Returns
-<a href=#447 id=447 data-nosnippet>447</a>    /// - `Ok(())`: If the entry was successfully removed.
-<a href=#448 id=448 data-nosnippet>448</a>    /// - `Err(Error)`: An error if the removal fails.
-<a href=#449 id=449 data-nosnippet>449</a>    </span><span class="kw">fn </span>unlink_entry(<span class="kw-2">&amp;</span><span class="self">self</span>, entry: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), keos::KernelError&gt; {
-<a href=#450 id=450 data-nosnippet>450</a>        <span class="comment">// Get the filesystem from the weak reference.
-<a href=#451 id=451 data-nosnippet>451</a>        </span><span class="kw">let </span>ffs = <span class="self">self
-<a href=#452 id=452 data-nosnippet>452</a>            </span>.ffs
-<a href=#453 id=453 data-nosnippet>453</a>            .upgrade()
-<a href=#454 id=454 data-nosnippet>454</a>            .ok_or(KernelError::FilesystemCorrupted(<span class="string">"File system closed."</span>))<span class="question-mark">?</span>;
-<a href=#455 id=455 data-nosnippet>455</a>
-<a href=#456 id=456 data-nosnippet>456</a>        <span class="kw">let </span>tx = ffs.open_transaction(<span class="string">"Directory::remove_entry"</span>);
-<a href=#457 id=457 data-nosnippet>457</a>        <span class="kw">let </span>inode = <span class="self">self</span>.open_entry(entry)<span class="question-mark">?</span>;
-<a href=#458 id=458 data-nosnippet>458</a>
-<a href=#459 id=459 data-nosnippet>459</a>        <span class="kw">if </span>inode.ino() == InodeNumber::new(<span class="number">1</span>).unwrap() {
-<a href=#460 id=460 data-nosnippet>460</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(KernelError::Busy);
-<a href=#461 id=461 data-nosnippet>461</a>        }
-<a href=#462 id=462 data-nosnippet>462</a>
-<a href=#463 id=463 data-nosnippet>463</a>        <span class="kw">let </span>links_to_dec = <span class="kw">match </span>inode {
-<a href=#464 id=464 data-nosnippet>464</a>            keos::fs::File::Directory(d) =&gt; {
-<a href=#465 id=465 data-nosnippet>465</a>                <span class="kw">if </span>d.read_dir()<span class="question-mark">?</span>.len() != <span class="number">2 </span>{
-<a href=#466 id=466 data-nosnippet>466</a>                    <span class="prelude-val">Err</span>(KernelError::DirectoryNotEmpty)
-<a href=#467 id=467 data-nosnippet>467</a>                } <span class="kw">else </span>{
-<a href=#468 id=468 data-nosnippet>468</a>                    <span class="kw">match </span>d.removed()<span class="question-mark">?</span>.swap(<span class="bool-val">true</span>) {
-<a href=#469 id=469 data-nosnippet>469</a>                        <span class="bool-val">true </span>=&gt; <span class="prelude-val">Err</span>(KernelError::NoSuchEntry),
-<a href=#470 id=470 data-nosnippet>470</a>                        <span class="bool-val">false </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">2</span>),
-<a href=#471 id=471 data-nosnippet>471</a>                    }
-<a href=#472 id=472 data-nosnippet>472</a>                }
-<a href=#473 id=473 data-nosnippet>473</a>            }
-<a href=#474 id=474 data-nosnippet>474</a>            <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">1</span>),
-<a href=#475 id=475 data-nosnippet>475</a>        }<span class="question-mark">?</span>;
-<a href=#476 id=476 data-nosnippet>476</a>        <span class="kw">let </span>inode = <span class="self">self</span>.take_entry(<span class="kw-2">&amp;</span>ffs, entry, <span class="kw-2">&amp;</span>tx)<span class="question-mark">?</span>;
-<a href=#477 id=477 data-nosnippet>477</a>        inode.write_with(<span class="kw-2">&amp;</span>tx, |<span class="kw-2">mut </span>ino| {
-<a href=#478 id=478 data-nosnippet>478</a>            ino.link_count -= links_to_dec;
-<a href=#479 id=479 data-nosnippet>479</a>            ino.submit();
-<a href=#480 id=480 data-nosnippet>480</a>            <span class="prelude-val">Ok</span>(())
-<a href=#481 id=481 data-nosnippet>481</a>        })<span class="question-mark">?</span>;
-<a href=#482 id=482 data-nosnippet>482</a>        tx.commit()
-<a href=#483 id=483 data-nosnippet>483</a>    }
-<a href=#484 id=484 data-nosnippet>484</a>
-<a href=#485 id=485 data-nosnippet>485</a>    <span class="doccomment">/// Reads the contents of the directory.
-<a href=#486 id=486 data-nosnippet>486</a>    ///
-<a href=#487 id=487 data-nosnippet>487</a>    /// This function lists all the entries within the directory.
-<a href=#488 id=488 data-nosnippet>488</a>    ///
-<a href=#489 id=489 data-nosnippet>489</a>    /// # Returns
-<a href=#490 id=490 data-nosnippet>490</a>    /// - `Ok(())`: If the directory was successfully read.
-<a href=#491 id=491 data-nosnippet>491</a>    /// - `Err(Error)`: An error if the read operation fails.
-<a href=#492 id=492 data-nosnippet>492</a>    </span><span class="kw">fn </span>read_dir(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(InodeNumber, String)&gt;, keos::KernelError&gt; {
-<a href=#493 id=493 data-nosnippet>493</a>        <span class="comment">// Get the filesystem from the weak reference.
-<a href=#494 id=494 data-nosnippet>494</a>        </span><span class="kw">let </span>ffs = <span class="self">self
-<a href=#495 id=495 data-nosnippet>495</a>            </span>.ffs
-<a href=#496 id=496 data-nosnippet>496</a>            .upgrade()
-<a href=#497 id=497 data-nosnippet>497</a>            .ok_or(KernelError::FilesystemCorrupted(<span class="string">"File system closed."</span>))<span class="question-mark">?</span>;
-<a href=#498 id=498 data-nosnippet>498</a>        <span class="self">self</span>.read_dir(<span class="kw-2">&amp;</span>ffs)
-<a href=#499 id=499 data-nosnippet>499</a>    }
-<a href=#500 id=500 data-nosnippet>500</a>
-<a href=#501 id=501 data-nosnippet>501</a>    <span class="doccomment">/// Returns [`AtomicBool`] which contains whether directory is removed.
-<a href=#502 id=502 data-nosnippet>502</a>    ///
-<a href=#503 id=503 data-nosnippet>503</a>    /// This is important because directory operations against the removed
-<a href=#504 id=504 data-nosnippet>504</a>    /// directory will result in undesirable behavior (e.g. unreachable file).
-<a href=#505 id=505 data-nosnippet>505</a>    ///
-<a href=#506 id=506 data-nosnippet>506</a>    /// # Returns
-<a href=#507 id=507 data-nosnippet>507</a>    /// - `Ok(())`: If the directory was successfully read.
-<a href=#508 id=508 data-nosnippet>508</a>    /// - `Err(Error)`: An error if the operation fails.
-<a href=#509 id=509 data-nosnippet>509</a>    </span><span class="kw">fn </span>removed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>AtomicBool, KernelError&gt; {
-<a href=#510 id=510 data-nosnippet>510</a>        <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.removed)
-<a href=#511 id=511 data-nosnippet>511</a>    }
-<a href=#512 id=512 data-nosnippet>512</a>}</code></pre></div></section></main></body></html>
+<a href=#440 id=440 data-nosnippet>440</a>    /// # Errors
+<a href=#441 id=441 data-nosnippet>441</a>    /// - Returns [`KernelError::Busy`] when entry's Inode number is `1`
+<a href=#442 id=442 data-nosnippet>442</a>    ///  as it means it's a root directory.
+<a href=#443 id=443 data-nosnippet>443</a>    /// - Returns [`KernelError::DirectoryNotEmpty`] when the entry is a
+<a href=#444 id=444 data-nosnippet>444</a>    ///  non-empty directory
+<a href=#445 id=445 data-nosnippet>445</a>    /// - Returns [`KernelError::NoSuchEntry`] if specified entry does
+<a href=#446 id=446 data-nosnippet>446</a>    ///  not exists.
+<a href=#447 id=447 data-nosnippet>447</a>    ///
+<a href=#448 id=448 data-nosnippet>448</a>    /// # Parameters
+<a href=#449 id=449 data-nosnippet>449</a>    /// - `entry`: The name of the entry to remove.
+<a href=#450 id=450 data-nosnippet>450</a>    ///
+<a href=#451 id=451 data-nosnippet>451</a>    /// # Returns
+<a href=#452 id=452 data-nosnippet>452</a>    /// - `Ok(())`: If the entry was successfully removed.
+<a href=#453 id=453 data-nosnippet>453</a>    /// - `Err(Error)`: An error if the removal fails.
+<a href=#454 id=454 data-nosnippet>454</a>    </span><span class="kw">fn </span>unlink_entry(<span class="kw-2">&amp;</span><span class="self">self</span>, entry: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), keos::KernelError&gt; {
+<a href=#455 id=455 data-nosnippet>455</a>        <span class="comment">// Get the filesystem from the weak reference.
+<a href=#456 id=456 data-nosnippet>456</a>        </span><span class="kw">let </span>ffs = <span class="self">self
+<a href=#457 id=457 data-nosnippet>457</a>            </span>.ffs
+<a href=#458 id=458 data-nosnippet>458</a>            .upgrade()
+<a href=#459 id=459 data-nosnippet>459</a>            .ok_or(KernelError::FilesystemCorrupted(<span class="string">"File system closed."</span>))<span class="question-mark">?</span>;
+<a href=#460 id=460 data-nosnippet>460</a>
+<a href=#461 id=461 data-nosnippet>461</a>        <span class="kw">let </span>tx = ffs.open_transaction(<span class="string">"Directory::remove_entry"</span>);
+<a href=#462 id=462 data-nosnippet>462</a>        <span class="kw">let </span>inode = <span class="self">self</span>.open_entry(entry)<span class="question-mark">?</span>;
+<a href=#463 id=463 data-nosnippet>463</a>
+<a href=#464 id=464 data-nosnippet>464</a>        <span class="kw">if </span>inode.ino() == InodeNumber::new(<span class="number">1</span>).unwrap() {
+<a href=#465 id=465 data-nosnippet>465</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(KernelError::Busy);
+<a href=#466 id=466 data-nosnippet>466</a>        }
+<a href=#467 id=467 data-nosnippet>467</a>
+<a href=#468 id=468 data-nosnippet>468</a>        <span class="kw">let </span>links_to_dec = <span class="kw">match </span>inode {
+<a href=#469 id=469 data-nosnippet>469</a>            keos::fs::File::Directory(d) =&gt; {
+<a href=#470 id=470 data-nosnippet>470</a>                <span class="kw">if </span>d.read_dir()<span class="question-mark">?</span>.len() != <span class="number">2 </span>{
+<a href=#471 id=471 data-nosnippet>471</a>                    <span class="prelude-val">Err</span>(KernelError::DirectoryNotEmpty)
+<a href=#472 id=472 data-nosnippet>472</a>                } <span class="kw">else </span>{
+<a href=#473 id=473 data-nosnippet>473</a>                    <span class="kw">match </span>d.removed()<span class="question-mark">?</span>.swap(<span class="bool-val">true</span>) {
+<a href=#474 id=474 data-nosnippet>474</a>                        <span class="bool-val">true </span>=&gt; <span class="prelude-val">Err</span>(KernelError::NoSuchEntry),
+<a href=#475 id=475 data-nosnippet>475</a>                        <span class="bool-val">false </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">2</span>),
+<a href=#476 id=476 data-nosnippet>476</a>                    }
+<a href=#477 id=477 data-nosnippet>477</a>                }
+<a href=#478 id=478 data-nosnippet>478</a>            }
+<a href=#479 id=479 data-nosnippet>479</a>            <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">1</span>),
+<a href=#480 id=480 data-nosnippet>480</a>        }<span class="question-mark">?</span>;
+<a href=#481 id=481 data-nosnippet>481</a>        <span class="kw">let </span>inode = <span class="self">self</span>.take_entry(<span class="kw-2">&amp;</span>ffs, entry, <span class="kw-2">&amp;</span>tx)<span class="question-mark">?</span>;
+<a href=#482 id=482 data-nosnippet>482</a>        inode.write_with(<span class="kw-2">&amp;</span>tx, |<span class="kw-2">mut </span>ino| {
+<a href=#483 id=483 data-nosnippet>483</a>            ino.link_count -= links_to_dec;
+<a href=#484 id=484 data-nosnippet>484</a>            ino.submit();
+<a href=#485 id=485 data-nosnippet>485</a>            <span class="prelude-val">Ok</span>(())
+<a href=#486 id=486 data-nosnippet>486</a>        })<span class="question-mark">?</span>;
+<a href=#487 id=487 data-nosnippet>487</a>        tx.commit()
+<a href=#488 id=488 data-nosnippet>488</a>    }
+<a href=#489 id=489 data-nosnippet>489</a>
+<a href=#490 id=490 data-nosnippet>490</a>    <span class="doccomment">/// Reads the contents of the directory.
+<a href=#491 id=491 data-nosnippet>491</a>    ///
+<a href=#492 id=492 data-nosnippet>492</a>    /// This function lists all the entries within the directory.
+<a href=#493 id=493 data-nosnippet>493</a>    ///
+<a href=#494 id=494 data-nosnippet>494</a>    /// # Returns
+<a href=#495 id=495 data-nosnippet>495</a>    /// - `Ok(())`: If the directory was successfully read.
+<a href=#496 id=496 data-nosnippet>496</a>    /// - `Err(Error)`: An error if the read operation fails.
+<a href=#497 id=497 data-nosnippet>497</a>    </span><span class="kw">fn </span>read_dir(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(InodeNumber, String)&gt;, keos::KernelError&gt; {
+<a href=#498 id=498 data-nosnippet>498</a>        <span class="comment">// Get the filesystem from the weak reference.
+<a href=#499 id=499 data-nosnippet>499</a>        </span><span class="kw">let </span>ffs = <span class="self">self
+<a href=#500 id=500 data-nosnippet>500</a>            </span>.ffs
+<a href=#501 id=501 data-nosnippet>501</a>            .upgrade()
+<a href=#502 id=502 data-nosnippet>502</a>            .ok_or(KernelError::FilesystemCorrupted(<span class="string">"File system closed."</span>))<span class="question-mark">?</span>;
+<a href=#503 id=503 data-nosnippet>503</a>        <span class="self">self</span>.read_dir(<span class="kw-2">&amp;</span>ffs)
+<a href=#504 id=504 data-nosnippet>504</a>    }
+<a href=#505 id=505 data-nosnippet>505</a>
+<a href=#506 id=506 data-nosnippet>506</a>    <span class="doccomment">/// Returns [`AtomicBool`] which contains whether directory is removed.
+<a href=#507 id=507 data-nosnippet>507</a>    ///
+<a href=#508 id=508 data-nosnippet>508</a>    /// This is important because directory operations against the removed
+<a href=#509 id=509 data-nosnippet>509</a>    /// directory will result in undesirable behavior (e.g. unreachable file).
+<a href=#510 id=510 data-nosnippet>510</a>    ///
+<a href=#511 id=511 data-nosnippet>511</a>    /// # Returns
+<a href=#512 id=512 data-nosnippet>512</a>    /// - `Ok(())`: If the directory was successfully read.
+<a href=#513 id=513 data-nosnippet>513</a>    /// - `Err(Error)`: An error if the operation fails.
+<a href=#514 id=514 data-nosnippet>514</a>    </span><span class="kw">fn </span>removed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>AtomicBool, KernelError&gt; {
+<a href=#515 id=515 data-nosnippet>515</a>        <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.removed)
+<a href=#516 id=516 data-nosnippet>516</a>    }
+<a href=#517 id=517 data-nosnippet>517</a>}</code></pre></div></section></main></body></html>

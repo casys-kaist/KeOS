@@ -80,7 +80,7 @@ kernel memory.</li>
 cases, you should <strong>never</strong> handle the errors by panicking the kernel.
 Instead, you propagates the error with <code>?</code> operator to the
 <a href="../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a>, which conveys the error code to the userspace. Consult
-with <a href="https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html"><code>RustBook</code></a> for how to use <code>?</code> operator.</p>
+with <a href="https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html"><code>Rust Book</code></a> for how to use <code>?</code> operator.</p>
 <h4 id="returning-value-to-user"><a class="doc-anchor" href="#returning-value-to-user">§</a>Returning Value to User</h4>
 <p>The epilog of the <a href="../../keos/task/trait.Task.html#tymethod.syscall"><code>Task::syscall</code></a> captures both the result and error of
 the function, interprets them in to the <code>usize</code>, and return the values into

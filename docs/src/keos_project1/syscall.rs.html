@@ -88,7 +88,7 @@
 <a href=#88 id=88 data-nosnippet>88</a>//! cases, you should **never** handle the errors by panicking the kernel.
 <a href=#89 id=89 data-nosnippet>89</a>//! Instead, you propagates the error with `?` operator to the
 <a href=#90 id=90 data-nosnippet>90</a>//! [`Task::syscall`], which conveys the error code to the userspace. Consult
-<a href=#91 id=91 data-nosnippet>91</a>//! with [`RustBook`] for how to use `?` operator.
+<a href=#91 id=91 data-nosnippet>91</a>//! with [`Rust Book`] for how to use `?` operator.
 <a href=#92 id=92 data-nosnippet>92</a>//!
 <a href=#93 id=93 data-nosnippet>93</a>//! ### Returning Value to User
 <a href=#94 id=94 data-nosnippet>94</a>//! The epilog of the [`Task::syscall`] captures both the result and error of
@@ -105,7 +105,7 @@
 <a href=#105 id=105 data-nosnippet>105</a>//!
 <a href=#106 id=106 data-nosnippet>106</a>//! [`Task::syscall`]: ../../keos/task/trait.Task.html#tymethod.syscall
 <a href=#107 id=107 data-nosnippet>107</a>//! [`Registers`]: ../../keos/syscall/struct.Registers.html
-<a href=#108 id=108 data-nosnippet>108</a>//! [`RustBook`]: &lt;https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html&gt;
+<a href=#108 id=108 data-nosnippet>108</a>//! [`Rust Book`]: &lt;https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html&gt;
 <a href=#109 id=109 data-nosnippet>109</a>//! [`Section`]: crate::file_struct
 <a href=#110 id=110 data-nosnippet>110</a>
 <a href=#111 id=111 data-nosnippet>111</a></span><span class="kw">use </span>keos::{KernelError, syscall::Registers};

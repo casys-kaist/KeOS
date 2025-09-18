@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["flags","uaccess"],"struct":["Registers"]};
+window.SIDEBAR_ITEMS = {"mod":["flags","uaccess"],"struct":["GeneralPurposeRegisters","Registers"]};
