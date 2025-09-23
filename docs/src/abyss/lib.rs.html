@@ -58,11 +58,17 @@
 <a href=#58 id=58 data-nosnippet>58</a><span class="attr">#[doc(hidden)]
 <a href=#59 id=59 data-nosnippet>59</a></span><span class="kw">pub mod </span>x86_64;
 <a href=#60 id=60 data-nosnippet>60</a>
-<a href=#61 id=61 data-nosnippet>61</a><span class="kw">pub use </span>addressing::{Va, Pa};
-<a href=#62 id=62 data-nosnippet>62</a><span class="kw">pub use </span>x86_64::interrupt::PFErrorCode;
-<a href=#63 id=63 data-nosnippet>63</a>
-<a href=#64 id=64 data-nosnippet>64</a><span class="doccomment">/// Maximum number of CPU the kernel can support.
-<a href=#65 id=65 data-nosnippet>65</a></span><span class="kw">pub const </span>MAX_CPU: usize = <span class="number">4</span>;
-<a href=#66 id=66 data-nosnippet>66</a>
-<a href=#67 id=67 data-nosnippet>67</a><span class="attr">#[doc(hidden)]
-<a href=#68 id=68 data-nosnippet>68</a></span><span class="kw">pub static </span>QUITE: AtomicBool = AtomicBool::new(<span class="bool-val">false</span>);</code></pre></div></section></main></body></html>
+<a href=#61 id=61 data-nosnippet>61</a><span class="attr">#[cfg(doc)]
+<a href=#62 id=62 data-nosnippet>62</a></span><span class="kw">pub use </span>addressing::{Va, Pa};
+<a href=#63 id=63 data-nosnippet>63</a><span class="attr">#[cfg(doc)]
+<a href=#64 id=64 data-nosnippet>64</a></span><span class="kw">pub use </span>x86_64::interrupt::PFErrorCode;
+<a href=#65 id=65 data-nosnippet>65</a><span class="attr">#[cfg(doc)]
+<a href=#66 id=66 data-nosnippet>66</a></span><span class="kw">pub use </span>interrupt::Registers;
+<a href=#67 id=67 data-nosnippet>67</a><span class="attr">#[cfg(doc)]
+<a href=#68 id=68 data-nosnippet>68</a></span><span class="kw">pub use </span>interrupt::GeneralPurposeRegisters;
+<a href=#69 id=69 data-nosnippet>69</a>
+<a href=#70 id=70 data-nosnippet>70</a><span class="doccomment">/// Maximum number of CPU the kernel can support.
+<a href=#71 id=71 data-nosnippet>71</a></span><span class="kw">pub const </span>MAX_CPU: usize = <span class="number">4</span>;
+<a href=#72 id=72 data-nosnippet>72</a>
+<a href=#73 id=73 data-nosnippet>73</a><span class="attr">#[doc(hidden)]
+<a href=#74 id=74 data-nosnippet>74</a></span><span class="kw">pub static </span>QUITE: AtomicBool = AtomicBool::new(<span class="bool-val">false</span>);</code></pre></div></section></main></body></html>
