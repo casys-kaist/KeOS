@@ -32,7 +32,7 @@ instance.</p>
 <li>A new <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> instance initialized with a new <a href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable"><code>PageTable</code></a> and
 <code>P::new()</code>.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.access_ok" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#171-173">Source</a><h4 class="code-header">pub fn <a href="#method.access_ok" class="fn">access_ok</a>(&amp;self, addr: Range&lt;Va&gt;, is_write: bool) -&gt; bool</h4></section></summary><div class="docblock"><p>This function ensures that system calls using memory addresses (such as
+</div></details><details class="toggle method-toggle" open><summary><section id="method.access_ok" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#171-173">Source</a><h4 class="code-header">pub fn <a href="#method.access_ok" class="fn">access_ok</a>(&amp;self, addr: Range&lt;<a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>&gt;, is_write: bool) -&gt; bool</h4></section></summary><div class="docblock"><p>This function ensures that system calls using memory addresses (such as
 <code>read</code>, <code>write</code>, etc.) operate only on <strong>valid and accessible</strong>
 memory regions.</p>
 <h5 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h5>
@@ -48,7 +48,7 @@ only being read.</li>
 </ul>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.do_mmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#186-197">Source</a><h4 class="code-header">pub fn <a href="#method.do_mmap" class="fn">do_mmap</a>(
     &amp;mut self,
-    addr: Va,
+    addr: <a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>,
     size: usize,
     prot: <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>,
     file: Option&lt;&amp;<a class="struct" href="../../keos/fs/struct.RegularFile.html" title="struct keos::fs::RegularFile">RegularFile</a>&gt;,
@@ -146,7 +146,7 @@ explicitly unmapped via <code>munmap</code>.</li>
 invalid or does not correspond to an active memory mapping.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.get_user_page_and" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#323-334">Source</a><h4 class="code-header">pub fn <a href="#method.get_user_page_and" class="fn">get_user_page_and</a>&lt;R&gt;(
     &amp;mut self,
-    addr: Va,
+    addr: <a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>,
     f: impl FnOnce(<a class="struct" href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef">PageRef</a>&lt;'_&gt;, <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>) -&gt; R,
 ) -&gt; Result&lt;R, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Find a mapped page at the given virtual address and apply a function to
 it.</p>
@@ -155,7 +155,7 @@ applies the provided function <code>f</code> to it. The function <code>f</code> 
 <a href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef"><code>PageRef</code></a> to the page and its corresponding <a href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission"><code>Permission</code></a> flags.</p>
 <h5 id="parameters-2"><a class="doc-anchor" href="#parameters-2">§</a>Parameters</h5>
 <ul>
-<li><code>addr</code>: The virtual address ([<code>Va</code>]) of the page to find.</li>
+<li><code>addr</code>: The virtual address (<a href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va"><code>Va</code></a>) of the page to find.</li>
 <li><code>f</code>: A closure that takes a <a href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef"><code>PageRef</code></a> and its <a href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission"><code>Permission</code></a> flags,
 returning a value of type <code>R</code>.</li>
 </ul>

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["PAGE_MASK","PAGE_SHIFT","PAGE_SIZE"],"struct":["Kva","Pa","Va"]};

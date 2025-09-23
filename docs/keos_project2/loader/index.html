@@ -56,7 +56,7 @@ kernel memory.</li>
 <code>kelibc/entry.c</code>, as the program entry point. It calls <code>main()</code> and
 exits when <code>main()</code> returns. The kernel must set up the registers and user
 program’s stack correctly before execution, passing arguments according to
-the standard calling convention. [<code>Registers</code>] contains the CPU states on
+the standard calling convention. <a href="../../abyss/interrupt/struct.Registers.html" title="struct abyss::interrupt::Registers"><code>Registers</code></a> contains the CPU states on
 launching a program, including instruction pointer, stack pointer, and
 general-purpose registers.</p>
 <p><strong>Example command:</strong> <code>/bin/ls -l foo bar</code></p>

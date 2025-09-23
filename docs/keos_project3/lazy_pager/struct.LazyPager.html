@@ -104,7 +104,7 @@ trigger a <strong>segmentation fault</strong>, resulting process exit.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.mmap" class="method trait-impl"><a class="src rightside" href="../../src/keos_project3/lazy_pager.rs.html#205-215">Source</a><a href="#method.mmap" class="anchor">§</a><h4 class="code-header">fn <a href="../../keos_project2/pager/trait.Pager.html#tymethod.mmap" class="fn">mmap</a>(
     &amp;mut self,
     _page_table: &amp;mut <a class="struct" href="../../keos_project2/page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
-    addr: Va,
+    addr: <a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>,
     size: usize,
     prot: <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>,
     file: Option&lt;&amp;<a class="struct" href="../../keos/fs/struct.RegularFile.html" title="struct keos::fs::RegularFile">RegularFile</a>&gt;,
@@ -116,7 +116,7 @@ real mappings on page fault.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.munmap" class="method trait-impl"><a class="src rightside" href="../../src/keos_project3/lazy_pager.rs.html#224-226">Source</a><a href="#method.munmap" class="anchor">§</a><h4 class="code-header">fn <a href="../../keos_project2/pager/trait.Pager.html#tymethod.munmap" class="fn">munmap</a>(
     &amp;mut self,
     page_table: &amp;mut <a class="struct" href="../../keos_project2/page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
-    addr: Va,
+    addr: <a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>,
 ) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Memory unmap function (<code>munmap</code>) for lazy paging.</p>
 <p>This function would unmap a previously mapped memory region, releasing
 any associated resources.</p>
@@ -127,7 +127,7 @@ any associated resources.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.get_user_page" class="method trait-impl"><a class="src rightside" href="../../src/keos_project3/lazy_pager.rs.html#241-247">Source</a><a href="#method.get_user_page" class="anchor">§</a><h4 class="code-header">fn <a href="../../keos_project2/pager/trait.Pager.html#tymethod.get_user_page" class="fn">get_user_page</a>(
     &amp;mut self,
     page_table: &amp;mut <a class="struct" href="../../keos_project2/page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable">PageTable</a>,
-    addr: Va,
+    addr: <a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>,
 ) -&gt; Option&lt;(<a class="struct" href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef">PageRef</a>&lt;'_&gt;, <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>)&gt;</h4></section></summary><div class="docblock"><p>Find a mapped page at the given virtual address. If the page for addr is
 not loaded, load it and then returns.</p>
 <p>This function searches for a memory page mapped at <code>addr</code> and, if found,
@@ -135,14 +135,14 @@ returns a tuple of <a href="../../keos/mm/struct.PageRef.html" title="struct keo
 <a href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission"><code>Permission</code></a> flags.</p>
 <h5 id="parameters-3"><a class="doc-anchor" href="#parameters-3">§</a>Parameters</h5>
 <ul>
-<li><code>addr</code>: The virtual address ([<code>Va</code>]) of the page to find.</li>
+<li><code>addr</code>: The virtual address (<a href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va"><code>Va</code></a>) of the page to find.</li>
 </ul>
 <h5 id="returns-3"><a class="doc-anchor" href="#returns-3">§</a>Returns</h5>
 <ul>
 <li><code>Some(([</code>PageRef<code>], [</code>Permission<code>]))</code>: If the page is found.</li>
 <li><code>None</code>: If no mapped page is found at <code>addr</code>.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.access_ok" class="method trait-impl"><a class="src rightside" href="../../src/keos_project3/lazy_pager.rs.html#255-257">Source</a><a href="#method.access_ok" class="anchor">§</a><h4 class="code-header">fn <a href="../../keos_project2/pager/trait.Pager.html#tymethod.access_ok" class="fn">access_ok</a>(&amp;self, va: Va, is_write: bool) -&gt; bool</h4></section></summary><div class="docblock"><p>Checks whether access to the given virtual address is permitted.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.access_ok" class="method trait-impl"><a class="src rightside" href="../../src/keos_project3/lazy_pager.rs.html#255-257">Source</a><a href="#method.access_ok" class="anchor">§</a><h4 class="code-header">fn <a href="../../keos_project2/pager/trait.Pager.html#tymethod.access_ok" class="fn">access_ok</a>(&amp;self, va: <a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>, is_write: bool) -&gt; bool</h4></section></summary><div class="docblock"><p>Checks whether access to the given virtual address is permitted.</p>
 <p>This function verifies that a virtual address <code>va</code> is part of a valid
 memory mapping and that the requested access type (read or write) is
 allowed by the page’s protection flags. Note that this does not trigger

@@ -4,7 +4,7 @@ multiple threads of execution. This coordination is vital to ensure data
 consistency, prevent race conditions, and maintain overall system stability
 and performance.</p>
 <p>In earlier projects, KeOS employed a single synchronization primitive: the
-<a href="keos::sync::SpinLock"><code>SpinLock</code></a>. While <a href="keos::sync::SpinLock"><code>SpinLock</code></a> provides correct mutual exclusion by
+<a href="../../abyss/spinlock/struct.SpinLock.html" title="struct abyss::spinlock::SpinLock"><code>SpinLock</code></a>. While <a href="../../abyss/spinlock/struct.SpinLock.html" title="struct abyss::spinlock::SpinLock"><code>SpinLock</code></a> provides correct mutual exclusion by
 repeatedly checking for lock availability (i.e., “spinning”), it is
 inefficient under high contention, as it wastes CPU cycles by actively
 polling instead of sleeping.</p>
@@ -42,7 +42,7 @@ and multithreaded applications.</p>
 <p>Different synchronization primitives are suited to different concurrency
 patterns. The table below summarizes their key characteristics:</p>
 <div><table><thead><tr><th>Primitive</th><th>Blocks Thread?</th><th>Fair?</th><th>Typical Use Case</th></tr></thead><tbody>
-<tr><td><a href="keos::sync::SpinLock"><code>SpinLock</code></a></td><td>No (busy wait)</td><td>No</td><td>Short, uncontended critical sections in the kernel</td></tr>
+<tr><td><a href="../../abyss/spinlock/struct.SpinLock.html" title="struct abyss::spinlock::SpinLock"><code>SpinLock</code></a></td><td>No (busy wait)</td><td>No</td><td>Short, uncontended critical sections in the kernel</td></tr>
 <tr><td><a href="mutex/index.html" title="mod keos_project4::sync::mutex"><code>Mutex</code></a></td><td>Yes</td><td>Yes</td><td>Exclusive access to shared data</td></tr>
 <tr><td><a href="condition_variable/struct.ConditionVariable.html" title="struct keos_project4::sync::condition_variable::ConditionVariable"><code>ConditionVariable</code></a></td><td>Yes</td><td>Yes</td><td>Waiting for a condition to become true</td></tr>
 <tr><td><a href="semaphore/index.html" title="mod keos_project4::sync::semaphore"><code>Semaphore</code></a></td><td>Yes</td><td>Depends</td><td>Limiting access to a bounded resource</td></tr>
