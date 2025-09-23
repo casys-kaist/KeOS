@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["MAX_CPU"],"macro":["debug","info","mmio","print","println","warning"],"struct":["GeneralPurposeRegisters","PFErrorCode","Pa","Registers","Va"]};
+window.SIDEBAR_ITEMS = {"constant":["MAX_CPU"],"macro":["debug","info","mmio","print","println","warning"],"struct":["GeneralPurposeRegisters","PFErrorCode","Pa","Registers","SpinLock","Va"]};
