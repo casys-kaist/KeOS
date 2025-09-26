@@ -80,6 +80,8 @@ int main(int argc, char *argv[]) {
     ASSERT(fd > 2);
 
     putchar('\n');
+
+    dummy = always_zero & elf_data;     // Ensure that elf_data to be loaded into PT.
     verify(&elf_data, 0);
     verify(&elf_data, 1);
 

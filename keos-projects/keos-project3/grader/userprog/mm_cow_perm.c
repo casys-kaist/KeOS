@@ -34,6 +34,7 @@ int rw_verify(void* addr) {
     uint64_t perm;
     
     perm = get_phys(addr, 1);
+    ASSERT(!TRUELY_ERROR(perm));
     ASSERT(perm & PTE_RW);
     ASSERT(perm & PTE_XD);
 
@@ -42,6 +43,7 @@ int rw_verify(void* addr) {
     ASSERT(pid >= 0);
 
     perm = get_phys(addr, 1);
+    ASSERT(!TRUELY_ERROR(perm));
     ASSERT(!(perm & PTE_RW));
     ASSERT(perm & PTE_XD);
 
@@ -49,6 +51,7 @@ int rw_verify(void* addr) {
         getrandom(addr, sizeof(uint64_t), 0);
 
         perm = get_phys(addr, 1);
+        ASSERT(!TRUELY_ERROR(perm));
         ASSERT(perm & PTE_RW);
         ASSERT(perm & PTE_XD);
         
@@ -75,6 +78,8 @@ int main(int argc, char *argv[]) {
     ASSERT(fd > 2);
 
     putchar('\n');
+
+    dummy = always_zero & elf_data;     // Ensure that elf_data to be loaded into PT.
     rw_verify(&elf_data);
 
     void* anon = (void*)mmap((void*)0xA000UL, 0x1000, PROT_READ | PROT_WRITE, -1, 0);

@@ -2,9 +2,9 @@
 
 This project is developed at CASYS Lab, KAIST.
 
-The following is the list of contributors, in alphabetical order by first name.
+The following is the list of contributors, in alphabetical order by surname.
 
-## Contributors (alphabetical by first name)
+## Contributors (alphabetical by surname)
 * Junho Ahn <jhahn@casys.kaist.ac.kr>
 * Minkyu Jung <mkjung@casys.kaist.ac.kr>
 * Chanshin Kwak <cskwak99@casys.kaist.ac.kr>

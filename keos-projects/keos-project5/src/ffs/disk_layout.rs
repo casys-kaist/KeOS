@@ -631,7 +631,7 @@ pub struct JournalTxEnd {
 }
 
 impl JournalTxEnd {
-    /// Creates a new, empty journal `TxBegin` block.
+    /// Creates a new, empty journal `TxEnd` block.
     pub fn new(tx_id: u64) -> Box<Self> {
         Box::new(Self {
             tx_id,
@@ -639,7 +639,7 @@ impl JournalTxEnd {
         })
     }
 
-    /// Loads a journal `TxBegin` block from disk at the specified LBA.
+    /// Loads a journal `TxEnd` block from disk at the specified LBA.
     ///
     /// # Arguments
     /// - `io`: Interface for reading blocks from disk.

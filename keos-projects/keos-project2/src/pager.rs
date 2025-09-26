@@ -22,8 +22,8 @@ use keos::{
 /// In **Project 3**, you will implement [`LazyPager`], which delays page
 /// allocation until the page is accessed (i.e., implements demand paging).
 ///
-/// [`LazyPager`]: ../../project3/lazy_pager/struct.LazyPager.html
-/// [`EagerPager`]: ../../project2/eager_pager/struct.EagerPager.html
+/// [`LazyPager`]: ../../keos_project3/lazy_pager/struct.LazyPager.html
+/// [`EagerPager`]: ../../keos_project2/eager_pager/struct.EagerPager.html
 /// [`get_user_page`]: Pager::get_user_page
 pub trait Pager {
     /// Creates a new instance of the pager.

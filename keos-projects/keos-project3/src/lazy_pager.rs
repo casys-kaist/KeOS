@@ -72,7 +72,7 @@
 //! After implement the functionalities, move on to the next [`section`].
 //!
 //! [`section`]: mod@crate::fork
-//! [`EagerPager`]: ../../project2/mmap/struct.EagerPager.html
+//! [`EagerPager`]: ../../keos_project2/mmap/struct.EagerPager.html
 
 use alloc::sync::Arc;
 #[cfg(doc)]

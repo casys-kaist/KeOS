@@ -286,27 +286,33 @@
 //!
 //! Here are some examples of how to set breakpoints in GDB:
 //! ```text
-//! (gdb) hbreak function_name    # Example: (gdb) hbreak Rounrobin::new
-//! (gdb) hbreak *address         # Example: (gdb) hbreak *0x1000
-//! (gdb) hbreak (file:)line      # Example: (gdb) hbreak rr.rs:95
+//! (gdb) hbreak function_name  # Example: hbreak keos::fs::Directory::open
+//! (gdb) hbreak *address       # Example: hbreak *0x1000
+//! (gdb) hbreak (file:)line    # Example: hbreak syscall.rs:164
 //! ```
 //!
 //! #### Example 1
 //!
-//! To debug the `check_affinity` test case in project 1, and set a breakpoint
-//! at `main.rs:115`, use:
+//! To debug the `syscall::read_normal` test case in project 1, and set a
+//! breakpoint at `syscall.rs:150`, use:
 //! ```bash
-//! (gdb) hbreak main.rs:115
+//! (gdb) hbreak syscall.rs:150
+//! ```
+//! 
+//! Alternatively, you can set a breakpoint by the test case's name:
+//! ```bash
+//! (gdb) hbreak project1_grader::syscall::read_normal
 //! ```
 //!
-//! Alternatively, you can set a breakpoint on the closure entry:
+//! You can even set a breakpoint on the closure entry, for instance, to set a
+//! on a closure of `sync::semaphore::sema_0` test case in project 3:
 //! ```bash
-//! (gdb) hbreak check_affinity::{{closure}}
+//! (gdb) hbreak project3_grader::sync::semaphore::{{closure}}
 //! ```
 //!
 //! To limit debugging to one core, use `thread apply`:
 //! ```bash
-//! (gdb) thread apply 1 hbreak main.rs:115
+//! (gdb) thread apply 1 hbreak syscall.rs:150
 //! (gdb) c
 //! ```
 //!
@@ -321,6 +327,20 @@
 //! This approach allows you to focus on specific conditions and skip over
 //! unrelated calls.
 //!
+//!
+//! ---
+//!
+//! ## Stopping an execution
+//! 
+//! When KeOS got stuck in deadlock or does not automatically shut down after
+//! it panicked, you may need to forcibly shut down the QEMU.
+//! 
+//! For execution in `cargo grade` or `cargo run` without argument in project 5,
+//! press **Ctrl-C** to stop execution.
+//! 
+//! Otherwise, such as running KeOS by `cargo run` in project 1-4, press
+//! **Ctrl-A**, then press **X** to stop execution.
+//! 
 //! [`System Call`]: ../keos_project1
 //! [`Memory Management`]: ../keos_project2
 //! [`Advanced Memory Management`]: ../keos_project3

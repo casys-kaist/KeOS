@@ -115,8 +115,7 @@
 //!
 //! This ends project 4.
 //!
-//! [`Scheduler::reschedule`]:../../../keos/thread/scheduler/trait.Scheduler.html#method.reschedule
-//! [`SpinLock`]:../../../keos/sync/struct.SpinLock.html
+//! [`Scheduler::reschedule`]:../../keos/thread/scheduler/trait.Scheduler.html#method.reschedule
 //! [`RoundRobin`]: RoundRobin
 //! [`Thread::run`]: keos::thread::Thread::run
 //! [`Box`]: https://doc.rust-lang.org/alloc/boxed/struct.Box.html

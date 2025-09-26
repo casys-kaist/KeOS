@@ -38,6 +38,7 @@ int verify(void* addr, int mode) {
     org_data = *(uint64_t *)addr;
 
     perm = get_phys(addr, 1);
+    ASSERT(!TRUELY_ERROR(perm));
     ASSERT(perm & PTE_RW);
     ASSERT(perm & PTE_XD);
 
@@ -51,6 +52,7 @@ int verify(void* addr, int mode) {
 
     {
         perm = get_phys(addr, 1);
+        ASSERT(!TRUELY_ERROR(perm));
         ASSERT(!(perm & PTE_RW));
         ASSERT(perm & PTE_XD);
 
@@ -74,6 +76,7 @@ int verify(void* addr, int mode) {
         close(file_fd);
 
         perm = get_phys(addr, 1);
+        ASSERT(!TRUELY_ERROR(perm));
         ASSERT(perm & PTE_RW);
         ASSERT(perm & PTE_XD);
 
@@ -104,6 +107,8 @@ int main(int argc, char *argv[]) {
     ASSERT(fd > 2);
 
     putchar('\n');
+
+    dummy = always_zero & elf_data;     // Ensure that elf_data to be loaded into PT.
     verify(&elf_data, 0);
     verify(&elf_data, 1);
 

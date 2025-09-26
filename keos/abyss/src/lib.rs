@@ -37,17 +37,37 @@ use core::sync::atomic::AtomicBool;
 
 extern crate alloc;
 
+#[doc(hidden)]
 #[macro_use]
 pub mod kprint;
+#[doc(hidden)]
 pub mod addressing;
+#[doc(hidden)]
 pub mod boot;
+#[doc(hidden)]
 #[macro_use]
 pub mod dev;
+#[doc(hidden)]
 pub mod interrupt;
+#[doc(hidden)]
 pub mod spinlock;
+#[doc(hidden)]
 pub mod syscall;
+#[doc(hidden)]
 pub mod unwind;
+#[doc(hidden)]
 pub mod x86_64;
+
+#[cfg(doc)]
+pub use addressing::{Va, Pa};
+#[cfg(doc)]
+pub use x86_64::interrupt::PFErrorCode;
+#[cfg(doc)]
+pub use interrupt::Registers;
+#[cfg(doc)]
+pub use interrupt::GeneralPurposeRegisters;
+#[cfg(doc)]
+pub use spinlock::SpinLock;
 
 /// Maximum number of CPU the kernel can support.
 pub const MAX_CPU: usize = 4;

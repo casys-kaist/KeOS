@@ -1,8 +1,6 @@
 //! System call infrastructure.
 use crate::thread::with_current;
 pub use abyss::interrupt::Registers;
-#[cfg(doc)]
-pub use abyss::interrupt::GeneralPurposeRegisters;
 use abyss::x86_64::PrivilegeLevel;
 
 pub mod uaccess;

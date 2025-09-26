@@ -128,8 +128,6 @@
 //! and efficiently through the page table.
 //! When you finish implementing all tasks, move on to the next [`section`].
 //!
-//! [`Pa`]: ../../keos/addressing/struct.Pa.html
-//! [`Va`]: ../../keos/addressing/struct.Va.html
 //! [`StaleTLBEntry`]: StaleTLBEntry
 //! [`section`]: crate::mm_struct
 

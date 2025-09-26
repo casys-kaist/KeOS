@@ -160,7 +160,6 @@ impl<'a> SyscallAbi<'a> {
     /// Returns an instance of [`SyscallAbi`] populated with the system call
     /// number and arguments extracted from the provided registers.
     ///
-    /// [`Registers`]: ../../keos/syscall/struct.Registers.html
     pub fn from_registers(regs: &'a mut Registers) -> Self {
         todo!()
     }

@@ -36,6 +36,32 @@ def strip_unprintable(s):
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
+def find_qemu_pids():
+    matching_pids = []
+    
+    # Iterate over all directories in /proc. PIDs are represented by numbers.
+    for pid_dir in os.listdir('/proc'):
+        if pid_dir.isdigit():
+            try:
+                # Construct the path to the command line file
+                cmdline_path = os.path.join('/proc', pid_dir, 'cmdline')
+                
+                # Check if the command line file exists and is readable
+                if os.path.exists(cmdline_path) and os.access(cmdline_path, os.R_OK):
+                    with open(cmdline_path, 'rb') as f:
+                        # Command line arguments are null-byte separated
+                        cmdline_bytes = f.read()
+                        cmdline_str = cmdline_bytes.replace(b'\x00', b' ').decode('utf-8').strip()
+                        
+                        # Check if the command line contains both required strings
+                        if "qemu-system-x86_64" in cmdline_str and "kernel.iso" in cmdline_str:
+                            matching_pids.append(int(pid_dir))
+            except (IOError, OSError, UnicodeDecodeError):
+                # Handles cases where a process disappears, or we can't read the file
+                continue
+
+    return matching_pids
+
 def is_ignored(file_path):
     IGNORED_PATTERNS = [
         'target/', 'build/', 'build_objects/', 'keos_kernel', 'ffs.bin', 'sfs.bin', '.o', 'kelibc.a',
@@ -528,10 +554,19 @@ def main():
 
     # Check is in grader dir
     if 'grader' not in current_path[-8:]:
-        print("\n\033[46m\033[1;93mPlease run 'cargo run' on each grader's own directory.\033[0m\n")
-        print('e.g. keos-project1/grader (O)')
-        print('     keos-project1/grader/src (X)')
-        print('     keos-project1 (X)\n')
+        eprint("\n\033[46m\033[1;93mPlease run a grader on each grader's own directory.\033[0m\n")
+        eprint('e.g. keos-project1/grader (O)')
+        eprint('     keos-project1/grader/src (X)')
+        eprint('     keos-project1 (X)\n')
+        sys.exit(1)
+    
+    # Check whether qemu is already running
+    qemu_pids = find_qemu_pids()
+    if qemu_pids:
+        eprint(f"\nError: \033[46m\033[1;93mRunning instance{"s" if len(qemu_pids) == 1 else ""} of QEMU\033[0m is detected:")
+        for pid in qemu_pids:
+            eprint(f" - {pid}")
+        eprint(f"Please stop above process{"es" if len(qemu_pids) == 1 else ""} before running the grader.")
         sys.exit(1)
 
     # Prepare run environment
