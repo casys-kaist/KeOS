@@ -32,7 +32,13 @@ pub struct TlbIpi {
 impl TlbIpi {
     /// Send the request and wait until the request is done for all CPUs
     pub fn send(cr3: Cr3, va: Option<Va>) {
-        let guard = IN_PROGRESS.lock();
+        let guard = loop {
+            if let Ok(guard) = IN_PROGRESS.try_lock() {
+                break guard;
+            }
+
+            TlbIpi::handle();
+        };
 
         // Publish the requests.
         {
@@ -76,36 +82,40 @@ impl TlbIpi {
 
         guard.unlock();
     }
+
+    fn handle() {
+        let request = REQUEST.read();
+
+        match &*request {
+            Some(request) => {
+                if request.cr3 == Cr3::current() {
+                    match request.va {
+                        Some(va) => unsafe {
+                            core::arch::asm!(
+                                "invlpg [{0}]",
+                                in(reg) va.into_usize(),
+                                options(nostack)
+                            )
+                        },
+                        _ => unsafe {
+                            core::arch::asm! {
+                                "mov rax, cr3",
+                                "mov cr3, rax",
+                                out("rax") _,
+                                options(nostack)
+                            }
+                        },
+                    }
+                }
+
+                request.processed.fetch_add(1);
+            }
+            _ => (),
+        }
+    }
 }
 
 /// Event handler for TLB Shootdown request
 pub fn handler(_regs: &mut Registers) {
-    let request = REQUEST.read();
-
-    match &*request {
-        Some(request) => {
-            if request.cr3 == Cr3::current() {
-                match request.va {
-                    Some(va) => unsafe {
-                        core::arch::asm!(
-                            "invlpg [{0}]",
-                            in(reg) va.into_usize(),
-                            options(nostack)
-                        )
-                    },
-                    _ => unsafe {
-                        core::arch::asm! {
-                            "mov rax, cr3",
-                            "mov cr3, rax",
-                            out("rax") _,
-                            options(nostack)
-                        }
-                    },
-                }
-            }
-
-            request.processed.fetch_add(1);
-        }
-        _ => panic!("TLB ipi triggered without live request."),
-    }
+    TlbIpi::handle();
 }

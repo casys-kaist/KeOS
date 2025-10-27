@@ -363,6 +363,7 @@ impl PageTable {
     /// for the PML4 page itself, which remains allocated.
     ///
     /// This method is automatically called when a [`PageTable`] is dropped.
+    /// At this point, it is guaranteed that no cores are using this page table.
     ///
     /// # Behavior
     /// - Unmaps all virtual addresses currently mapped in the page table.
