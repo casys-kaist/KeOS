@@ -196,6 +196,8 @@ pub struct Thread {
     pub(crate) running_cpu: Arc<AtomicI32>,
     /// Mixture of exit state (63th and 62th bit) and exit code (lower 32 bits).
     pub exit_status: Arc<AtomicU64>,
+    /// Interrupt Frame if thread was handling interrupt.
+    pub interrupt_frame: SpinLock<*const abyss::interrupt::Registers>,
     #[doc(hidden)]
     pub task: Option<Box<dyn Task>>,
     // Grading utils.
@@ -231,6 +233,7 @@ impl Thread {
             name: String::from(name),
             state,
             exit_status,
+            interrupt_frame: SpinLock::new(core::ptr::null()),
             running_cpu: Arc::new(AtomicI32::new(-1)),
             task: None,
             tty_hook: SpinLock::new(
@@ -467,6 +470,10 @@ unsafe extern "C" fn finish_context_switch(prev: &'static mut Thread) {
             result
         };
 
+        let mut prev_interrupt_frame = prev.interrupt_frame.lock();
+        *prev_interrupt_frame = abyss::x86_64::kernel_gs::current().interrupt_frame;
+        prev_interrupt_frame.unlock();
+
         let _dropped = match prev_state {
             ThreadState::Exited(_e) => Some(Box::from_raw(prev)),
             ThreadState::Idle => None,
@@ -491,6 +498,10 @@ unsafe extern "C" fn finish_context_switch(prev: &'static mut Thread) {
 
             __check_for_signal();
 
+            let interrupt_frame = th.interrupt_frame.lock();
+            abyss::x86_64::kernel_gs::current().interrupt_frame = *interrupt_frame;
+            interrupt_frame.unlock();
+            
             abyss::x86_64::segmentation::SegmentTable::update_tss(
                 th.stack.as_mut() as *mut _ as usize + STACK_SIZE,
             );
