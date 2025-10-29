@@ -59,15 +59,15 @@ pub mod unwind;
 pub mod x86_64;
 
 #[cfg(doc)]
-pub use addressing::{Va, Pa};
-#[cfg(doc)]
-pub use x86_64::interrupt::PFErrorCode;
-#[cfg(doc)]
-pub use interrupt::Registers;
+pub use addressing::{Pa, Va};
 #[cfg(doc)]
 pub use interrupt::GeneralPurposeRegisters;
 #[cfg(doc)]
+pub use interrupt::Registers;
+#[cfg(doc)]
 pub use spinlock::SpinLock;
+#[cfg(doc)]
+pub use x86_64::interrupt::PFErrorCode;
 
 /// Maximum number of CPU the kernel can support.
 pub const MAX_CPU: usize = 4;

@@ -298,7 +298,7 @@
 //! ```bash
 //! (gdb) hbreak syscall.rs:150
 //! ```
-//! 
+//!
 //! Alternatively, you can set a breakpoint by the test case's name:
 //! ```bash
 //! (gdb) hbreak project1_grader::syscall::read_normal
@@ -331,16 +331,16 @@
 //! ---
 //!
 //! ## Stopping an execution
-//! 
+//!
 //! When KeOS got stuck in deadlock or does not automatically shut down after
 //! it panicked, you may need to forcibly shut down the QEMU.
-//! 
+//!
 //! For execution in `cargo grade` or `cargo run` without argument in project 5,
 //! press **Ctrl-C** to stop execution.
-//! 
+//!
 //! Otherwise, such as running KeOS by `cargo run` in project 1-4, press
 //! **Ctrl-A**, then press **X** to stop execution.
-//! 
+//!
 //! [`System Call`]: ../keos_project1
 //! [`Memory Management`]: ../keos_project2
 //! [`Advanced Memory Management`]: ../keos_project3

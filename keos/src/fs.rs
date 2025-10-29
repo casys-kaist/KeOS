@@ -488,12 +488,13 @@ impl Directory {
         let entry = list.pop().ok_or(KernelError::InvalidArgument)?;
 
         for part in list {
-            dstdir = dstdir.0
+            dstdir = dstdir
+                .0
                 .open_entry(part)?
                 .into_directory()
                 .ok_or(KernelError::NoSuchEntry)?;
         }
-    
+
         dstdir.0.create_entry(entry, is_dir)
     }
 
@@ -518,12 +519,13 @@ impl Directory {
         let entry = list.pop().ok_or(KernelError::InvalidArgument)?;
 
         for part in list {
-            dstdir = dstdir.0
+            dstdir = dstdir
+                .0
                 .open_entry(part)?
                 .into_directory()
                 .ok_or(KernelError::NoSuchEntry)?;
         }
-    
+
         dstdir.0.unlink_entry(entry)
     }
 

@@ -501,7 +501,7 @@ unsafe extern "C" fn finish_context_switch(prev: &'static mut Thread) {
             let interrupt_frame = th.interrupt_frame.lock();
             abyss::x86_64::kernel_gs::current().interrupt_frame = *interrupt_frame;
             interrupt_frame.unlock();
-            
+
             abyss::x86_64::segmentation::SegmentTable::update_tss(
                 th.stack.as_mut() as *mut _ as usize + STACK_SIZE,
             );

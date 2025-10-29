@@ -1,7 +1,7 @@
 //! # Lazy Paging
 //!
 //! The lazy paging or demand paging is an another policy for the
-//! paging, which used by modern operating systems. Unlink the [`EagerPager`]
+//! paging, which used by modern operating systems. Unlike the [`EagerPager`]
 //! that you implemented in project 2, the [`LazyPager`] defers physical page
 //! allocation until a page fault occurs. This method optimizes memory usage by
 //! mapping memory pages **on demand**, rather than preallocating them.
