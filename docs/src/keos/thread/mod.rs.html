@@ -501,7 +501,7 @@
 <a href=#501 id=501 data-nosnippet>501</a>            <span class="kw">let </span>interrupt_frame = th.interrupt_frame.lock();
 <a href=#502 id=502 data-nosnippet>502</a>            abyss::x86_64::kernel_gs::current().interrupt_frame = <span class="kw-2">*</span>interrupt_frame;
 <a href=#503 id=503 data-nosnippet>503</a>            interrupt_frame.unlock();
-<a href=#504 id=504 data-nosnippet>504</a>            
+<a href=#504 id=504 data-nosnippet>504</a>
 <a href=#505 id=505 data-nosnippet>505</a>            abyss::x86_64::segmentation::SegmentTable::update_tss(
 <a href=#506 id=506 data-nosnippet>506</a>                th.stack.as_mut() <span class="kw">as </span><span class="kw-2">*mut </span><span class="kw">_ as </span>usize + STACK_SIZE,
 <a href=#507 id=507 data-nosnippet>507</a>            );

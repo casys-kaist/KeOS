@@ -78,9 +78,10 @@ error.</p>
 proper exit code.</li>
 <li>If <code>retval</code> is non-null, the exit code of the target thread is stored.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.exit_group" class="method"><a class="src rightside" href="../../src/keos_project4/process.rs.html#307">Source</a><h4 class="code-header">pub fn <a href="#method.exit_group" class="fn">exit_group</a>(&amp;self, abi: &amp;<a class="struct" href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'_&gt;) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Exit a process.</p>
-<p>This function terminates all the threads in the current process, including the current caller thread.
-The exit code is provided as the first argument (<code>arg1</code>) of the system call.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.exit_group" class="method"><a class="src rightside" href="../../src/keos_project4/process.rs.html#308">Source</a><h4 class="code-header">pub fn <a href="#method.exit_group" class="fn">exit_group</a>(&amp;self, abi: &amp;<a class="struct" href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'_&gt;) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Exit a process.</p>
+<p>This function terminates all the threads in the current process,
+including the current caller thread. The exit code is provided as
+the first argument (<code>arg1</code>) of the system call.</p>
 <h5 id="syscall-api-3"><a class="doc-anchor" href="#syscall-api-3">§</a>Syscall API</h5><div class="example-wrap"><pre class="language-c"><code>int exit_group(int status);</code></pre></div>
 <ul>
 <li><code>status</code>: The thread’s exit code.</li>
