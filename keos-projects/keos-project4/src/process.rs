@@ -291,8 +291,9 @@ impl Thread {
 
     /// Exit a process.
     ///
-    /// This function terminates all the threads in the current process, including the current caller thread.
-    /// The exit code is provided as the first argument (`arg1`) of the system call.
+    /// This function terminates all the threads in the current process,
+    /// including the current caller thread. The exit code is provided as
+    /// the first argument (`arg1`) of the system call.
     ///
     /// # Syscall API
     /// ```c

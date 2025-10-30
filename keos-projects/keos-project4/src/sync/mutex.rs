@@ -42,10 +42,13 @@
 //! [`Current::park_with`]: keos::thread::Current::park_with
 
 use alloc::collections::vec_deque::VecDeque;
-use core::ops::{Deref, DerefMut};
+use core::{
+    cell::UnsafeCell,
+    ops::{Deref, DerefMut},
+};
 use keos::{
-    sync::{SpinLock, SpinLockGuard, WouldBlock},
-    thread::ParkHandle,
+    sync::{SpinLock, WouldBlock, atomic::AtomicBool},
+    thread::{Current, ParkHandle},
 };
 
 /// A mutual exclusion primitive useful for protecting shared data
@@ -96,7 +99,7 @@ use keos::{
 /// ```
 pub struct Mutex<T> {
     // TODO: Define any member you need.
-    t: SpinLock<T>,
+    t: UnsafeCell<T>,
     waiters: SpinLock<VecDeque<ParkHandle>>,
 }
 
@@ -117,7 +120,7 @@ impl<T> Mutex<T> {
     pub const fn new(t: T) -> Mutex<T> {
         Mutex {
             // TODO: Initialize the members you added.
-            t: SpinLock::new(t),
+            t: UnsafeCell::new(t),
             waiters: SpinLock::new(VecDeque::new()),
         }
     }
@@ -188,14 +191,12 @@ impl<T> Mutex<T> {
     /// assert_eq!(*mutex.lock().unwrap(), 10);
     /// ```
     pub fn try_lock(&self) -> Result<MutexGuard<'_, T>, WouldBlock> {
-        if let Ok(guard) = self.t.try_lock() {
-            Ok(MutexGuard {
-                guard: Some(guard),
-                lock: self,
-            })
-        } else {
-            Err(WouldBlock)
-        }
+        todo!();
+        // Incomplete implementation
+        Ok(MutexGuard {
+            t: unsafe { &mut *self.t.get() },
+            lock: self,
+        })
     }
 
     /// Consumes this mutex, returning the underlying data.
@@ -227,13 +228,13 @@ impl<T> Deref for MutexGuard<'_, T> {
     type Target = T;
 
     fn deref(&self) -> &T {
-        self.guard.as_ref().unwrap()
+        self.t
     }
 }
 
 impl<T> DerefMut for MutexGuard<'_, T> {
     fn deref_mut(&mut self) -> &mut T {
-        &mut *self.guard.as_mut().unwrap()
+        self.t
     }
 }
 
@@ -251,7 +252,8 @@ impl<T> DerefMut for MutexGuard<'_, T> {
 /// [`try_lock`]: Mutex::try_lock
 /// [`unlock`]: MutexGuard::unlock
 pub struct MutexGuard<'a, T: 'a> {
-    guard: Option<SpinLockGuard<'a, T>>,
+    // Define any member you need.
+    t: &'a mut T,
     lock: &'a Mutex<T>,
 }
 
