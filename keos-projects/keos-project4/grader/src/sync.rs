@@ -398,6 +398,31 @@ pub mod semaphore {
         }
 
         while counter2.load(Ordering::SeqCst) != COUNT {}
+
+        {
+            let mut prime_count = 0;
+            for num in 2..1000000 {
+                let mut is_prime = true;
+
+                let mut i = 2;
+                while i * i <= num {
+                    if num % i == 0 {
+                        is_prime = false;
+                        break;
+                    }
+                    i += 1;
+                }
+
+                if is_prime {
+                    prime_count += 1;
+                }
+            }
+
+            keos::println!(
+                "Waiting for threads to wake. Number of primes found: {}",
+                prime_count
+            );
+        }
         assert_eq!(counter.load(Ordering::SeqCst), 0);
     }
 
@@ -427,6 +452,31 @@ pub mod semaphore {
         }
 
         while counter2.load(Ordering::SeqCst) != COUNT {}
+        
+        {
+            let mut prime_count = 0;
+            for num in 2..1000000 {
+                let mut is_prime = true;
+
+                let mut i = 2;
+                while i * i <= num {
+                    if num % i == 0 {
+                        is_prime = false;
+                        break;
+                    }
+                    i += 1;
+                }
+
+                if is_prime {
+                    prime_count += 1;
+                }
+            }
+
+            keos::println!(
+                "Waiting for threads to wake. Number of primes found: {}",
+                prime_count
+            );
+        }
         assert_eq!(counter.load(Ordering::SeqCst), PERMITS);
         guard.unlock();
     }
