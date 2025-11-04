@@ -1,6 +1,10 @@
 //! TLB Shootdown helper.
-use crate::sync::{RwLock, atomic::AtomicUsize};
+use crate::sync::{
+    RwLock,
+    atomic::{AtomicBool, AtomicUsize},
+};
 use abyss::{
+    MAX_CPU,
     addressing::Va,
     boot::ONLINE_CPU,
     dev::x86_64::apic::{IPIDest, Mode},
@@ -15,6 +19,13 @@ static IN_PROGRESS: SpinLock<()> = SpinLock::new(());
 
 #[doc(hidden)]
 static REQUEST: RwLock<Option<TlbIpi>> = RwLock::new(None);
+
+#[doc(hidden)]
+#[allow(clippy::declare_interior_mutable_const)]
+const PER_CORE_STATUS: AtomicBool = AtomicBool::new(false);
+
+#[doc(hidden)]
+static HAVE_REQUEST: [AtomicBool; MAX_CPU] = [PER_CORE_STATUS; MAX_CPU];
 
 /// Struct for TLB request
 pub struct TlbIpi {
@@ -59,10 +70,21 @@ impl TlbIpi {
         // Waiting the requests
         {
             let request = REQUEST.read();
+            let self_id = abyss::x86_64::intrinsics::cpuid();
 
             let online_cpu_cnt = ONLINE_CPU
                 .iter()
-                .filter(|cpu| cpu.load(Ordering::SeqCst))
+                .enumerate()
+                .filter(|(i, cpu)| {
+                    if *i == self_id {
+                        true
+                    } else if cpu.load(Ordering::SeqCst) {
+                        HAVE_REQUEST[*i].store(true);
+                        true
+                    } else {
+                        false
+                    }
+                })
                 .count();
 
             unsafe {
@@ -77,17 +99,20 @@ impl TlbIpi {
         }
 
         // Clean up the request
-        let mut request = REQUEST.write();
-        *request = None;
+        {
+            let mut request = REQUEST.write();
+            *request = None;
+        }
 
         guard.unlock();
     }
 
     fn handle() {
-        let request = REQUEST.read();
+        let core_id = abyss::x86_64::intrinsics::cpuid();
+        if HAVE_REQUEST[core_id].load() {
+            let request = REQUEST.read();
 
-        match &*request {
-            Some(request) => {
+            if let Some(request) = &*request {
                 if request.cr3 == Cr3::current() {
                     match request.va {
                         Some(va) => unsafe {
@@ -109,8 +134,8 @@ impl TlbIpi {
                 }
 
                 request.processed.fetch_add(1);
+                HAVE_REQUEST[core_id].store(false);
             }
-            _ => (),
         }
     }
 }

@@ -398,7 +398,6 @@ pub mod semaphore {
         }
 
         while counter2.load(Ordering::SeqCst) != COUNT {}
-
         {
             let mut prime_count = 0;
             for num in 2..1000000 {
@@ -452,7 +451,6 @@ pub mod semaphore {
         }
 
         while counter2.load(Ordering::SeqCst) != COUNT {}
-        
         {
             let mut prime_count = 0;
             for num in 2..1000000 {
