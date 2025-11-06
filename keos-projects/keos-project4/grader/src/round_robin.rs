@@ -155,11 +155,11 @@ pub fn balance2() {
                 } else {
                     // Spawning turn.
                     scheduler.push_to_queue(Thread::new("task"));
-                    let s = spawned.fetch_add(1);
+                    let s = turn.load() * (MAX_CPU - 1) + (MAX_CPU - 1);
 
                     // Ensure tasks are consumed before proceeding.
                     loop {
-                        if consumed.load() > s {
+                        if consumed.load() >= s {
                             break;
                         }
                         core::hint::spin_loop();
