@@ -189,7 +189,8 @@
                     "post-hook": [
                         "../../.cargo/ffs-fsck",
                         "ffs.bin"
-                    ]
+                    ],
+                    "timeout": 60
                 }
             }
         },
@@ -275,7 +276,8 @@
                 "userprog::tar_gen": {
                     "post-hook": [
                         "../../.cargo/validate-tar.sh"
-                    ]
+                    ],
+                    "timeout": 60
                 }
             }
         }
