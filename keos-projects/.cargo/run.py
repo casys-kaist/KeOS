@@ -563,10 +563,10 @@ def main():
     # Check whether qemu is already running
     qemu_pids = find_qemu_pids()
     if qemu_pids:
-        eprint(f"\nError: \033[46m\033[1;93mRunning instance{"s" if len(qemu_pids) == 1 else ""} of QEMU\033[0m is detected:")
+        eprint("\nError: \033[46m\033[1;93mRunning instance{} of QEMU\033[0m is detected:".format("s" if len(qemu_pids) == 1 else ""))
         for pid in qemu_pids:
             eprint(f" - {pid}")
-        eprint(f"Please stop above process{"es" if len(qemu_pids) == 1 else ""} before running the grader.")
+        eprint("Please stop above process{} before running the grader.".format("es" if len(qemu_pids) == 1 else ""))
         sys.exit(1)
 
     # Prepare run environment
