@@ -7,10 +7,14 @@
 //! HOWEVER, most of codes in this crate exceeds the scope of the CS330
 //! curriculum, which is why this crate is named "abyss".
 //!
-//! In other words, you do **NOT** have to see codes in this crate. Neither in
-//! exams or projects, this crate is definitely **NOT** a coverage. Nonetheless,
-//! if you want to go deeper into the low-level of the operating system, you may
-//! see the internal of this crate with the [`OSDev Wiki`].
+//! In other words, you are **not** required to understand every line of code in
+//! this crate. Most of its implementation details are not directly covered in
+//! exams or projects. However, some parts that you will explicitly use during
+//! the implementation (e.g., x86 register related contents)
+//! **may be** included in exams.
+//!
+//! If you want to go deeper into the low-level of the operating system, you may
+//! explore the internals of this crate along with the [`OSDev Wiki`].
 //!
 //! **IN PARTICULAR, YOU ARE *NOT* SUPPOSED TO DIRECTLY USE THE MODULES OF
 //! THIS CRATE TO IMPLEMENT THE KEOS PROJECT.**
