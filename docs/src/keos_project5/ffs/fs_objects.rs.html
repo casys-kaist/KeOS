@@ -438,12 +438,12 @@
 <a href=#438 id=438 data-nosnippet>438</a>    <span class="doccomment">/// Removes a directory entry by name.
 <a href=#439 id=439 data-nosnippet>439</a>    ///
 <a href=#440 id=440 data-nosnippet>440</a>    /// # Errors
-<a href=#441 id=441 data-nosnippet>441</a>    /// - Returns [`KernelError::Busy`] when entry's Inode number is `1`
-<a href=#442 id=442 data-nosnippet>442</a>    ///  as it means it's a root directory.
+<a href=#441 id=441 data-nosnippet>441</a>    /// - Returns [`KernelError::Busy`] when entry's Inode number is `1` as it
+<a href=#442 id=442 data-nosnippet>442</a>    ///   means it's a root directory.
 <a href=#443 id=443 data-nosnippet>443</a>    /// - Returns [`KernelError::DirectoryNotEmpty`] when the entry is a
-<a href=#444 id=444 data-nosnippet>444</a>    ///  non-empty directory
-<a href=#445 id=445 data-nosnippet>445</a>    /// - Returns [`KernelError::NoSuchEntry`] if specified entry does
-<a href=#446 id=446 data-nosnippet>446</a>    ///  not exists.
+<a href=#444 id=444 data-nosnippet>444</a>    ///   non-empty directory
+<a href=#445 id=445 data-nosnippet>445</a>    /// - Returns [`KernelError::NoSuchEntry`] if specified entry does not
+<a href=#446 id=446 data-nosnippet>446</a>    ///   exists.
 <a href=#447 id=447 data-nosnippet>447</a>    ///
 <a href=#448 id=448 data-nosnippet>448</a>    /// # Parameters
 <a href=#449 id=449 data-nosnippet>449</a>    /// - `entry`: The name of the entry to remove.

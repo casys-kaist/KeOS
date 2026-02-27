@@ -77,7 +77,7 @@
 <a href=#77 id=77 data-nosnippet>77</a>
 <a href=#78 id=78 data-nosnippet>78</a><span class="attr">#[<span class="kw">unsafe</span>(no_mangle)]
 <a href=#79 id=79 data-nosnippet>79</a>#[allow(clippy::empty_loop)]
-<a href=#80 id=80 data-nosnippet>80</a></span><span class="kw">extern </span><span class="string">"C" </span><span class="kw">fn </span>do_handle_irq(frame: <span class="kw-2">&amp;mut </span>Registers, vec: usize) {
+<a href=#80 id=80 data-nosnippet>80</a></span><span class="kw">pub extern </span><span class="string">"C" </span><span class="kw">fn </span>do_handle_irq(frame: <span class="kw-2">&amp;mut </span>Registers, vec: usize) {
 <a href=#81 id=81 data-nosnippet>81</a>    <span class="kw">unsafe extern </span><span class="string">"Rust" </span>{
 <a href=#82 id=82 data-nosnippet>82</a>        <span class="kw">fn </span>do_handle_interrupt(idx: usize, frame: <span class="kw-2">&amp;mut </span>Registers);
 <a href=#83 id=83 data-nosnippet>83</a>    }
@@ -86,7 +86,7 @@
 <a href=#86 id=86 data-nosnippet>86</a>
 <a href=#87 id=87 data-nosnippet>87</a>    <span class="kw">if </span>vec == <span class="number">32 </span>{
 <a href=#88 id=88 data-nosnippet>88</a>        <span class="kw">unsafe </span>{
-<a href=#89 id=89 data-nosnippet>89</a>            <span class="comment">// Reprgram the deadline.
+<a href=#89 id=89 data-nosnippet>89</a>            <span class="comment">// Reprogram the deadline.
 <a href=#90 id=90 data-nosnippet>90</a>            </span><span class="kw">crate</span>::dev::x86_64::timer::set_timer();
 <a href=#91 id=91 data-nosnippet>91</a>        }
 <a href=#92 id=92 data-nosnippet>92</a>    }

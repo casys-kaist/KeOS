@@ -25,14 +25,14 @@ memory.</p>
 addresses.</p>
 </div><span id="structfield.pager" class="structfield section-header"><a href="#structfield.pager" class="anchor field">§</a><code>pager: P</code></span><div class="docblock"><p>The pager that handles memory allocation (<code>mmap</code>) and deallocation
 (<code>munmap</code>).</p>
-</div><h2 id="implementations" class="section-header">Implementations<a href="#implementations" class="anchor">§</a></h2><div id="implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-MmStruct%3CP%3E" class="impl"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#143-335">Source</a><a href="#impl-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P: <a class="trait" href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager">Pager</a>&gt; <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.new" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#150-155">Source</a><h4 class="code-header">pub fn <a href="#method.new" class="fn">new</a>() -&gt; Self</h4></section></summary><div class="docblock"><p>Creates a new <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> with an empty page table and a new pager
+</div><h2 id="implementations" class="section-header">Implementations<a href="#implementations" class="anchor">§</a></h2><div id="implementations-list"><details class="toggle implementors-toggle" open><summary><section id="impl-MmStruct%3CP%3E" class="impl"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#143-334">Source</a><a href="#impl-MmStruct%3CP%3E" class="anchor">§</a><h3 class="code-header">impl&lt;P: <a class="trait" href="../pager/trait.Pager.html" title="trait keos_project2::pager::Pager">Pager</a>&gt; <a class="struct" href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct">MmStruct</a>&lt;P&gt;</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.new" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#150-155">Source</a><h4 class="code-header">pub fn <a href="#method.new" class="fn">new</a>() -&gt; Self</h4></section></summary><div class="docblock"><p>Creates a new <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> with an empty page table and a new pager
 instance.</p>
 <h5 id="returns"><a class="doc-anchor" href="#returns">§</a>Returns</h5>
 <ul>
 <li>A new <a href="struct.MmStruct.html" title="struct keos_project2::mm_struct::MmStruct"><code>MmStruct</code></a> instance initialized with a new <a href="../page_table/struct.PageTable.html" title="struct keos_project2::page_table::PageTable"><code>PageTable</code></a> and
 <code>P::new()</code>.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.access_ok" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#171-173">Source</a><h4 class="code-header">pub fn <a href="#method.access_ok" class="fn">access_ok</a>(&amp;self, addr: Range&lt;<a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>&gt;, is_write: bool) -&gt; bool</h4></section></summary><div class="docblock"><p>This function ensures that system calls using memory addresses (such as
+</div></details><details class="toggle method-toggle" open><summary><section id="method.access_ok" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#170-172">Source</a><h4 class="code-header">pub fn <a href="#method.access_ok" class="fn">access_ok</a>(&amp;self, addr: Range&lt;<a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>&gt;, is_write: bool) -&gt; bool</h4></section></summary><div class="docblock"><p>This function ensures that system calls using memory addresses (such as
 <code>read</code>, <code>write</code>, etc.) operate only on <strong>valid and accessible</strong>
 memory regions.</p>
 <h5 id="parameters"><a class="doc-anchor" href="#parameters">§</a>Parameters</h5>
@@ -46,7 +46,7 @@ only being read.</li>
 <li><code>true</code> if the memory range is valid.</li>
 <li><code>false</code> if the memory range is invalid or inaccessible.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.do_mmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#186-197">Source</a><h4 class="code-header">pub fn <a href="#method.do_mmap" class="fn">do_mmap</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.do_mmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#185-196">Source</a><h4 class="code-header">pub fn <a href="#method.do_mmap" class="fn">do_mmap</a>(
     &amp;mut self,
     addr: <a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>,
     size: usize,
@@ -66,7 +66,7 @@ system call.</li>
 <li>The result of the memory mapping operation, returned by the pager’s
 <code>mmap</code>.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.mmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#247-253">Source</a><h4 class="code-header">pub fn <a href="#method.mmap" class="fn">mmap</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.mmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#246-252">Source</a><h4 class="code-header">pub fn <a href="#method.mmap" class="fn">mmap</a>(
     &amp;mut self,
     fstate: &amp;mut <a class="struct" href="../../keos_project1/file_struct/struct.FileStruct.html" title="struct keos_project1::file_struct::FileStruct">FileStruct</a>,
     abi: &amp;<a class="struct" href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'_&gt;,
@@ -110,7 +110,7 @@ bytes in the final page are zero-filled.</p>
 <p>Returns the starting virtual address of the mapped region on success, or
 a <a href="../../keos/enum.KernelError.html" title="enum keos::KernelError"><code>KernelError</code></a> on failure due to invalid arguments or conflicts with
 existing memory mappings.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.munmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#294-297">Source</a><h4 class="code-header">pub fn <a href="#method.munmap" class="fn">munmap</a>(&amp;mut self, abi: &amp;<a class="struct" href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'_&gt;) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Unmaps a memory-mapped file region.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.munmap" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#293-296">Source</a><h4 class="code-header">pub fn <a href="#method.munmap" class="fn">munmap</a>(&amp;mut self, abi: &amp;<a class="struct" href="../../keos_project1/syscall/struct.SyscallAbi.html" title="struct keos_project1::syscall::SyscallAbi">SyscallAbi</a>&lt;'_&gt;) -&gt; Result&lt;usize, <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Unmaps a memory-mapped file region.</p>
 <p>This function implements the <code>munmap</code> system call, which removes a
 previously established memory mapping created by <code>mmap</code>. It releases
 the virtual memory associated with the mapping.</p>
@@ -144,7 +144,7 @@ explicitly unmapped via <code>munmap</code>.</li>
 <h5 id="returns-4"><a class="doc-anchor" href="#returns-4">§</a>Returns</h5>
 <p>Returns <code>Ok(0)</code> on success or a <a href="../../keos/enum.KernelError.html" title="enum keos::KernelError"><code>KernelError</code></a> if the address is
 invalid or does not correspond to an active memory mapping.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_user_page_and" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#323-334">Source</a><h4 class="code-header">pub fn <a href="#method.get_user_page_and" class="fn">get_user_page_and</a>&lt;R&gt;(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_user_page_and" class="method"><a class="src rightside" href="../../src/keos_project2/mm_struct.rs.html#322-333">Source</a><h4 class="code-header">pub fn <a href="#method.get_user_page_and" class="fn">get_user_page_and</a>&lt;R&gt;(
     &amp;mut self,
     addr: <a class="struct" href="../../abyss/addressing/struct.Va.html" title="struct abyss::addressing::Va">Va</a>,
     f: impl FnOnce(<a class="struct" href="../../keos/mm/struct.PageRef.html" title="struct keos::mm::PageRef">PageRef</a>&lt;'_&gt;, <a class="struct" href="../../keos/mm/page_table/struct.Permission.html" title="struct keos::mm::page_table::Permission">Permission</a>) -&gt; R,

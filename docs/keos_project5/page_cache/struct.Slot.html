@@ -20,8 +20,8 @@ page. This method does not trigger I/O.</p>
 The buffer must be exactly 4096 bytes long.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.writeback" class="method"><a class="src rightside" href="../../src/keos_project5/page_cache/mod.rs.html#237-239">Source</a><h4 class="code-header">pub fn <a href="#method.writeback" class="fn">writeback</a>(&amp;mut self) -&gt; Result&lt;(), <a class="enum" href="../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Write back the dirty portion of the page to the underlying file.</p>
 <ul>
-<li>If <code>writeback_size</code> is <code>Some(size)</code>, representing slot is dirty, marked with
-the desired minimum file size (in bytes) after write-back.</li>
+<li>If <code>writeback_size</code> is <code>Some(size)</code>, representing slot is dirty,
+marked with the desired minimum file size (in bytes) after write-back.</li>
 <li>On success, clears the <code>writeback_size</code> to <code>None</code>.</li>
 </ul>
 <p>If the slot is clean, this does not trigger the I/O.</p>

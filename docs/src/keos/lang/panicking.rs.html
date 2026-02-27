@@ -265,27 +265,24 @@
 <a href=#265 id=265 data-nosnippet>265</a>    };
 <a href=#266 id=266 data-nosnippet>266</a>    <span class="kw">let </span>image_size = kernel_disk.block_cnt() * kernel_disk.block_size();
 <a href=#267 id=267 data-nosnippet>267</a>    <span class="kw">let </span><span class="kw-2">mut </span>kernel_image = <span class="macro">alloc::vec!</span>[<span class="number">0u8</span>; image_size].into_boxed_slice();
-<a href=#268 id=268 data-nosnippet>268</a>    <span class="kw">if </span>kernel_disk
-<a href=#269 id=269 data-nosnippet>269</a>        .read_bios(<span class="kw-2">&amp;mut </span><span class="prelude-val">Some</span>((<span class="number">0</span>, kernel_image.as_mut())).into_iter())
-<a href=#270 id=270 data-nosnippet>270</a>        .is_err()
-<a href=#271 id=271 data-nosnippet>271</a>    {
+<a href=#268 id=268 data-nosnippet>268</a>    <span class="kw">if </span>!kernel_disk.read_block_many(<span class="number">0</span>, kernel_image.as_mut()) {
+<a href=#269 id=269 data-nosnippet>269</a>        <span class="kw">return </span><span class="bool-val">false</span>;
+<a href=#270 id=270 data-nosnippet>270</a>    }
+<a href=#271 id=271 data-nosnippet>271</a>    <span class="kw">let </span><span class="prelude-val">Ok</span>(kernel) = object::File::parse(kernel_image.as_ref()) <span class="kw">else </span>{
 <a href=#272 id=272 data-nosnippet>272</a>        <span class="kw">return </span><span class="bool-val">false</span>;
-<a href=#273 id=273 data-nosnippet>273</a>    }
-<a href=#274 id=274 data-nosnippet>274</a>    <span class="kw">let </span><span class="prelude-val">Ok</span>(kernel) = object::File::parse(kernel_image.as_ref()) <span class="kw">else </span>{
-<a href=#275 id=275 data-nosnippet>275</a>        <span class="kw">return </span><span class="bool-val">false</span>;
-<a href=#276 id=276 data-nosnippet>276</a>    };
-<a href=#277 id=277 data-nosnippet>277</a>    <span class="kw">let </span><span class="prelude-val">Ok</span>(dwarf): <span class="prelude-ty">Result</span>&lt;<span class="kw">_</span>, ()&gt; = gimli::Dwarf::load(|id| {
-<a href=#278 id=278 data-nosnippet>278</a>        <span class="kw">let </span>data = kernel
-<a href=#279 id=279 data-nosnippet>279</a>            .section_by_name(id.name())
-<a href=#280 id=280 data-nosnippet>280</a>            .and_then(|section| section.uncompressed_data().ok())
-<a href=#281 id=281 data-nosnippet>281</a>            .unwrap_or(Cow::Borrowed(<span class="kw-2">&amp;</span>[]));
-<a href=#282 id=282 data-nosnippet>282</a>        <span class="kw">let </span>data: Arc&lt;[u8]&gt; = Arc::from(data.as_ref());
-<a href=#283 id=283 data-nosnippet>283</a>        <span class="prelude-val">Ok</span>(gimli::EndianArcSlice::new(data, gimli::LittleEndian))
-<a href=#284 id=284 data-nosnippet>284</a>    }) <span class="kw">else </span>{
-<a href=#285 id=285 data-nosnippet>285</a>        <span class="kw">return </span><span class="bool-val">false</span>;
-<a href=#286 id=286 data-nosnippet>286</a>    };
-<a href=#287 id=287 data-nosnippet>287</a>    <span class="kw">unsafe </span>{
-<a href=#288 id=288 data-nosnippet>288</a>        DEBUG_CONTEXT = Context::from_dwarf(dwarf).ok();
-<a href=#289 id=289 data-nosnippet>289</a>        DEBUG_CONTEXT.is_some()
-<a href=#290 id=290 data-nosnippet>290</a>    }
-<a href=#291 id=291 data-nosnippet>291</a>}</code></pre></div></section></main></body></html>
+<a href=#273 id=273 data-nosnippet>273</a>    };
+<a href=#274 id=274 data-nosnippet>274</a>    <span class="kw">let </span><span class="prelude-val">Ok</span>(dwarf): <span class="prelude-ty">Result</span>&lt;<span class="kw">_</span>, ()&gt; = gimli::Dwarf::load(|id| {
+<a href=#275 id=275 data-nosnippet>275</a>        <span class="kw">let </span>data = kernel
+<a href=#276 id=276 data-nosnippet>276</a>            .section_by_name(id.name())
+<a href=#277 id=277 data-nosnippet>277</a>            .and_then(|section| section.uncompressed_data().ok())
+<a href=#278 id=278 data-nosnippet>278</a>            .unwrap_or(Cow::Borrowed(<span class="kw-2">&amp;</span>[]));
+<a href=#279 id=279 data-nosnippet>279</a>        <span class="kw">let </span>data: Arc&lt;[u8]&gt; = Arc::from(data.as_ref());
+<a href=#280 id=280 data-nosnippet>280</a>        <span class="prelude-val">Ok</span>(gimli::EndianArcSlice::new(data, gimli::LittleEndian))
+<a href=#281 id=281 data-nosnippet>281</a>    }) <span class="kw">else </span>{
+<a href=#282 id=282 data-nosnippet>282</a>        <span class="kw">return </span><span class="bool-val">false</span>;
+<a href=#283 id=283 data-nosnippet>283</a>    };
+<a href=#284 id=284 data-nosnippet>284</a>    <span class="kw">unsafe </span>{
+<a href=#285 id=285 data-nosnippet>285</a>        DEBUG_CONTEXT = Context::from_dwarf(dwarf).ok();
+<a href=#286 id=286 data-nosnippet>286</a>        DEBUG_CONTEXT.is_some()
+<a href=#287 id=287 data-nosnippet>287</a>    }
+<a href=#288 id=288 data-nosnippet>288</a>}</code></pre></div></section></main></body></html>

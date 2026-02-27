@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Useful tips for implementing KeOS Projects."><title>keos::tips - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../../static.files/storage-e2aeef58.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Module tips</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos/index.html">keos</a><span class="version">1.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module tips</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#implementation-strategy" title="Implementation Strategy">Implementation Strategy</a></li><li><a href="#stopping-an-execution" title="Stopping an execution">Stopping an execution</a></li><li><a href="#passing-tests--bug-free-correctness" title="Passing tests != bug-free correctness">Passing tests != bug-free correctness</a></li><li><a href="#do-not-assign-large-variables-on-stack" title="Do not assign large variables on stack">Do not assign large variables on stack</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos</a></div><h1>Module <span>tips</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos/tips.rs.html#1-53">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Useful tips for implementing KeOS Projects.</p>
+<h3 id="implementation-strategy"><a class="doc-anchor" href="#implementation-strategy">§</a>Implementation Strategy</h3>
+<p>We recommend using a <strong>“TODO-driven” approach</strong> to implement project
+systematically. This method ensures an <strong>incremental and structured</strong>
+development process:</p>
+<ol>
+<li><strong>Run the code</strong> and identify <code>todo!()</code> placeholders that cause panics.</li>
+<li><strong>Implement the missing functionality</strong>, ensuring it aligns with the
+expected behavior described in the project requirements.</li>
+<li><strong>Repeat</strong> steps 1 and 2 until all test cases pass and the system behaves
+correctly.</li>
+</ol>
+<p>This approach allows you to build your project <strong>one step at a time</strong>,
+making debugging and understanding the system easier.</p>
+<h3 id="stopping-an-execution"><a class="doc-anchor" href="#stopping-an-execution">§</a>Stopping an execution</h3>
+<p>When KeOS got stuck in deadlock or does not automatically shut down after
+it panicked, you may need to forcibly shut down the QEMU.</p>
+<p>For execution in <code>cargo grade</code> or <code>cargo run</code> without argument in project 5,
+press <strong>Ctrl-C</strong> to stop execution.</p>
+<p>Otherwise, such as running KeOS by <code>cargo run</code> in project 1-4, press
+<strong>Ctrl-A</strong>, then press <strong>X</strong> to stop execution.</p>
+<h3 id="passing-tests--bug-free-correctness"><a class="doc-anchor" href="#passing-tests--bug-free-correctness">§</a>Passing tests != bug-free correctness</h3>
+<ul>
+<li>The provided tests check basic functionality and semantics only. Passing
+them does not guarantee your code is bug-free.</li>
+<li>Later components that build on your code may stress it in ways the tests
+don’t cover, including edge cases.</li>
+<li>This also applies across project milestones: a bug you see now may come
+from a misimplementation in an earlier project—even if you received full
+points at the time.</li>
+</ul>
+<h3 id="do-not-assign-large-variables-on-stack"><a class="doc-anchor" href="#do-not-assign-large-variables-on-stack">§</a>Do not assign large variables on stack</h3>
+<p>In <strong>KeOS</strong>, each process/thread is assigned a fixed execution stack of
+<code>STACK_SIZE</code> bytes. While KeOS attempts to detect stack overflows, its
+detection is not perfect. <strong>A stack overflow may lead to mysterious kernel
+panics.</strong> To avoid this:</p>
+<ul>
+<li><strong>Avoid declaring large data structures on the stack.</strong></li>
+</ul>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>v: [u8; <span class="number">0x200000</span>]; <span class="comment">// ERROR: This may cause a stack overflow</span></code></pre></div>
+<ul>
+<li><strong>Instead, allocate large data structures on the heap using <code>Box</code>.</strong></li>
+</ul>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span>v = Box::new([<span class="number">0u8</span>; <span class="number">0x200000</span>]); <span class="comment">// OK: Allocates on the heap</span></code></pre></div>
+</div></details></section></div></main></body></html>

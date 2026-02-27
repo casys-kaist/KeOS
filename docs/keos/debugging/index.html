@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="This modules explains debugging tips for KeOS."><title>keos::debugging - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="keos" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../../static.files/storage-e2aeef58.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Module debugging</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../keos/index.html">keos</a><span class="version">1.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module debugging</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#selectively-run-tests" title="Selectively run tests">Selectively run tests</a></li><li><a href="#debugging-with-print" title="Debugging with `print!`">Debugging with <code>print!</code></a><ul><li><a href="#example-workflow-to-debug-why-keos_project2userprogarg_parse-has-no-output" title="Example: Workflow to debug why `keos_project2::userprog::arg_parse` has no output.">Example: Workflow to debug why <code>keos_project2::userprog::arg_parse</code> has no output.</a></li><li><a href="#trust-but-verify-your-debug-prints" title="Trust, but verify, your debug prints">Trust, but verify, your debug prints</a></li></ul></li><li><a href="#debugging-with-gdb" title="Debugging with GDB">Debugging with GDB</a><ul><li><a href="#running-gdb" title="Running GDB">Running GDB</a></li><li><a href="#inspect-each-core" title="Inspect Each Core">Inspect Each Core</a></li><li><a href="#analyzing-execution-state" title="Analyzing Execution State">Analyzing Execution State</a></li><li><a href="#setting-breakpoints" title="Setting Breakpoints">Setting Breakpoints</a></li></ul></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate keos</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">keos</a></div><h1>Module <span>debugging</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/keos/debugging.rs.html#1-231">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>This modules explains debugging tips for KeOS.</p>
+<h3 id="selectively-run-tests"><a class="doc-anchor" href="#selectively-run-tests">§</a>Selectively run tests</h3>
+<p>In KeOS, you can run one or more specific test cases by passing their names
+as arguments to the test runner. For example:</p>
+<div class="example-wrap"><pre class="language-bash"><code>$ cargo run -- syscall::pipe_normal syscall::pipe_partial</code></pre></div>
+<p>This command runs exactly the listed test cases, <code>syscall::pipe_normal</code> and
+<code>syscall::pipe_partial</code>. You may specify a single test case or multiple test
+cases, depending on your needs.</p>
+<h3 id="debugging-with-print"><a class="doc-anchor" href="#debugging-with-print">§</a>Debugging with <code>print!</code></h3>
+<p><code>print!</code> is a simple yet effective debugging tool in KeOS. It allows you to
+output messages directly to the console, helping you trace the execution.
+Use <code>print!</code> generously while debugging.</p>
+<h4 id="example-workflow-to-debug-why-keos_project2userprogarg_parse-has-no-output"><a class="doc-anchor" href="#example-workflow-to-debug-why-keos_project2userprogarg_parse-has-no-output">§</a>Example: Workflow to debug why <code>keos_project2::userprog::arg_parse</code> has no output.</h4>
+<p>There are two possibilities:</p>
+<ol>
+<li>
+<p>The user program executed <strong>but never reached the print</strong>.</p>
+<ul>
+<li>This implies the program’s initial state was wrong.</li>
+<li>In the grader directory, you can check that <code>arg_parse</code> is launched
+via <code>run_elf_with_arg</code>.</li>
+<li>Add logging around that path to dump the final state before entering
+user mode:
+<ul>
+<li>Print a summary of <code>mm_struct</code> and the register set (<code>regs</code>).</li>
+<li>Because the existing <code>mm_struct</code>/page-table walk helpers may only
+return a <strong>final PTE</strong>, write small debug helpers to dump
+<strong>intermediate</strong> page-table levels and the final PTE (include
+addresses and flags).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>The user program executed, reached the print, <strong>but failed to print</strong>.</p>
+<ul>
+<li>User–kernel interactions go through the syscall interface, so if it
+executed at all, it likely issued a syscall.
+<ul>
+<li>Add a log in <code>Process::syscall</code> to print the syscall
+<strong>number/args</strong> and the <strong>return_val</strong>.</li>
+<li>If you see this log, the program executed, made a syscall, and the
+kernel handled it without panicking.</li>
+<li>Check whether <code>return_val</code> is what you expect. If not, dig deeper:</li>
+</ul>
+</li>
+<li>Additional symptom: syscall number is <code>Write</code>, but the result is
+<code>KernelError::BadAddress</code>
+<ul>
+<li>Add a log inside <code>Write</code> to find where <code>KernelError::BadAddress</code>
+originates.</li>
+<li>If <code>UserU8SliceRO::get</code> returns the error, the kernel thinks the
+user buffer address is invalid.</li>
+<li>If you believe the address should be valid, continue down the call
+chain: <strong><code>UserU8SliceRO::get</code></strong> → <strong><code>Task::access_ok</code></strong> →
+<strong><code>MmStruct::access_ok</code></strong> (your implementation). Review these
+carefully.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="trust-but-verify-your-debug-prints"><a class="doc-anchor" href="#trust-but-verify-your-debug-prints">§</a>Trust, but verify, your debug prints</h4>
+<ul>
+<li>Your logging may call code you wrote, which might itself be buggy. That
+can mislead you.
+<ul>
+<li>For example, if you use <code>get_user_page</code> (also your code) to dump user
+memory. If it’s wrong, you could read the wrong memory and still “see”
+plausible contents. In this case, use GDB to inspect the real memory
+state during execution. Treat that as ground truth.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3 id="debugging-with-gdb"><a class="doc-anchor" href="#debugging-with-gdb">§</a>Debugging with GDB</h3>
+<p>KeOS supports debugging with <strong>GDB</strong> and <strong>QEMU</strong>. This section provides
+step-by-step instructions on how to set up and use GDB for effective
+debugging.</p>
+<h4 id="running-gdb"><a class="doc-anchor" href="#running-gdb">§</a>Running GDB</h4>
+<p>To launch KeOS in debug mode, run the following command <strong>inside each grader
+directory</strong>:</p>
+<div class="example-wrap"><pre class="language-bash"><code>$ GDB=1 cargo run &lt;TESTCASE&gt;</code></pre></div>
+<p>You must specify a single test case to debug with a GDB.</p>
+<p>This starts <strong>QEMU</strong> and waits for a GDB connection on TCP <strong>port 1234</strong>.
+A <code>.gdbinit</code> script will also be generated to automate the debugging setup.</p>
+<p>In a <strong>separate terminal</strong>, start GDB using:</p>
+<div class="example-wrap"><pre class="language-bash"><code>$ rust-gdb keos_kernel</code></pre></div>
+<p>We recommend to use <code>rust-gdb</code>, as it provides better support for
+Rust-specific data structures and improves debugging readability.</p>
+<h5 id="one-time-setup"><a class="doc-anchor" href="#one-time-setup">§</a>One-time setup</h5>
+<p>Before using <code>rust-gdb</code>, you may need to modify your <strong><code>~/.gdbinit</code></strong> file
+to allow script execution. Add the following line:</p>
+<div class="example-wrap"><pre class="language-bash"><code>set auto-load safe-path /</code></pre></div>
+<p>After launching <code>rust-gdb</code>, the execution will halt at the startup stage,
+showing output similar to this:</p>
+<div class="example-wrap"><pre class="language-bash"><code>$ rust-gdb
+warning: No executable has been specified and target does not support
+determining executable automatically. Try using the &quot;file&quot; command.
+0x000000000000fff0 in ?? ()
+(gdb)</code></pre></div>
+<p>Now, you can continue execution by typing:</p>
+<h4 id="inspect-each-core"><a class="doc-anchor" href="#inspect-each-core">§</a>Inspect Each Core</h4>
+<p>In <strong>QEMU</strong>, each <strong>CPU core</strong> is treated as a <strong>separate thread</strong>.
+When debugging multi-core execution, be aware that <strong>some cores may panic
+while others continue running.</strong></p>
+<p>To inspect all active cores, use:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) info threads</code></pre></div>
+<p>This will display the state of each thread, including which CPU core it
+belongs to and its current stack frame. For example:</p>
+<div class="example-wrap"><pre class="language-text"><code>(gdb) info threads
+Id   Target Id         Frame
+* 1    Thread 1 (CPU#0 [running]) 0x000000000000fff0 in ?? ()
+2    Thread 2 (CPU#1 [running]) 0x000000000000fff0 in ?? ()
+3    Thread 3 (CPU#2 [running]) 0x000000000000fff0 in ?? ()
+4    Thread 4 (CPU#3 [running]) 0x000000000000fff0 in ?? ()</code></pre></div>
+<p>To switch to a specific <strong>CPU core (thread)</strong>, use:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) thread {thread_id}</code></pre></div>
+<p>This allows you to inspect registers, call stacks, and execution state
+per core.</p>
+<h4 id="analyzing-execution-state"><a class="doc-anchor" href="#analyzing-execution-state">§</a>Analyzing Execution State</h4><h5 id="viewing-the-call-stack-backtrace"><a class="doc-anchor" href="#viewing-the-call-stack-backtrace">§</a>Viewing the Call Stack (Backtrace)</h5>
+<p>Use <code>backtrace</code> (or <code>bt</code>) to display the <strong>call stack</strong> of the current
+thread:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) bt</code></pre></div>
+<p>Each function call in the stack is represented as a <strong>frame</strong>.
+To switch to a specific frame, use:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) frame {frame_id}</code></pre></div>
+<p>Once inside a frame, you can inspect variables:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) info args
+(gdb) info locals
+(gdb) i r</code></pre></div>
+<p><strong>Debugging a Panic:</strong>
+If you encounter a <strong>kernel panic</strong> during a test, use:</p>
+<ol>
+<li><code>info threads</code> to locate the crashing core</li>
+<li><code>bt</code> to examine the backtrace</li>
+<li><code>frame {frame_id}</code> to inspect function parameters</li>
+</ol>
+<h4 id="setting-breakpoints"><a class="doc-anchor" href="#setting-breakpoints">§</a>Setting Breakpoints</h4>
+<p>Breakpoints help stop execution at specific points. However, in <strong>multi-core
+debugging</strong>, regular breakpoints may not always work correctly.
+Instead, use <strong>hardware breakpoints</strong>:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) hb * {address_of_breakpoint}</code></pre></div>
+<p>To view the source code that the current CPU is executing, use:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) layout asm
+(gdb) layout src</code></pre></div><h5 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h5>
+<p>Here are some examples of how to set breakpoints in GDB:</p>
+<div class="example-wrap"><pre class="language-text"><code>(gdb) hbreak function_name  # Example: hbreak keos::fs::Directory::open
+(gdb) hbreak *address       # Example: hbreak *0x1000
+(gdb) hbreak (file:)line    # Example: hbreak syscall.rs:164</code></pre></div><h5 id="example-1"><a class="doc-anchor" href="#example-1">§</a>Example 1</h5>
+<p>To debug the <code>syscall::read_normal</code> test case in project 1, and set a
+breakpoint at <code>syscall.rs:150</code>, use:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) hbreak syscall.rs:150</code></pre></div>
+<p>Alternatively, you can set a breakpoint by the test case’s name:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) hbreak project1_grader::syscall::read_normal</code></pre></div>
+<p>You can even set a breakpoint on the closure entry, for instance, to set a
+on a closure of <code>sync::semaphore::sema_0</code> test case in project 3:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) hbreak project3_grader::sync::semaphore::{{closure}}</code></pre></div>
+<p>To limit debugging to one core, use <code>thread apply</code>:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) thread apply 1 hbreak syscall.rs:150
+(gdb) c</code></pre></div><h5 id="example-2"><a class="doc-anchor" href="#example-2">§</a>Example 2</h5>
+<p>To stop at a breakpoint only when a specific condition is met (e.g., when a
+parameter is <code>0xcafe0000</code>), use:</p>
+<div class="example-wrap"><pre class="language-bash"><code>(gdb) hbreak walk if va.__0 == 0xcafe0000</code></pre></div>
+<p>This approach allows you to focus on specific conditions and skip over
+unrelated calls.</p>
+</div></details></section></div></main></body></html>

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["INIT"],"fn":["register"],"static":["HANDLERS"],"type":["Handler"]};

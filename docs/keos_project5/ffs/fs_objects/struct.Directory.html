@@ -113,12 +113,12 @@ occurs.</li>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.unlink_entry" class="method trait-impl"><a class="src rightside" href="../../../src/keos_project5/ffs/fs_objects.rs.html#454-488">Source</a><a href="#method.unlink_entry" class="anchor">§</a><h4 class="code-header">fn <a href="../../../keos/fs/traits/trait.Directory.html#tymethod.unlink_entry" class="fn">unlink_entry</a>(&amp;self, entry: &amp;str) -&gt; Result&lt;(), <a class="enum" href="../../../keos/enum.KernelError.html" title="enum keos::KernelError">KernelError</a>&gt;</h4></section></summary><div class="docblock"><p>Removes a directory entry by name.</p>
 <h5 id="errors"><a class="doc-anchor" href="#errors">§</a>Errors</h5>
 <ul>
-<li>Returns <a href="../../../keos/enum.KernelError.html#variant.Busy" title="variant keos::KernelError::Busy"><code>KernelError::Busy</code></a> when entry’s Inode number is <code>1</code>
-as it means it’s a root directory.</li>
+<li>Returns <a href="../../../keos/enum.KernelError.html#variant.Busy" title="variant keos::KernelError::Busy"><code>KernelError::Busy</code></a> when entry’s Inode number is <code>1</code> as it
+means it’s a root directory.</li>
 <li>Returns <a href="../../../keos/enum.KernelError.html#variant.DirectoryNotEmpty" title="variant keos::KernelError::DirectoryNotEmpty"><code>KernelError::DirectoryNotEmpty</code></a> when the entry is a
 non-empty directory</li>
-<li>Returns <a href="../../../keos/enum.KernelError.html#variant.NoSuchEntry" title="variant keos::KernelError::NoSuchEntry"><code>KernelError::NoSuchEntry</code></a> if specified entry does
-not exists.</li>
+<li>Returns <a href="../../../keos/enum.KernelError.html#variant.NoSuchEntry" title="variant keos::KernelError::NoSuchEntry"><code>KernelError::NoSuchEntry</code></a> if specified entry does not
+exists.</li>
 </ul>
 <h5 id="parameters-2"><a class="doc-anchor" href="#parameters-2">§</a>Parameters</h5>
 <ul>

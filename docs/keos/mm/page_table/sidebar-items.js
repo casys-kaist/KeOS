@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["PageTableMappingError"],"fn":["tlb_shutdown"],"struct":["PageTableRoot","Pde","PdeFlags","Pdpe","PdpeFlags","Permission","Pml4e","Pml4eFlags","Pte","PteFlags","StaleTLBEntry"]};
+window.SIDEBAR_ITEMS = {"enum":["PageTableMappingError"],"fn":["get_current_pt_pa","load_pt","tlb_shutdown"],"struct":["PageTableRoot","Pde","PdeFlags","Pdpe","PdpeFlags","Permission","Pml4e","Pml4eFlags","Pte","PteFlags","StaleTLBEntry"]};

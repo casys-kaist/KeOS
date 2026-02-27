@@ -65,7 +65,7 @@ zero.</li>
 </ul>
 <h5 id="returns"><a class="doc-anchor" href="#returns">§</a>Returns</h5>
 <ul>
-<li><code>Ok(n)</code>: Number of bytes successfully mapped.</li>
+<li><code>Ok(p)</code>: Start address of the mapped region.</li>
 <li><code>Err([KernelError])</code>: If the operation fails, e.g., due to invalid
 arguments, overlapping mappings, zero-length file, or a
 non-page-aligned <code>addr</code>.</li>

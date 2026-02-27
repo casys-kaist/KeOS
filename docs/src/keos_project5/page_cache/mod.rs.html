@@ -229,8 +229,8 @@
 <a href=#229 id=229 data-nosnippet>229</a>
 <a href=#230 id=230 data-nosnippet>230</a>    <span class="doccomment">/// Write back the dirty portion of the page to the underlying file.
 <a href=#231 id=231 data-nosnippet>231</a>    ///
-<a href=#232 id=232 data-nosnippet>232</a>    /// - If `writeback_size` is `Some(size)`, representing slot is dirty, marked with 
-<a href=#233 id=233 data-nosnippet>233</a>    ///   the desired minimum file size (in bytes) after write-back.
+<a href=#232 id=232 data-nosnippet>232</a>    /// - If `writeback_size` is `Some(size)`, representing slot is dirty,
+<a href=#233 id=233 data-nosnippet>233</a>    ///   marked with the desired minimum file size (in bytes) after write-back.
 <a href=#234 id=234 data-nosnippet>234</a>    /// - On success, clears the `writeback_size` to `None`.
 <a href=#235 id=235 data-nosnippet>235</a>    ///
 <a href=#236 id=236 data-nosnippet>236</a>    /// If the slot is clean, this does not trigger the I/O.
@@ -299,7 +299,7 @@
 <a href=#299 id=299 data-nosnippet>299</a>    ///   system, inserts it into the cache, and copies it into the buffer.
 <a href=#300 id=300 data-nosnippet>300</a>    ///
 <a href=#301 id=301 data-nosnippet>301</a>    /// This method does not triggers the read-ahead requests.
-<a href=#302 id=302 data-nosnippet>302</a>    /// 
+<a href=#302 id=302 data-nosnippet>302</a>    ///
 <a href=#303 id=303 data-nosnippet>303</a>    /// Returns Ok(true) if there exists any byte read.
 <a href=#304 id=304 data-nosnippet>304</a>    </span><span class="kw">pub fn </span>do_read(
 <a href=#305 id=305 data-nosnippet>305</a>        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
