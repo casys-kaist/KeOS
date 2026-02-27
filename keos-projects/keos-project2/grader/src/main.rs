@@ -32,13 +32,17 @@ pub unsafe fn main(_config_builder: SystemConfigurationBuilder) {
         &page_table::free,
         &page_table::error,
         &page_table::complicate,
+        &page_table::x86_permission,
+        &page_table::x86_permission_advanced,
         // Mmap.
         &mm_struct::do_mmap,
         &mm_struct::access_ok_normal,
         &mm_struct::access_ok_invalid,
         &mm_struct::bad_addr_0,
+        &mm_struct::get_user_page,
         // Loader.
         &userprog::arg_parse,
+        &userprog::loader_bss_sanity,
         &userprog::sys_open,
         &userprog::sys_read,
         &userprog::sys_read_error,
@@ -63,6 +67,7 @@ pub unsafe fn main(_config_builder: SystemConfigurationBuilder) {
         &userprog::mm_munmap_error_bad_addr,
         &userprog::mm_munmap_error_double_free,
         &userprog::mm_munmap_error_unaligned,
+        &userprog::mm_exit_cleanup_stress,
         &userprog::bad_addr_1,
         &userprog::bad_code_write,
     ]);

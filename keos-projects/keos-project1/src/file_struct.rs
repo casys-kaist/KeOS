@@ -483,7 +483,7 @@ impl FileStruct {
     /// - Returns [`KernelError::InvalidArgument`] if the calculated position is
     ///   invalid.
     /// - Returns [`KernelError::InvalidArgument`] if the specified file is not a
-    ///  [`FileKind::RegularFile`].
+    ///   [`FileKind::RegularFile`].
     /// - Returns [`KernelError::BadFileDescriptor`] if specified file descriptor is
     ///   invalid.
     /// - Propagates any errors from underlying APIs (e.g. [`uaccess`](keos::syscall::uaccess)).

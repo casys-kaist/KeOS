@@ -1,0 +1,29 @@
+{
+    "whitelist": [
+        "src/ept.rs",
+        "src/mmio.rs",
+        "src/keos_vm/pager.rs"
+    ],
+    "rubrics": {
+        "ept": {
+            "score": 30,
+            "tests": {
+                "ept::simple": {},
+                "ept::complicate": {},
+                "ept::check_huge_translation": {}
+            }
+        },
+        "mmio": {
+            "score": 20,
+            "tests": {
+                "mmio::mmio_read": {}
+            }
+        },
+        "gkeos": {
+            "score": 50,
+            "tests": {
+                "gkeos::run_keos": {}
+            }
+        }
+    }
+}

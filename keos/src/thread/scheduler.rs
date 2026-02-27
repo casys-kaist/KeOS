@@ -62,7 +62,7 @@ unsafe impl core::marker::Sync for Fifo {}
 impl Scheduler for Fifo {
     fn next_to_run(&self) -> Option<Box<Thread>> {
         let mut guard = self.runqueue.lock();
-        let val = guard.pop_back();
+        let val = guard.pop_front();
         guard.unlock();
         val
     }
@@ -97,7 +97,12 @@ pub fn scheduler() -> &'static (dyn Scheduler + 'static) {
 impl dyn Scheduler {
     /// Reschedule the current thread.
     pub fn reschedule(&self) {
-        let _p = Thread::pin();
+        assert!(
+            !abyss::interrupt::InterruptGuard::is_guarded(),
+            "Try to reschedule a thread while holding a lock."
+        );
+
+        unsafe { abyss::interrupt::InterruptState::disable() };
         match self.next_to_run() {
             Some(th) => {
                 th.run();
@@ -109,6 +114,7 @@ impl dyn Scheduler {
                     .do_run();
             },
         }
+        unsafe { abyss::interrupt::InterruptState::enable() };
     }
 
     /// Park a thread 'th' and return ParkHandle.
@@ -158,6 +164,9 @@ pub(crate) fn idle(core_id: usize) -> ! {
         if let Some(th) = scheduler.next_to_run() {
             th.run();
         }
-        unsafe { asm!("sti", "hlt", "cli") }
+        #[cfg(not(feature = "gkeos"))]
+        unsafe {
+            asm!("sti", "hlt", "cli")
+        }
     }
 }

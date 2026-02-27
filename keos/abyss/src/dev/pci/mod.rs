@@ -6,6 +6,7 @@ mod header;
 pub mod virtio;
 mod x86_config;
 
+use alloc::boxed::Box;
 pub use bar::{Bar, IoSpace, MemorySpace};
 pub use cap::{Capability, CapabilityIterator, MessageControl};
 pub use header::*;
@@ -333,11 +334,10 @@ pub unsafe fn init() {
                         .expect("Failed to create virtio block device.");
                     for slot in super::BLOCK_DEVS.iter_mut() {
                         if slot.is_none() {
-                            *slot = Some(dev);
-                            slot.as_ref()
-                                .unwrap()
-                                .init()
-                                .expect("Failed to initialize virtio block device.");
+                            *slot = Some(Box::new(dev));
+                            if !slot.as_ref().unwrap().init() {
+                                panic!("Failed to initialize virtio block device.");
+                            }
                             break;
                         }
                     }

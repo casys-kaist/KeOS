@@ -1,0 +1,13 @@
+[package]
+name = "kev-project3"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bitflags = "1.2.1"
+
+keos = { path ="../../keos" }
+
+kev = { path = "../../kev" }
+kev-project1 = { path ="../kev-project1" }
+kev-project2 = { path ="../kev-project2" }

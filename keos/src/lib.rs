@@ -20,21 +20,22 @@
 //! unnecessary complexity and focus on the core concepts, we encourage your
 //! feedback.
 //!
-//! ## ⚠️ IMPORTANT NOTES on GRADING
-//! - **DO NOT** make public forks of this project.
-//! - The **KeOS license explicitly prohibits** public redistribution of this
-//!   work.
-//! - You **MUST NOT** share or distribute your work based on the provided
-//!   template.
-//! - **Cheating, plagiarism, or uploading your code online is strictly
-//!   prohibited** and will result in **disqualification**.
+//! ## Project Structure
 //!
-//! Failure to comply may result in academic integrity violations.
+//! The KeOS project is divided into five projects:
 //!
-//! For the grading, please refer to the following policy:
-//! - Your submission **must pass all test cases without modifying the
-//!   non-whitelisted code in each project**.
-//! - Submissions that **fail to compile** will receive **0 points**.
+//! 1. **[`System Call`]** – Learn how the OS interacts with user applications.
+//! 2. **[`Memory Management`]** – Implement basic memory management and
+//!    user-space execution.
+//! 3. **[`Advanced Memory Management`]** – Expand the KeOS's memory management
+//!    system with advanced features.
+//! 4. **[`Process Management`]** – Implement the advanced process management,
+//!    including round robin scheduler and sychronization primitives.
+//! 5. **[`File System`]** – Develop a simple yet functional filesystem for data
+//!    storage.
+//!
+//! Each project builds upon the previous ones, helping you progressively
+//! develop a deeper understanding of OS design.
 //!
 //! ## Why Rust?
 //!
@@ -55,62 +56,13 @@
 //!   data races.
 //! - **Avoid common concurrency pitfalls** such as race conditions.
 //!
-//! ## Project Structure
-//!
-//! The KeOS project is divided into five projects:
-//!
-//! 1. **[`System Call`]** – Learn how the OS interacts with user applications.
-//! 2. **[`Memory Management`]** – Implement basic memory management and
-//!    user-space execution.
-//! 3. **[`Advanced Memory Management`]** – Expand the KeOS's memory management
-//!    system with advanced features.
-//! 4. **[`Process Management`]** – Implement the advanced process management,
-//!    including round robin scheduler and sychronization primitives.
-//! 5. **[`File System`]** – Develop a simple yet functional filesystem for data
-//!    storage.
-//!
-//! Each project builds upon the previous ones, helping you progressively
-//! develop a deeper understanding of OS design.
-//!
-//!
-//! ## Implementation Notes
-//!
-//! In **KeOS**, each process/thread is assigned a fixed execution stack of
-//! `STACK_SIZE` bytes. While KeOS attempts to detect stack overflows, its
-//! detection is not perfect. **A stack overflow may lead to mysterious kernel
-//! panics.** To avoid this:
-//! - **Avoid declaring large data structures on the stack.**
-//! ```rust
-//! let v: [u8; 0x200000]; // ERROR: This may cause a stack overflow
-//! ```
-//!
-//! - **Instead, allocate large data structures on the heap using `Box`.**
-//! ```rust
-//! let v = Box::new([0u8; 0x200000]); // OK: Allocates on the heap
-//! ```
-//!
-//! ## Implementation Strategy
-//!
-//! We recommend using a **"TODO-driven" approach** to build KeOS
-//! systematically. This method ensures an **incremental and structured**
-//! development process:
-//!
-//! 1. **Run the code** and identify `todo!()` placeholders that cause panics.
-//! 2. **Implement the missing functionality**, ensuring it aligns with the
-//!    expected behavior described in the project requirements.
-//! 3. **Repeat** steps 1 and 2 until all test cases pass and the system behaves
-//!    correctly.
-//!
-//! This approach allows you to build your OS **one step at a time**,
-//! making debugging and understanding the system easier.
-//!
 //! ## Getting Started
 //!
 //! To set up your **KeOS** development environment, run the following commands:
 //! ```bash
 //! $ mkdir keos
 //! $ cd keos
-//! $ curl https://raw.githubusercontent.com/casys-kaist/KeOS/refs/heads/main/scripts/install.sh | sh
+//! $ curl https://raw.githubusercontent.com/casys-kaist/KeOS/refs/heads/main/scripts/install-keos.sh | sh
 //! ```
 //!
 //! We recommend using VS Code as the editor, along with `rust-analyzer` for
@@ -124,20 +76,7 @@
 //!
 //! Failure to comply may result in academic integrity violations.
 //!
-//! ### Selectively run tests
-//!
-//! In KeOS, you can run one or more specific test cases by passing their names
-//! as arguments to the test runner. For example:
-//!
-//! ```bash
-//! $ cargo run -- syscall::pipe_normal syscall::pipe_partial
-//! ```
-//!
-//! This command runs exactly the listed test cases, `syscall::pipe_normal` and
-//! `syscall::pipe_partial`. You may specify a single test case or multiple test
-//! cases, depending on your needs.
-//!
-//! ### Grading Policy
+//! ## Grading
 //!
 //! During grading, we will **overwrite** all files **except those explicitly
 //! whitelisted** for each project. Any modifications to non-whitelisted files
@@ -148,198 +87,29 @@
 //! This reported score will be treated as your **final grade**, as long as your
 //! submission complies with the whitelist policy.
 //!
-//! **⚠️ IMPORTANT NOTES:**
-//! - Your submission **must pass all test cases without modifying the test
-//!   code**.
-//! - Submissions that **fail to compile** will receive **0 points**.
-//! - **Cheating, plagiarism, or uploading your code online is strictly
-//!   prohibited** and will result in **disqualification**.
-//!
 //! Grading rubrics and the list of whitelisted files can be found in each
 //! grader's `.grade-target` file.
 //!
-//! ## Debugging with GDB
+//! ### ⚠️ IMPORTANT NOTES on GRADING
+//! - The **KeOS license explicitly prohibits** sharing or distributing your
+//!   work based on the provided template.
+//! - Please **DO NOT** make public forks of this project.
+//! - **Cheating, plagiarism, or uploading your code online is strictly
+//!   prohibited** and will result in **disqualification**.
 //!
-//! KeOS supports debugging with **GDB** and **QEMU**. This section provides
-//! step-by-step instructions on how to set up and use GDB for effective
-//! debugging.
+//! Failure to comply may result in academic integrity violations.
 //!
-//! ### Running GDB
-//!
-//! To launch KeOS in debug mode, run the following command **inside each grader
-//! directory**:
-//! ```bash
-//! $ GDB=1 cargo run <TESTCASE>
-//! ```
-//! You must specify a single test case to debug with a GDB.
-//!
-//! This starts **QEMU** and waits for a GDB connection on TCP **port 1234**.
-//! A `.gdbinit` script will also be generated to automate the debugging setup.
-//!
-//! In a **separate terminal**, start GDB using:
-//! ```bash
-//! $ rust-gdb keos_kernel
-//! ```
-//!
-//! **Why `rust-gdb`?**
-//! We recommend `rust-gdb`, as it provides better support for Rust-specific
-//! data structures and improves debugging readability.
-//!
-//! #### One-time setup
-//! Before using `rust-gdb`, you may need to modify your **`~/.gdbinit`** file
-//! to allow script execution. Add the following line:
-//! ```bash
-//! set auto-load safe-path /
-//! ```
-//!
-//! After launching `rust-gdb`, the execution will halt at the startup stage,
-//! showing output similar to this:
-//! ```bash
-//! $ rust-gdb
-//! warning: No executable has been specified and target does not support
-//! determining executable automatically. Try using the "file" command.
-//! 0x000000000000fff0 in ?? ()
-//! (gdb)
-//! ```
-//!
-//! Now, you can continue execution by typing:
-//!
-//! ### Inspect Each Core
-//!
-//! In **QEMU**, each **CPU core** is treated as a **separate thread**.
-//! When debugging multi-core execution, be aware that **some cores may panic
-//! while others continue running.**
-//!
-//! To inspect all active cores, use:
-//! ```bash
-//! (gdb) info threads
-//! ```
-//!
-//! This will display the state of each thread, including which CPU core it
-//! belongs to and its current stack frame. For example:
-//! ```text
-//! (gdb) info threads
-//! Id   Target Id         Frame
-//! * 1    Thread 1 (CPU#0 [running]) 0x000000000000fff0 in ?? ()
-//! 2    Thread 2 (CPU#1 [running]) 0x000000000000fff0 in ?? ()
-//! 3    Thread 3 (CPU#2 [running]) 0x000000000000fff0 in ?? ()
-//! 4    Thread 4 (CPU#3 [running]) 0x000000000000fff0 in ?? ()
-//! ```
-//!
-//! To switch to a specific **CPU core (thread)**, use:
-//! ```bash
-//! (gdb) thread {thread_id}
-//! ```
-//!
-//! This allows you to inspect registers, call stacks, and execution state
-//! per core.
-//!
-//! ---
-//!
-//! ## Analyzing Execution State
-//!
-//! ### Viewing the Call Stack (Backtrace)
-//!
-//! Use `backtrace` (or `bt`) to display the **call stack** of the current
-//! thread:
-//! ```bash
-//! (gdb) bt
-//! ```
-//!
-//! Each function call in the stack is represented as a **frame**.
-//! To switch to a specific frame, use:
-//! ```bash
-//! (gdb) frame {frame_id}
-//! ```
-//!
-//! Once inside a frame, you can inspect variables:
-//! ```bash
-//! (gdb) info args
-//! (gdb) info locals
-//! (gdb) i r
-//! ```
-//!
-//! **Debugging a Panic:**
-//! If you encounter a **kernel panic** during a test, use:
-//! 1. `info threads` to locate the crashing core
-//! 2. `bt` to examine the backtrace
-//! 3. `frame {frame_id}` to inspect function parameters
-//!
-//! ---
-//!
-//! ## Setting Breakpoints
-//!
-//! Breakpoints help stop execution at specific points. However, in **multi-core
-//! debugging**, regular breakpoints may not always work correctly.
-//! Instead, use **hardware breakpoints**:
-//! ```bash
-//! (gdb) hb * {address_of_breakpoint}
-//! ```
-//!
-//! To view the source code that the current CPU is executing, use:
-//! ```bash
-//! (gdb) layout asm
-//! (gdb) layout src
-//! ```
-//!
-//! ### Examples
-//!
-//! Here are some examples of how to set breakpoints in GDB:
-//! ```text
-//! (gdb) hbreak function_name  # Example: hbreak keos::fs::Directory::open
-//! (gdb) hbreak *address       # Example: hbreak *0x1000
-//! (gdb) hbreak (file:)line    # Example: hbreak syscall.rs:164
-//! ```
-//!
-//! #### Example 1
-//!
-//! To debug the `syscall::read_normal` test case in project 1, and set a
-//! breakpoint at `syscall.rs:150`, use:
-//! ```bash
-//! (gdb) hbreak syscall.rs:150
-//! ```
-//!
-//! Alternatively, you can set a breakpoint by the test case's name:
-//! ```bash
-//! (gdb) hbreak project1_grader::syscall::read_normal
-//! ```
-//!
-//! You can even set a breakpoint on the closure entry, for instance, to set a
-//! on a closure of `sync::semaphore::sema_0` test case in project 3:
-//! ```bash
-//! (gdb) hbreak project3_grader::sync::semaphore::{{closure}}
-//! ```
-//!
-//! To limit debugging to one core, use `thread apply`:
-//! ```bash
-//! (gdb) thread apply 1 hbreak syscall.rs:150
-//! (gdb) c
-//! ```
-//!
-//! #### Example 2
-//!
-//! To stop at a breakpoint only when a specific condition is met (e.g., when a
-//! parameter is `0xcafe0000`), use:
-//! ```bash
-//! (gdb) hbreak walk if va.__0 == 0xcafe0000
-//! ```
-//!
-//! This approach allows you to focus on specific conditions and skip over
-//! unrelated calls.
+//! For the grading, please refer to the following policy:
+//! - Your submission **must pass all test cases without modifying the
+//!   non-whitelisted code in each project**.
+//! - Submissions that **fail to compile** will receive **0 points**.
 //!
 //!
-//! ---
-//!
-//! ## Stopping an execution
-//!
-//! When KeOS got stuck in deadlock or does not automatically shut down after
-//! it panicked, you may need to forcibly shut down the QEMU.
-//!
-//! For execution in `cargo grade` or `cargo run` without argument in project 5,
-//! press **Ctrl-C** to stop execution.
-//!
-//! Otherwise, such as running KeOS by `cargo run` in project 1-4, press
-//! **Ctrl-A**, then press **X** to stop execution.
+//! ## Useful Materials
+//! We strongly recommend reading the following materials to help you
+//! successfully complete the KeOS project:
+//! - [**Tips on Implementation**](tips)
+//! - [**Debugging**](debugging)
 //!
 //! [`System Call`]: ../keos_project1
 //! [`Memory Management`]: ../keos_project2
@@ -365,11 +135,17 @@
 extern crate abyss;
 extern crate alloc;
 
-mod interrupt;
-mod lang;
+// For documentations.
+#[cfg(doc)]
+pub mod debugging;
+#[cfg(doc)]
+pub mod tips;
 
 pub mod channel;
 pub mod fs;
+#[doc(hidden)]
+pub mod interrupt;
+mod lang;
 pub mod mm;
 pub mod sync;
 pub mod syscall;
@@ -580,7 +356,7 @@ Copyright 2025 Computer Architecture and Systems Lab\n"
     }
     unsafe {
         main(SystemConfigurationBuilder { _p: () });
-        abyss::boot::bootup_mps();
+        abyss::boot::ap_init();
         // Kill the kernel low address.
         (abyss::addressing::Pa::new({
             unsafe extern "C" {

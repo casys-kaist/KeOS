@@ -116,7 +116,6 @@ pub fn balance() {
 pub fn balance2() {
     let task_control = Arc::new((
         AtomicUsize::new(0), // Pinned CPUs
-        AtomicUsize::new(0), // Spawned tasks
         AtomicUsize::new(0), // Consumed tasks
         AtomicUsize::new(0), // Consumer turn
     ));
@@ -127,7 +126,7 @@ pub fn balance2() {
         let task_control = task_control.clone();
         let scheduler = scheduler.clone();
         let handle = ThreadBuilder::new(format!("t{i}")).spawn(move || {
-            let (pinned, spawned, consumed, turn) = &*task_control;
+            let (pinned, consumed, turn) = &*task_control;
             // Pin all cores not to be scheduled.
             let _p = Thread::pin();
             let core_id = cpuid();

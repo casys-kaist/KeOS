@@ -45,9 +45,7 @@ pub extern "C" fn handle_page_fault(frame: &mut Registers, ec: PFErrorCode) {
         Some(task) => {
             let cr2 = Va::new(Cr2::current().into_usize()).unwrap();
             // Enable interrupt after resolving the faulting address.
-            unsafe {
-                core::arch::asm!("sti");
-            }
+            unsafe { abyss::interrupt::InterruptState::enable() };
             task.page_fault(ec, cr2);
         }
         _ => {

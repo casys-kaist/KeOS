@@ -229,8 +229,8 @@ impl Slot {
 
     /// Write back the dirty portion of the page to the underlying file.
     ///
-    /// - If `writeback_size` is `Some(size)`, representing slot is dirty, marked with 
-    ///   the desired minimum file size (in bytes) after write-back.
+    /// - If `writeback_size` is `Some(size)`, representing slot is dirty,
+    ///   marked with the desired minimum file size (in bytes) after write-back.
     /// - On success, clears the `writeback_size` to `None`.
     ///
     /// If the slot is clean, this does not trigger the I/O.
@@ -299,7 +299,7 @@ impl PageCacheState {
     ///   system, inserts it into the cache, and copies it into the buffer.
     ///
     /// This method does not triggers the read-ahead requests.
-    /// 
+    ///
     /// Returns Ok(true) if there exists any byte read.
     pub fn do_read(
         &mut self,

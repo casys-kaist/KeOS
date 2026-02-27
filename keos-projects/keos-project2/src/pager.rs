@@ -50,7 +50,7 @@ pub trait Pager {
     /// - `offset`: Offset into the file where the mapping begins.
     ///
     /// # Returns
-    /// - `Ok(n)`: Number of bytes successfully mapped.
+    /// - `Ok(p)`: Start address of the mapped region.
     /// - `Err([KernelError])`: If the operation fails, e.g., due to invalid
     ///   arguments, overlapping mappings, zero-length file, or a
     ///   non-page-aligned `addr`.

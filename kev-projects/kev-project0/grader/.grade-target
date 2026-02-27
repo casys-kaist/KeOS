@@ -1,0 +1,30 @@
+{
+    "whitelist": [],
+    "rubrics": {
+        "page_table": {
+            "score": 50,
+            "tests": {
+                "page_table::simple": {},
+                "page_table::simple2": {
+                    "timeout": 60
+                },
+                "page_table::free": {},
+                "page_table::error": {},
+                "page_table::complicate": {}
+            }
+        },
+        "round_robin": {
+            "score": 50,
+            "tests": {
+                "round_robin::functionality": {},
+                "round_robin::balance": {
+					"timeout": 60
+				},
+                "round_robin::balance2": {
+					"timeout": 60
+				},
+                "round_robin::affinity": {}
+            }
+        }
+    }
+}

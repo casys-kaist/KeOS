@@ -32,3 +32,9 @@ pub fn cow_perm() {
 pub fn cow_sys() {
     assert_eq!(run_elf("mm_cow_sys"), 0);
 }
+
+pub fn cow_cleanup_stress() {
+    for _ in 0..12 {
+        assert_eq!(run_elf("fork_cow_cleanup"), 0);
+    }
+}

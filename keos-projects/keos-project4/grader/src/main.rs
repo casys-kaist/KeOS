@@ -68,6 +68,7 @@ pub unsafe fn main(config_builder: SystemConfigurationBuilder) {
         &userprog::mm_mmap_error_protection_exec,
         &userprog::mm_munmap,
         &userprog::mm_munmap_error,
+        &userprog::mm_exit_cleanup_stress,
         &userprog::bad_addr_1,
         &userprog::bad_code_write,
         // User thread.

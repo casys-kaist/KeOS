@@ -241,7 +241,8 @@ impl<T: Disk> SimpleFs<T> {
                 let mut content_pos = pos + 1;
                 let mut chunks = contents.chunks_exact(512);
                 while let Some(chunk) = chunks.next() {
-                    self.t.write(Sector(content_pos), chunk.try_into().unwrap())?;
+                    self.t
+                        .write(Sector(content_pos), chunk.try_into().unwrap())?;
                     content_pos += 1;
                 }
                 let remainder = chunks.remainder();

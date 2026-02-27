@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "abyss"
-version = "1.0.4"
+version = "1.1.0"
 dependencies = [
  "arrayvec",
  "bitflags",
@@ -59,7 +59,7 @@ dependencies = [
 
 [[package]]
 name = "keos"
-version = "1.0.4"
+version = "1.1.0"
 dependencies = [
  "abyss",
  "addr2line",

@@ -1,0 +1,12 @@
+{
+    "whitelist": [
+    ],
+    "rubrics": {
+        "gKeOS": {
+            "score": 100,
+            "tests": {
+                "gkeos": {}
+            }
+        }
+    }
+}

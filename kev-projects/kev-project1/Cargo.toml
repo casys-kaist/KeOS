@@ -1,0 +1,16 @@
+[package]
+name = "kev-project1"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bitflags = "1.2.1"
+keos = { path ="../../keos" }
+keos-project2 = { path ="../../keos-projects/keos-project2" }
+
+kev = { path = "../../kev" }
+
+[dependencies.iced-x86]
+version = "1.18.0"
+default-features = false
+features = ["no_std", "decoder", "intel"]

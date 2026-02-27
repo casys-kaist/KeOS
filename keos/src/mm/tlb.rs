@@ -1,10 +1,9 @@
 //! TLB Shootdown helper.
-use crate::sync::{
-    RwLock,
-    atomic::{AtomicBool, AtomicUsize},
+use crate::{
+    mm::page_table::ACTIVE_PAGE_TABLES,
+    sync::{RwLock, atomic::AtomicUsize},
 };
 use abyss::{
-    MAX_CPU,
     addressing::Va,
     boot::ONLINE_CPU,
     dev::x86_64::apic::{IPIDest, Mode},
@@ -19,13 +18,6 @@ static IN_PROGRESS: SpinLock<()> = SpinLock::new(());
 
 #[doc(hidden)]
 static REQUEST: RwLock<Option<TlbIpi>> = RwLock::new(None);
-
-#[doc(hidden)]
-#[allow(clippy::declare_interior_mutable_const)]
-const PER_CORE_STATUS: AtomicBool = AtomicBool::new(false);
-
-#[doc(hidden)]
-static HAVE_REQUEST: [AtomicBool; MAX_CPU] = [PER_CORE_STATUS; MAX_CPU];
 
 /// Struct for TLB request
 pub struct TlbIpi {
@@ -43,13 +35,8 @@ pub struct TlbIpi {
 impl TlbIpi {
     /// Send the request and wait until the request is done for all CPUs
     pub fn send(cr3: Cr3, va: Option<Va>) {
-        let guard = loop {
-            if let Ok(guard) = IN_PROGRESS.try_lock() {
-                break guard;
-            }
-
-            TlbIpi::handle();
-        };
+        let cr3_pa = cr3.0 as usize;
+        let guard = IN_PROGRESS.lock();
 
         // Publish the requests.
         {
@@ -76,24 +63,18 @@ impl TlbIpi {
                 .iter()
                 .enumerate()
                 .filter(|(i, cpu)| {
-                    if *i == self_id {
-                        true
-                    } else if cpu.load(Ordering::SeqCst) {
-                        HAVE_REQUEST[*i].store(true);
-                        true
-                    } else {
-                        false
-                    }
+                    cpu.load(Ordering::SeqCst)
+                        && *i != self_id
+                        && ACTIVE_PAGE_TABLES[*i].load() == cr3_pa
+                })
+                .map(|(core_id, _)| unsafe {
+                    abyss::dev::x86_64::apic::send_ipi(IPIDest::Cpu(core_id), Mode::Fixed(0x7e));
                 })
                 .count();
 
-            unsafe {
-                abyss::dev::x86_64::apic::send_ipi(IPIDest::AllExcludingSelf, Mode::Fixed(0x7e));
-            }
-
             let request_ref = request.as_ref().unwrap();
 
-            while request_ref.processed.load() < online_cpu_cnt - 1 {
+            while request_ref.processed.load() < online_cpu_cnt {
                 core::hint::spin_loop();
             }
         }
@@ -108,34 +89,29 @@ impl TlbIpi {
     }
 
     fn handle() {
-        let core_id = abyss::x86_64::intrinsics::cpuid();
-        if HAVE_REQUEST[core_id].load() {
-            let request = REQUEST.read();
+        let request = REQUEST.read();
 
-            if let Some(request) = &*request {
-                if request.cr3 == Cr3::current() {
-                    match request.va {
-                        Some(va) => unsafe {
-                            core::arch::asm!(
-                                "invlpg [{0}]",
-                                in(reg) va.into_usize(),
-                                options(nostack)
-                            )
-                        },
-                        _ => unsafe {
-                            core::arch::asm! {
-                                "mov rax, cr3",
-                                "mov cr3, rax",
-                                out("rax") _,
-                                options(nostack)
-                            }
-                        },
-                    }
+        if let Some(request) = &*request {
+            if request.cr3 == Cr3::current() {
+                match request.va {
+                    Some(va) => unsafe {
+                        core::arch::asm!(
+                            "invlpg [{0}]",
+                            in(reg) va.into_usize(),
+                            options(nostack)
+                        )
+                    },
+                    _ => unsafe {
+                        core::arch::asm! {
+                            "mov rax, cr3",
+                            "mov cr3, rax",
+                            out("rax") _,
+                            options(nostack)
+                        }
+                    },
                 }
-
-                request.processed.fetch_add(1);
-                HAVE_REQUEST[core_id].store(false);
             }
+            request.processed.fetch_add(1);
         }
     }
 }

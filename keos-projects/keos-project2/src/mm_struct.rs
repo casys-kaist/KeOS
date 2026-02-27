@@ -33,7 +33,7 @@
 //!
 //! The [`MmStruct`] contains the two key components:
 //! - **Page Table**: Tracks mappings between virtual and physical addresses.
-//! - **Pager**: Defines the policy for memory mapping. and unmapping.`
+//! - **Pager**: Defines the policy for memory mapping and unmapping.
 //!
 //! ### Validating User Input
 //!
@@ -153,7 +153,6 @@ impl<P: Pager> MmStruct<P> {
             pager: P::new(), // Initialize the pager.
         }
     }
-
     // Check whether a given memory range is accessible by the process.
     ///
     /// This function ensures that system calls using memory addresses (such as

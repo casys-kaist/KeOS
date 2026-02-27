@@ -39,7 +39,7 @@
 //! The TLB is a CPU cache that stores recent translations of virtual memory
 //! addresses to physical memory. The TLB is not updated automatically when the
 //! page table is modified, so the kernel must explicitly invalidate the TLB
-//! entries after a page table update. If you invalidate the entry, the kernel
+//! entries after a page table update. Unless you invalidate the entry, the kernel
 //! may be work with a stale memory.
 //!
 //! ## Paging in x86_64
@@ -232,9 +232,7 @@ impl PageTable {
     /// # Returns
     /// The physical address of the page table ([`Pa`]).
     pub fn pa(&self) -> Pa {
-        Kva::new(self.0.as_ref().as_ptr() as usize)
-            .unwrap()
-            .into_pa()
+        self.0.as_ref().pa()
     }
 
     /// Map a virtual address (`va`) to a physical page (`pg`) with the

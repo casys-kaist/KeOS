@@ -60,12 +60,14 @@ pub unsafe fn main(_config_builder: SystemConfigurationBuilder) {
         &userprog::mm_munmap_error_bad_addr,
         &userprog::mm_munmap_error_double_free,
         &userprog::mm_munmap_error_unaligned,
+        &userprog::mm_exit_cleanup_stress,
         &userprog::bad_addr_1,
         &userprog::bad_code_write,
         &userprog_part_2::fork,
         &userprog_part_2::cow,
         &userprog_part_2::cow_perm,
         &userprog_part_2::cow_sys,
+        &userprog_part_2::cow_cleanup_stress,
         // CoW test
         &userprog_part_2::fork2,
     ]);

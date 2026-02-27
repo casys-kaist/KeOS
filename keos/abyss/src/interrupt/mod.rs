@@ -7,10 +7,49 @@ use crate::{
 };
 use core::{
     arch::{asm, naked_asm},
-    sync::atomic::AtomicBool,
+    sync::atomic::{AtomicBool, AtomicIsize, Ordering},
 };
 
 mod entry;
+pub use entry::do_handle_irq;
+
+static PER_CORE_STATE: [InterruptGuardInner; crate::MAX_CPU] =
+    [const { InterruptGuardInner::new() }; crate::MAX_CPU];
+
+struct InterruptGuardInner {
+    initial_state: AtomicBool,
+    cnt: AtomicIsize,
+}
+
+impl InterruptGuardInner {
+    const fn new() -> Self {
+        Self {
+            initial_state: AtomicBool::new(true),
+            cnt: AtomicIsize::new(0),
+        }
+    }
+
+    fn save_nested_interrupt_state(&self, state: InterruptState) {
+        if self.cnt.fetch_add(1, Ordering::SeqCst) == 0 {
+            self.initial_state
+                .store(state == InterruptState::On, Ordering::SeqCst);
+        }
+    }
+
+    fn load_nested_interrupt_state(&self) {
+        let prev = self.cnt.fetch_sub(1, Ordering::SeqCst);
+        assert!(prev > 0, "Mismatched InterruptGuard drop calls: {prev}");
+
+        if prev == 1 && self.initial_state.load(Ordering::SeqCst) {
+            unsafe { InterruptState::enable() };
+        }
+    }
+
+    fn decrement_count(&self) {
+        let prev = self.cnt.fetch_sub(1, Ordering::SeqCst);
+        assert!(prev > 0, "Mismatched InterruptGuard drop calls: {prev}");
+    }
+}
 
 /// Enumeration representing the interrupt state.
 #[derive(PartialEq, Eq, Debug)]
@@ -34,6 +73,18 @@ impl InterruptState {
             Self::Off
         }
     }
+
+    pub unsafe fn enable() {
+        unsafe {
+            asm!("sti");
+        }
+    }
+
+    pub unsafe fn disable() {
+        unsafe {
+            asm!("cli");
+        }
+    }
 }
 
 /// An RAII-based guard for managing interrupt disabling.
@@ -51,8 +102,11 @@ impl InterruptState {
 ///
 /// This structure is created using [`InterruptGuard::new`].
 pub struct InterruptGuard {
-    state: InterruptState,
+    core_id: usize,
 }
+
+impl !Send for InterruptGuard {}
+impl !Sync for InterruptGuard {}
 
 impl InterruptGuard {
     /// Creates a new `InterruptGuard`, disabling interrupts.
@@ -73,10 +127,28 @@ impl InterruptGuard {
     /// ```
     pub fn new() -> Self {
         let state = InterruptState::current();
-        unsafe {
-            asm!("cli");
-        }
-        Self { state }
+        unsafe { InterruptState::disable() };
+        core::sync::atomic::fence(Ordering::SeqCst);
+
+        let core_id = crate::x86_64::intrinsics::cpuid();
+        let guard = &PER_CORE_STATE[core_id];
+
+        guard.save_nested_interrupt_state(state);
+
+        Self { core_id }
+    }
+
+    pub fn consume(self) {
+        let guard = &PER_CORE_STATE[self.core_id];
+        guard.decrement_count();
+
+        core::mem::forget(self);
+    }
+
+    pub fn is_guarded() -> bool {
+        let core_id = crate::x86_64::intrinsics::cpuid();
+        let guard = &PER_CORE_STATE[core_id];
+        guard.cnt.load(Ordering::SeqCst) > 0
     }
 }
 
@@ -88,11 +160,17 @@ impl Default for InterruptGuard {
 
 impl Drop for InterruptGuard {
     fn drop(&mut self) {
-        if self.state == InterruptState::On {
-            unsafe {
-                asm!("sti");
-            }
+        if self.core_id != crate::x86_64::intrinsics::cpuid() {
+            panic!(
+                "InterruptGuard dropped on different core: {} != {}",
+                self.core_id,
+                crate::x86_64::intrinsics::cpuid()
+            );
         }
+
+        let guard = &PER_CORE_STATE[crate::x86_64::intrinsics::cpuid()];
+        guard.load_nested_interrupt_state();
+        core::sync::atomic::fence(Ordering::SeqCst);
     }
 }
 

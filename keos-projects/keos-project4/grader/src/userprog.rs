@@ -159,6 +159,12 @@ pub fn mm_munmap_error() {
     run_elf("mm_munmap_error");
 }
 
+pub fn mm_exit_cleanup_stress() {
+    for _ in 0..24 {
+        assert_eq!(run_elf("mm_exit_cleanup"), 0);
+    }
+}
+
 #[stdin(b"")]
 #[assert_output(b"success ")]
 pub fn bad_addr_1() {

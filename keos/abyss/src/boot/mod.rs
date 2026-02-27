@@ -6,7 +6,7 @@ use crate::{
     MAX_CPU,
     addressing::{Kva, Pa},
     dev::x86_64::apic::{IPIDest, Mode},
-    syscall::syscall_entry_register,
+    syscall::syscall_entry_init,
     x86_64::{
         Cr0,
         interrupt::{ExceptionType, IDT, InterruptStackFrame, PFErrorCode},
@@ -69,18 +69,15 @@ unsafe extern "C" fn start() {
     );
 }
 
-/// Bootup the mps.
-pub unsafe fn bootup_mps() {
+/// Bootup the aps.
+pub unsafe fn ap_init() {
     unsafe extern "C" {
         static ap_trampoline: u8;
         static ap_trampoline_end: u8;
-        static mut boot_pml4e: u64;
     }
     const MP_ENTRY: u32 = 0x8000;
 
     unsafe {
-        boot_pml4e = crate::x86_64::intrinsics::read_cr3() as u64;
-
         // Init bsp.
         Pio::new(0x70).write_u8(0xF); // cmos port.
         Pio::new(0x71).write_u8(0xA); // cmos command.
@@ -141,10 +138,15 @@ unsafe extern "C" fn bootstrap(core_id: usize, mbinfo: &MultiBootInfo2) {
                 .into_usize();
             core::slice::from_raw_parts_mut(start as *mut u8, end - start).fill(0);
 
-            initialize_idt();
+            idt_init();
         }
 
         per_cpu_init(core_id);
+
+        unsafe extern "C" {
+            static mut boot_pml4e: u64;
+        }
+        boot_pml4e = crate::x86_64::intrinsics::read_cr3() as u64;
 
         if core_id == 0 {
             let cmd = mbinfo.get_cmdline();
@@ -186,13 +188,14 @@ unsafe fn per_cpu_init(core_id: usize) {
         Msr::<0xc0000080>::write(Msr::<0xc0000080>::read() | (1 << 11) | (1 << 0));
 
         KernelGS::new().apply();
-        syscall_entry_register();
+        #[cfg(not(feature = "gkeos"))]
+        syscall_entry_init();
 
         ONLINE_CPU[core_id].store(true, Ordering::SeqCst);
     }
 }
 
-fn initialize_idt() {
+fn idt_init() {
     unsafe extern "x86-interrupt" {
         fn do_isr_32(_: &mut InterruptStackFrame);
         fn do_isr_33(_: &mut InterruptStackFrame);

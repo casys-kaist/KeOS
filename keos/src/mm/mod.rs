@@ -348,7 +348,7 @@ impl Arena {
                             self.set_used(i);
                         }
                         let ref_cnt = &self.ref_cnts[start];
-                        debug_assert_eq!(
+                        assert_eq!(
                             ref_cnt.fetch_add(1, core::sync::atomic::Ordering::SeqCst),
                             0
                         );
@@ -488,6 +488,7 @@ impl ContigPages {
                     });
                 }
             }
+            allocator.unlock();
         }
         None
     }
@@ -521,14 +522,19 @@ impl ContigPages {
                 }
             })
             .expect("Failed to find arena index.");
+        let ref_cnt = allocator.inner[arena_idx]
+            .as_ref()
+            .unwrap()
+            .ref_cnt_for_va(kva);
+        assert!(
+            ref_cnt.load(Ordering::SeqCst) >= 1,
+            "Tried to call `from_va()` on unallocated page."
+        );
         let page = ContigPages {
             arena_idx,
             kva,
             cnt: size / 4096,
-            ref_cnt: allocator.inner[arena_idx]
-                .as_ref()
-                .unwrap()
-                .ref_cnt_for_va(kva),
+            ref_cnt,
         };
         allocator.unlock();
         page

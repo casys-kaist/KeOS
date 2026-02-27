@@ -46,7 +46,6 @@ impl KernelGS {
         unsafe {
             KERNEL_GS_BASES[cpuid()] = self;
             Msr::<0xC000_0101>::write(&mut KERNEL_GS_BASES[cpuid()] as *mut KernelGS as u64);
-            Msr::<0xC000_0102>::write(&mut KERNEL_GS_BASES[cpuid()] as *mut KernelGS as u64);
         }
     }
 }

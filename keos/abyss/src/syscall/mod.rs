@@ -8,7 +8,7 @@ unsafe extern "C" {
     fn arch_syscall_entry();
 }
 
-pub fn syscall_entry_register() {
+pub fn syscall_entry_init() {
     unsafe {
         Msr::<0xC000_0081>::write(
             ((Segment::UserCode.into_selector().pack() as u64).wrapping_sub(0x10) << 48)

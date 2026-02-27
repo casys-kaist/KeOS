@@ -265,10 +265,7 @@ pub(crate) fn load_debug_infos() -> bool {
     };
     let image_size = kernel_disk.block_cnt() * kernel_disk.block_size();
     let mut kernel_image = alloc::vec![0u8; image_size].into_boxed_slice();
-    if kernel_disk
-        .read_bios(&mut Some((0, kernel_image.as_mut())).into_iter())
-        .is_err()
-    {
+    if !kernel_disk.read_block_many(0, kernel_image.as_mut()) {
         return false;
     }
     let Ok(kernel) = object::File::parse(kernel_image.as_ref()) else {

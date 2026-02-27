@@ -208,6 +208,13 @@
                         "../../.cargo/ffs-fsck",
                         "ffs.bin"
                     ]
+                },
+                "page_cache::writeback": {
+                    "post-hook": [
+                        "../../.cargo/ffs-fsck",
+                        "ffs.bin"
+                    ],
+                    "timeout": 60
                 }
             }
         },

@@ -2,8 +2,9 @@
 use crate::{
     addressing::{Pa, Va},
     mm::{Page, tlb::TlbIpi},
+    sync::atomic::AtomicUsize,
 };
-use abyss::x86_64::Cr3;
+use abyss::{MAX_CPU, x86_64::Cr3};
 use alloc::boxed::Box;
 use core::ops::Deref;
 
@@ -887,17 +888,22 @@ impl Drop for StaleTLBEntry {
 /// entries of the current CPU. The invalidation ensures that any cached
 /// translations are cleared and that the system will use the updated
 /// page table entries for subsequent address lookups.
-pub fn tlb_shutdown() {
-    unsafe {
-        core::arch::asm! {
-            "mov rax, cr3",
-            "mov cr3, rax",
-            out("rax") _,
-            options(nostack)
-        }
+pub fn tlb_shutdown(pgtbl: &PageTableRoot) {
+    let pgtbl_pa = pgtbl.pa().into_usize();
+    let curr_cr3 = Cr3::current();
 
-        TlbIpi::send(Cr3::current(), None);
+    if pgtbl_pa == curr_cr3.into_usize() {
+        unsafe {
+            core::arch::asm! {
+                "mov rax, cr3",
+                "mov cr3, rax",
+                out("rax") _,
+                options(nostack)
+            }
+        }
     }
+
+    TlbIpi::send(Cr3(pgtbl_pa as u64), None);
 }
 
 /// Page Table Mapping Error.
@@ -1078,4 +1084,36 @@ impl PageTableRoot {
         this.0[Self::KBASE..512].copy_from_slice(&kernel_pt[Self::KBASE..512]);
         this
     }
+
+    /// Get the physical address of this page table root.
+    pub fn pa(&self) -> Pa {
+        crate::mm::Kva::new(self.as_ptr() as usize)
+            .unwrap()
+            .into_pa()
+    }
+}
+
+#[doc(hidden)]
+pub(crate) static ACTIVE_PAGE_TABLES: [AtomicUsize; MAX_CPU] =
+    [const { AtomicUsize::new(0) }; MAX_CPU];
+
+/// Load page table by given physical address.
+#[inline]
+pub fn load_pt(pa: Pa) {
+    if abyss::x86_64::Cr3::current().into_usize() != pa.into_usize() {
+        // println!("RELOAD PT {:?}", pa);
+        ACTIVE_PAGE_TABLES[abyss::x86_64::intrinsics::cpuid()].store(pa.into_usize());
+        unsafe { abyss::x86_64::Cr3(pa.into_usize() as u64).apply() }
+    }
+}
+
+/// Get current page table's physical address.
+#[inline]
+pub fn get_current_pt_pa() -> Pa {
+    let addr = abyss::x86_64::Cr3::current().into_usize();
+    assert_eq!(
+        ACTIVE_PAGE_TABLES[abyss::x86_64::intrinsics::cpuid()].load(),
+        addr
+    );
+    Pa::new(addr).unwrap()
 }

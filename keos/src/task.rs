@@ -30,7 +30,7 @@ pub trait Task {
     fn page_fault(&mut self, ec: PFErrorCode, cr2: Va) {
         if (ec & PFErrorCode::USER) == PFErrorCode::USER {
             println!(
-                "[ERROR] Page fault occurs by {:?} [0x{:x}]. Killing thread...",
+                "[ERROR] Page fault occurs by {} [0x{:x}]. Killing thread...",
                 if !ec.contains(PFErrorCode::PRESENT) {
                     "accessing non-present page"
                 } else if ec.contains(PFErrorCode::INSTRCUTION_FETCH) {

@@ -438,12 +438,12 @@ impl keos::fs::traits::Directory for Directory {
     /// Removes a directory entry by name.
     ///
     /// # Errors
-    /// - Returns [`KernelError::Busy`] when entry's Inode number is `1`
-    ///  as it means it's a root directory.
+    /// - Returns [`KernelError::Busy`] when entry's Inode number is `1` as it
+    ///   means it's a root directory.
     /// - Returns [`KernelError::DirectoryNotEmpty`] when the entry is a
-    ///  non-empty directory
-    /// - Returns [`KernelError::NoSuchEntry`] if specified entry does
-    ///  not exists.
+    ///   non-empty directory
+    /// - Returns [`KernelError::NoSuchEntry`] if specified entry does not
+    ///   exists.
     ///
     /// # Parameters
     /// - `entry`: The name of the entry to remove.

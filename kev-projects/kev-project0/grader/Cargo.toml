@@ -1,0 +1,16 @@
+[package]
+name = "project0-grader"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+keos = { path ="../../../keos" }
+keos-project2 = { path ="../../../keos-projects/keos-project2" }
+keos-project4 = { path ="../../../keos-projects/keos-project4" }
+
+grading = { path = "../../../keos/grading" }
+
+kev = { path = "../../../kev" }
+
+[build-dependencies]
+simple_fs = { path = "../../../fs/simple_fs" }

@@ -77,7 +77,7 @@ extern "C" fn handle_device_not_available(frame: &mut Registers) {
 
 #[unsafe(no_mangle)]
 #[allow(clippy::empty_loop)]
-extern "C" fn do_handle_irq(frame: &mut Registers, vec: usize) {
+pub extern "C" fn do_handle_irq(frame: &mut Registers, vec: usize) {
     unsafe extern "Rust" {
         fn do_handle_interrupt(idx: usize, frame: &mut Registers);
     }
@@ -86,7 +86,7 @@ extern "C" fn do_handle_irq(frame: &mut Registers, vec: usize) {
 
     if vec == 32 {
         unsafe {
-            // Reprgram the deadline.
+            // Reprogram the deadline.
             crate::dev::x86_64::timer::set_timer();
         }
     }

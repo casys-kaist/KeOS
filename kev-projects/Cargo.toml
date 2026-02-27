@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+
+members = [
+  "kev-project0/grader",
+  "kev-project1/grader",
+  "kev-project2/grader",
+  "kev-project3/grader",
+  "kev-project1",
+  "kev-project2",
+  "kev-project3",
+  "kev-project4/grader",
+]

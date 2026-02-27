@@ -7,7 +7,7 @@
 //! provide some built-in support for low-level synchronization.
 pub mod scheduler;
 
-use crate::{KernelError, spinlock::SpinLock, task::Task};
+use crate::{KernelError, mm::page_table::load_pt, spinlock::SpinLock, task::Task};
 use abyss::{
     addressing::{Kva, Pa},
     dev::x86_64::apic::{IPIDest, Mode},
@@ -80,10 +80,6 @@ impl crate::teletype::Teletype for TtyState {
         self.idx += read_bytes;
         Ok(read_bytes)
     }
-}
-
-fn load_pt(pa: Pa) {
-    unsafe { abyss::x86_64::Cr3(pa.into_usize() as u64).apply() }
 }
 
 static EXIT_CODE_TABLE: SpinLock<BTreeMap<u64, Arc<AtomicU64>>> = SpinLock::new(BTreeMap::new());
@@ -286,21 +282,22 @@ impl Thread {
 
     pub(crate) unsafe fn do_run(&mut self) {
         unsafe {
-            let _p = abyss::interrupt::InterruptGuard::new();
-            if with_current(|current| current as *const _ as usize != self as *const _ as usize) {
-                let next_sp = self.sp;
-                let current_sp = with_current(|th| {
+            abyss::interrupt::InterruptState::disable();
+            with_current(|current| {
+                if !core::ptr::eq(current, self) {
+                    let next_sp = self.sp;
+                    let current_sp = { &mut current.sp as *mut usize };
                     while self.running_cpu.load(Ordering::SeqCst) != -1 {
                         core::hint::spin_loop()
                     }
-                    &mut th.sp as *mut usize
-                });
-                assert_eq!(
-                    abyss::interrupt::InterruptState::current(),
-                    abyss::interrupt::InterruptState::Off
-                );
-                context_switch_trampoline(current_sp, next_sp)
-            }
+                    assert_eq!(
+                        abyss::interrupt::InterruptState::current(),
+                        abyss::interrupt::InterruptState::Off
+                    );
+                    context_switch_trampoline(current_sp, next_sp)
+                }
+            });
+            abyss::interrupt::InterruptState::enable();
         }
     }
 
@@ -414,7 +411,6 @@ impl ParkHandle {
         let mut state = self.th.state.lock();
         *state = ThreadState::Runnable;
         state.unlock();
-
         scheduler::scheduler().push_to_queue(self.th);
     }
 }
@@ -544,14 +540,17 @@ impl Current {
     /// Run a function `f` with [`ParkHandle`] for current thread, and then park
     /// the current thread.
     pub fn park_with(f: impl FnOnce(ParkHandle)) {
+        let p = abyss::interrupt::InterruptGuard::new();
         with_current(|th| {
             f(unsafe { scheduler::scheduler().park_thread(th).unwrap() });
         });
+
+        p.consume();
         assert!(
-            abyss::interrupt::InterruptState::current() == abyss::interrupt::InterruptState::On,
+            !abyss::interrupt::InterruptGuard::is_guarded(),
             "Try to park a thread while holding a lock."
         );
-        let _ = abyss::interrupt::InterruptGuard::new();
+
         scheduler::scheduler().reschedule();
     }
 

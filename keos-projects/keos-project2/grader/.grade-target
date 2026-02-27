@@ -17,7 +17,9 @@
                 },
                 "page_table::free": {},
                 "page_table::error": {},
-                "page_table::complicate": {}
+                "page_table::complicate": {},
+                "page_table::x86_permission": {},
+                "page_table::x86_permission_advanced": {}
             }
         },
         "mm_struct": {
@@ -26,7 +28,8 @@
                 "mm_struct::do_mmap": {},
                 "mm_struct::access_ok_normal": {},
                 "mm_struct::access_ok_invalid": {},
-                "mm_struct::bad_addr_0": {}
+                "mm_struct::bad_addr_0": {},
+                "mm_struct::get_user_page": {}
             }
         },
         "userprog": {
@@ -53,9 +56,13 @@
                 "userprog::mm_mmap_error_bad_addr": {},
                 "userprog::mm_mmap_error_bad_fd": {},
                 "userprog::mm_mmap_error_protection": {},
+                "userprog::mm_mmap_error_protection_exec": {},
                 "userprog::mm_munmap_error_bad_addr": {},
                 "userprog::mm_munmap_error_double_free": {},
                 "userprog::mm_munmap_error_unaligned": {},
+                "userprog::mm_exit_cleanup_stress": {
+                    "timeout": 120
+                },
                 "userprog::bad_addr_1": {},
                 "userprog::bad_code_write": {}
             }

@@ -180,6 +180,7 @@ pub mod traits {
 }
 
 use crate::{KernelError, mm::Page, sync::atomic::AtomicBool};
+pub use abyss::dev::{BlockOps, Sector};
 use alloc::{boxed::Box, string::String, sync::Arc, vec::Vec};
 use core::{iter::Step, num::NonZeroU32};
 
@@ -504,8 +505,8 @@ impl Directory {
     /// - `path`: The path to the entry.
     ///
     /// # Returns
-    /// - `Ok(())`: If the entry was successfully added.
-    /// - `Err(Error)`: An error if the add fails.
+    /// - `Ok(())`: If the entry was successfully unlinked.
+    /// - `Err(Error)`: An error if the unlink operation fails.
     #[inline]
     pub fn unlink(&self, mut path: &str) -> Result<(), KernelError> {
         let mut dstdir = if path.starts_with("/") {
@@ -547,7 +548,7 @@ impl Directory {
     /// directory will result in undesirable behavior (e.g. unreachable file).
     ///
     /// # Returns
-    /// - `Ok(())`: If the directory was successfully read.
+    /// - `Ok(Removed)`: If the directory exists in current filesystem.
     /// - `Err(Error)`: An error if the operation fails.
     #[inline]
     pub fn removed(&self) -> Result<&AtomicBool, KernelError> {
@@ -633,33 +634,6 @@ impl File {
             File::RegularFile(r) => r.size() as u64,
             File::Directory(d) => d.size() as u64,
         }
-    }
-}
-
-/// Sector, an access granuality for the disk.
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
-pub struct Sector(pub usize);
-
-impl Sector {
-    /// Get offset that represented by the sector.
-    #[inline]
-    pub fn into_offset(self) -> usize {
-        self.0 * 512
-    }
-
-    /// Cast into usize.
-    #[inline]
-    pub fn into_usize(self) -> usize {
-        self.0
-    }
-}
-
-impl core::ops::Add<usize> for Sector {
-    type Output = Self;
-
-    fn add(self, rhs: usize) -> Self {
-        Self(self.0 + rhs)
     }
 }
 
@@ -789,8 +763,11 @@ impl Disk {
         if let Some(hook) = self.hook.as_ref() {
             hook(sector, buf, false)?;
         }
-        dev.read_bios(&mut Some((512 * sector.into_usize(), buf.as_mut())).into_iter())
-            .map_err(|_| KernelError::IOError)
+        if dev.read(sector, buf) {
+            Ok(())
+        } else {
+            Err(KernelError::IOError)
+        }
     }
 
     /// Write 512 bytes to disk starting from sector.
@@ -802,8 +779,11 @@ impl Disk {
             if let Some(hook) = self.hook.as_ref() {
                 hook(sector, buf, true)?;
             }
-            dev.write_bios(&mut Some((512 * sector.into_usize(), buf.as_ref())).into_iter())
-                .map_err(|_| KernelError::IOError)
+            if dev.write(sector, buf) {
+                Ok(())
+            } else {
+                Err(KernelError::IOError)
+            }
         }
     }
 }

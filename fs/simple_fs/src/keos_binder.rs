@@ -12,13 +12,19 @@ pub struct FsDisk(usize);
 impl Disk for FsDisk {
     fn read(&self, sector: Sector, buf: &mut [u8; 512]) -> Result<(), Error> {
         let dev = abyss::dev::get_bdev(self.0).ok_or(Error::DiskError)?;
-        dev.read_bios(&mut Some((512 * sector.into_usize(), buf.as_mut())).into_iter())
-            .map_err(|_| Error::DiskError)
+        if dev.read(keos::fs::Sector(sector.into_usize()), buf) {
+            Ok(())
+        } else {
+            Err(Error::DiskError)
+        }
     }
     fn write(&self, sector: Sector, buf: &[u8; 512]) -> Result<(), Error> {
         let dev = abyss::dev::get_bdev(self.0).ok_or(Error::DiskError)?;
-        dev.write_bios(&mut Some((512 * sector.into_usize(), buf.as_ref())).into_iter())
-            .map_err(|_| Error::DiskError)
+        if dev.write(keos::fs::Sector(sector.into_usize()), buf) {
+            Ok(())
+        } else {
+            Err(Error::DiskError)
+        }
     }
 }
 

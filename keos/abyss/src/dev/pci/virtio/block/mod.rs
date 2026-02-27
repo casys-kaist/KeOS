@@ -9,6 +9,7 @@ mod tys;
 
 use crate::dev::pci::PciDeviceHeader;
 use crate::dev::pci::virtio::{PciTransport, VirtIoDevice, VirtIoFeaturesCommon};
+use crate::dev::{BlockOps, Sector};
 use tys::*;
 
 use super::VirtIOError;
@@ -205,5 +206,32 @@ impl VirtIoBlock {
         }
         virtq.unlock();
         Ok(())
+    }
+}
+
+impl BlockOps for VirtIoBlock {
+    fn init(&self) -> bool {
+        self.init().is_ok()
+    }
+    /// Get total block count of this device.
+    fn block_cnt(&self) -> usize {
+        self.block_count
+    }
+    /// get block size of this device.
+    fn block_size(&self) -> usize {
+        self.block_size
+    }
+    fn read(&self, sector: Sector, buf: &mut [u8; 512]) -> bool {
+        self.read_bios(&mut Some((512 * sector.into_usize(), buf.as_mut())).into_iter())
+            .is_ok()
+    }
+
+    fn write(&self, sector: Sector, buf: &[u8; 512]) -> bool {
+        self.write_bios(&mut Some((512 * sector.into_usize(), buf.as_ref())).into_iter())
+            .is_ok()
+    }
+
+    fn read_block_many(&self, offset: usize, buf: &mut [u8]) -> bool {
+        self.read_bios(&mut Some((offset, buf)).into_iter()).is_ok()
     }
 }

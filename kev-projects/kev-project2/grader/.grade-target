@@ -1,0 +1,42 @@
+{
+    "whitelist": [
+        "src/msr.rs",
+        "src/pio.rs",
+        "src/hypercall.rs",
+        "src/vmexit/cpuid.rs",
+        "src/vmexit/hypercall.rs",
+        "src/vmexit/msr.rs",
+        "src/vmexit/pio.rs"
+    ],
+    "rubrics": {
+        "hypercall": {
+            "score": 8,
+            "tests": {
+                "hypercall::hypercall_exit": {},
+                "hypercall::hypercall_print": {}
+            }
+        },
+        "pio": {
+            "score": 8,
+            "tests": {
+                "pio::pio_print": {},
+                "pio::pio_dx_port": {},
+                "pio::pio_imm8_port": {},
+                "pio::pio_mem": {}
+            }
+        },
+        "cpuid": {
+            "score": 8,
+            "tests": {
+                "cpuid::cpuid_leaf_0": {},
+                "cpuid::cpuid_leaf_1": {}
+            }
+        },
+        "msr": {
+            "score": 8,
+            "tests": {
+                "msr::msr": {}
+            }
+        }
+    }
+}

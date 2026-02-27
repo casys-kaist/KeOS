@@ -1,5 +1,6 @@
 use keos::{
     addressing::Va,
+    mm::page_table::{get_current_pt_pa, load_pt},
     mm::{
         Page,
         page_table::{PageTableMappingError, PageTableRoot, Permission, PteFlags},
@@ -87,22 +88,22 @@ fn check_remove_one(pgtbl: &mut PageTable, va: usize) {
 pub fn simple() {
     // Create a new page table with a boxed root.
     let mut pgtbl = PageTable(PageTableRoot::new_boxed());
-    
+
     // Test with read-write permission
     let perm = Permission::READ | Permission::WRITE;
     let va = Va::new(0x1000).unwrap();
-    
+
     keos::println!("Testing single page mapping with READ|WRITE permission");
-    
+
     // Map the virtual address to a newly allocated page
     assert!(pgtbl.map(va, Page::new(), perm).is_ok());
-    
+
     // Verify the mapping exists
     assert!(pgtbl.walk(va).is_ok());
-    
+
     // Unmap the virtual address
     assert!(pgtbl.unmap(va).is_ok());
-    
+
     // Verify the mapping no longer exists
     assert!(matches!(
         pgtbl.walk(va),
@@ -122,7 +123,7 @@ pub fn simple2() {
     // Iterate over all possible permissions.
     for perm in Permission::ALL_CASES {
         keos::println!("Testing Permission: {perm:?}");
-        let map_expect = if perm.is_empty() || perm == Permission::USER {
+        let map_expect = if perm.is_empty() || !perm.contains(Permission::READ) {
             Err(PageTableMappingError::InvalidPermission)
         } else {
             Ok(())
@@ -146,6 +147,116 @@ pub fn simple2() {
             );
         }
     }
+}
+
+/// A test to verify whether the page table permission bits are correctly set
+/// for x86 architecture.
+///
+/// This function tests a single virtual address mapping with a specific
+/// permission has proper permission bits on page table.
+pub fn x86_permission() {
+    // Take a current kernel page table.
+    let prev_cr3 = get_current_pt_pa();
+    let mut pgtbl = PageTable::new();
+
+    let perm = Permission::READ | Permission::WRITE | Permission::EXECUTABLE;
+    let va = Va::new(0x1000).unwrap();
+
+    let mut page = Page::new();
+    page.inner_mut()[0] = 0x7;
+    assert!(pgtbl.map(va, page, perm).is_ok());
+
+    // Verify the mapping exists
+    assert!(pgtbl.walk(va).is_ok());
+
+    load_pt(pgtbl.pa());
+
+    // Test whether the read permission is actually set
+    keos::println!("Testing read...");
+    unsafe {
+        let val = core::ptr::read(0x1000 as *mut u64);
+        assert_eq!(val, 0x7);
+    }
+
+    // Test whether the write permission is actually set
+    keos::println!("Testing write...");
+    unsafe {
+        core::ptr::write(0x1000 as *mut u8, 0x89); // mov eax, edi
+        core::ptr::write(0x1001 as *mut u8, 0xf8);
+        core::ptr::write(0x1002 as *mut u8, 0x01); // add eax, esi
+        core::ptr::write(0x1003 as *mut u8, 0xf0);
+        core::ptr::write(0x1004 as *mut u8, 0xc3); // ret
+    }
+
+    // Test whether the executable permission is actually set
+    keos::println!("Testing execute...");
+    let func = unsafe { core::mem::transmute::<usize, extern "C" fn(u32, u32) -> u32>(0x1000) };
+    let res = func(10, 32);
+    assert_eq!(res, 42);
+
+    // Unmap the virtual address
+    assert!(pgtbl.unmap(va).is_ok());
+
+    load_pt(prev_cr3);
+}
+
+/// A more advanced test to verify whether the page table permission bits are
+/// correctly set for x86 architecture.
+///
+/// This function tests two virtual address mappings with a specific
+/// permission have proper permission bits on page table.
+pub fn x86_permission_advanced() {
+    // Take a current kernel page table.
+    let prev_cr3 = get_current_pt_pa();
+    let mut pgtbl = PageTable::new();
+
+    let perm = Permission::READ | Permission::WRITE | Permission::EXECUTABLE;
+    let va = Va::new(0x1000).unwrap();
+
+    let perm_2 = Permission::READ | Permission::EXECUTABLE;
+    let va_2 = Va::new(0x2000).unwrap();
+
+    let perm_3 = Permission::READ | Permission::WRITE;
+    let va_3 = Va::new(0x3000).unwrap();
+
+    let mut page = Page::new();
+    page.inner_mut()[0] = 0x7;
+
+    assert!(pgtbl.map(va, page, perm).is_ok());
+    assert!(pgtbl.map(va_2, Page::new(), perm_2).is_ok());
+    assert!(pgtbl.map(va_3, Page::new(), perm_3).is_ok());
+
+    load_pt(pgtbl.pa());
+
+    // Test whether the read permission is actually set
+    keos::println!("Testing read...");
+    unsafe {
+        let val = core::ptr::read(0x1000 as *mut u64);
+        assert_eq!(val, 0x7);
+    }
+
+    // Test whether the write permission is actually set
+    keos::println!("Testing write...");
+    unsafe {
+        core::ptr::write(0x1000 as *mut u8, 0x89); // mov eax, edi
+        core::ptr::write(0x1001 as *mut u8, 0xf8);
+        core::ptr::write(0x1002 as *mut u8, 0x01); // add eax, esi
+        core::ptr::write(0x1003 as *mut u8, 0xf0);
+        core::ptr::write(0x1004 as *mut u8, 0xc3); // ret
+    }
+
+    // Test whether the executable permission is actually set
+    keos::println!("Testing execute...");
+    let func = unsafe { core::mem::transmute::<usize, extern "C" fn(u32, u32) -> u32>(0x1000) };
+    let res = func(10, 32);
+    assert_eq!(res, 42);
+
+    // Unmap the virtual address
+    assert!(pgtbl.unmap(va).is_ok());
+    assert!(pgtbl.unmap(va_2).is_ok());
+    assert!(pgtbl.unmap(va_3).is_ok());
+
+    load_pt(prev_cr3);
 }
 
 /// Tests that all allocated pages are freed when the page table is dropped.

@@ -155,15 +155,13 @@ use keos::{KernelError, sync::SpinLockGuard};
 /// This ensures that partially written operations do not corrupt the file
 /// system state.
 ///
-/// The `Journal` struct encapsulates the journaling superblock and the total
-/// size of the journal region on disk. It is responsible for managing the
-/// checkpointing process, which commits durable changes and clears completed
-/// transactions.
+/// The `Journal` struct encapsulates the journaling superblock.
+/// It is responsible for managing the checkpointing process, which commits
+/// durable changes and clears completed transactions.
 ///
 /// # Fields
 /// - `sb`: The journal superblock, containing configuration and state of the
 ///   journal.
-/// - `size`: The total number of blocks allocated for the journal region.
 pub struct Journal {
     /// Journal superblock.
     pub sb: Box<JournalSb>,

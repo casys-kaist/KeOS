@@ -1,0 +1,14 @@
+[package]
+name = "kev"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+abyss = { path = "../keos/abyss" }
+keos = { path =  "../keos" }
+bitflags = "1.2.1"
+
+[dependencies.iced-x86]
+version = "1.18.0"
+default-features = false
+features = ["no_std", "decoder", "intel"]

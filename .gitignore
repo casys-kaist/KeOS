@@ -13,6 +13,7 @@
 **/build
 **/build_objects
 **/rootfs/*
+!**/rootfs/.gitkeep
 !**/rootfs/hello*
 !**/rootfs/os-release
 !**/rootfs/simple_fs.tar

@@ -1,0 +1,14 @@
+[package]
+name = "gkeos"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+abyss = { path ="../../../../keos/abyss" }
+keos = { path ="../../../../keos", features = ["gkeos"] }
+keos-project2 = { path ="../../../../keos-projects/keos-project2" }
+keos-project4 = { path ="../../../../keos-projects/keos-project4" }
+
+grading = { path ="../../../../keos/grading" }
+
+[workspace]

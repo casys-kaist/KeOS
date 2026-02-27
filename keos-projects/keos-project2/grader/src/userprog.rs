@@ -196,3 +196,15 @@ pub fn bad_addr_1() {
 pub fn bad_code_write() {
     assert_eq!(run_elf("bad_code_write"), -1);
 }
+
+#[stdin(b"")]
+#[assert_output(b"success ")]
+pub fn loader_bss_sanity() {
+    run_elf("loader_bss_sanity");
+}
+
+pub fn mm_exit_cleanup_stress() {
+    for _ in 0..24 {
+        assert_eq!(run_elf("mm_exit_cleanup"), 0);
+    }
+}
