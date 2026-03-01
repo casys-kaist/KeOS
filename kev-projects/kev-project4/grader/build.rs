@@ -6,7 +6,7 @@ fn main() {
     if !Path::new("rootfs/gKeOS").exists() {
         let cmd = std::process::Command::new("cargo")
             .current_dir(Path::new("gkeos"))
-            .args(["build", "--target=../../.cargo/x86_64-unknown-keos.json"])
+            .args(["build", "--target=../../../.cargo/x86_64-unknown-keos.json"])
             .output()
             .expect("Failed to launch cargo to build guest kernel.");
         if !cmd.status.success() {

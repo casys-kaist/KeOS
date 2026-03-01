@@ -30,9 +30,12 @@
 //!
 //! ## Getting started
 //! When you run the following command lines in the project3 directory, keos
-//! will panic with "not yet implemented" message. ```/bin/bash
+//! will panic with "not yet implemented" message. 
+//! 
+//! ```/bin/bash
 //! $ cargo run --target ../.cargo/x86_64-unknown-keos.json
 //! ```
+//! 
 //! ## Outline
 //! - [`Extended Page Table`]
 //! - [`Memory-mapped I/O`]

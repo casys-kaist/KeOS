@@ -147,6 +147,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "kev-project0"
+version = "0.1.0"
+dependencies = [
+ "bitflags",
+ "iced-x86",
+ "keos",
+]
+
+[[package]]
 name = "kev-project1"
 version = "0.1.0"
 dependencies = [

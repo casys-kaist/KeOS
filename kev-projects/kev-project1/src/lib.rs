@@ -173,9 +173,12 @@
 //!
 //! ## Getting started
 //! When you run following command lines in the project2 directory, keos will be
-//! panic with "not yet implemented" message. ```/bin/bash
+//! panic with "not yet implemented" message. 
+//! 
+//! ```/bin/bash
 //! $ cargo run --target ../.cargo/x86_64-unknown-keos.json
 //! ```
+//! 
 //! ## Outline
 //! - [`Virtual Machine Control Structure (VMCS)`]
 //! - [`Hypercall`]

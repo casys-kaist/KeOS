@@ -6,6 +6,7 @@ members = [
   "kev-project1/grader",
   "kev-project2/grader",
   "kev-project3/grader",
+  "kev-project0",
   "kev-project1",
   "kev-project2",
   "kev-project3",

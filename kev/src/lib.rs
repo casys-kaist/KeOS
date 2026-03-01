@@ -56,12 +56,12 @@
 //! Refer to the main [KeOS documentation] for more details on general workflow
 //! of KeV projects, including grading, implementation tips and debugging.
 //!
-//! [KeOS documentation]: ../keos
-//! [KeOS]: ../kev-projects/kev-project0
-//! [VMCS and VMexits]: ../kev-projects/kev-project1
-//! [Hardware virtualization]: ../kev-projects/kev-project2
-//! [Interrupt and I/O virtualization]: ../kev-projects/kev-project3
-//! [Final project]: ../kev-projects/kev-project4
+//! [KeOS documentation]: ../../keos
+//! [KeOS]: ../kev_project0
+//! [VMCS and VMexits]: ../kev_project1
+//! [Hardware virtualization]: ../kev_project2
+//! [Interrupt and I/O virtualization]: ../kev_project3
+//! [Final project]: ../kev_project4
 
 #![no_std]
 #![feature(get_mut_unchecked)]
