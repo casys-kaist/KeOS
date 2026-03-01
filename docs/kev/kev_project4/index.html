@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Project 5: Final project"><title>kev_project4 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="kev_project4" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../static.files/storage-e2aeef58.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate kev_project4</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../kev_project4/index.html">kev_<wbr>project4</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#candidates-for-final-project" title="Candidates for final project">Candidates for final project</a></li></ul><h3><a href="#functions">Crate Items</a></h3><ul class="block"><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>kev_<wbr>project4</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/kev_project4/main.rs.html#1-74">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Project 5: Final project</p>
+<p>You have learned the basic components of the virtulaization.
+In the final project, you will do an open-ended final project based on what
+you have learned. For the final project, you should add a significant piece
+of functionality to the kev, as described below. The project must (1) have a
+significant implementation component, specified by deliverables (2) concern
+operating systems and (3) be challenging and potentially research-worthy.
+You can modify any source code of the keos and kev infrastructure.
+For all projects, you must write a proposal that is accepted by the course
+staff.</p>
+<h3 id="candidates-for-final-project"><a class="doc-anchor" href="#candidates-for-final-project">§</a>Candidates for final project</h3>
+<p>Here is a list of possible tasks for a final project. Some are small enough
+that multiple options should be combined, especially if you have a larger
+group. You are most welcome to come up with other ideas. The actual project
+is up to you. Please pick something manageable. It is far better to complete
+your project to spec than it is to take on something too big and not have
+anything to show for it except excellent intentions (also true in the real
+world).</p>
+<ul>
+<li>Port the kev to work on AMD SVM (the rough equivalent of Intel’s VMX).</li>
+<li>Implement support for an IOMMU to allow the guest to directly access
+hardware.</li>
+<li>Incorporate APICv support into kev.</li>
+<li>Use a binary translator to support trap-and-emulate semantics on an x86
+CPU without VMX or SVM support.</li>
+<li>Implement network driver and work it on the kev.</li>
+<li>Implement the nested virtualization to run kev on kev.</li>
+<li>Support a smp in keos on kev.</li>
+</ul>
+<p>The work of students that do a particularly good project may be incorporated
+into future assignments (a good way to get your name on the credits page!).
+The project you choose must have a significant virtualization component. For
+example, you shouldn’t simply port a user-level application that requires
+little or no kernel modification. You should email a proposal to the
+instructor by the notified deadline. The proposal must include: (1) The
+names of your group members; (2) What you want to do; and (3) What you are
+expecting to present (a list of deliverables). Please keep it short (no more
+than several paragraphs).</p>
+</div></details><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.ap_main.html" title="fn kev_project4::ap_main">ap_main</a><sup title="unsafe function">⚠</sup></dt><dt><a class="fn" href="fn.main.html" title="fn kev_project4::main">main</a><sup title="unsafe function">⚠</sup></dt></dl></section></div></main></body></html>

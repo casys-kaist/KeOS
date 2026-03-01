@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ExceptionType","ExceptionVector"],"static":["IDT"],"struct":["InterruptGateDescriptor","InterruptStackFrame","MustbeZero","PFErrorCode"],"type":["AbortDoubleFault","AbortMachineCheck","Handler","HandlerAlignCheck","HandlerPageFault","HandlerWithSegmentSelectorErrorCode"]};

@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Lazy loader and pager for guest virtual machine."><title>kev_project2::keos_vm::pager - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="kev_project2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../../../static.files/storage-e2aeef58.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Module pager</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../kev_project2/index.html">kev_<wbr>project2</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module pager</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#background" title="Background">Background</a><ul><li><a href="#executable-and-linkage-format" title="Executable and Linkage Format">Executable and Linkage Format</a></li></ul></li><li><a href="#tasks" title="Tasks">Tasks</a><ul><li><a href="#translate-kernel-entry-into-physical-address" title="Translate kernel entry into Physical Address">Translate kernel entry into Physical Address</a></li><li><a href="#load-phdr-to-loader" title="Load phdr to loader">Load phdr to loader</a></li><li><a href="#load-page-to-extended-page-table" title="Load page to extended page table">Load page to extended page table</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#types" title="Type Aliases">Type Aliases</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="../index.html">In kev_<wbr>project2::<wbr>keos_<wbr>vm</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">kev_project2</a>::<wbr><a href="../index.html">keos_vm</a></div><h1>Module <span>pager</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/kev_project2/keos_vm/pager.rs.html#1-326">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Lazy loader and pager for guest virtual machine.</p>
+<h3 id="background"><a class="doc-anchor" href="#background">§</a>Background</h3>
+<p>Lazy loading is a technique that delays resource allocations until the
+resource is required. Lazy paging in project 3 implements the principle of
+lazy loading, which involves delaying the reading from file and loading of
+guest OS’s memory (such as text section of guest OS) into the host machine
+until a specific physical page of the guest is required.</p>
+<p>Lazy paging in project 3 enhances the performance of the initial booting
+process since there is no need to read and load all the pages guest OS at
+once. This approache also helps the reducing the memory usage of the guest
+OS by avoiding the allocation of memory which is not used</p>
+<p>In KeV projects, we will launch as KeOS as a guest operting system for the
+simplicity. The <code>build.rs</code> automatically build the guest KeOS (gKeOS) from
+the <code>guests/project3/</code> and build the file system from the <code>rootfs/</code> with the
+compiled gKeOS.</p>
+<p>KeOS’s file system is rough. It only supports file without grow.
+There is no more abstraction than file such as directory or symbolic link.</p>
+<h4 id="executable-and-linkage-format"><a class="doc-anchor" href="#executable-and-linkage-format">§</a>Executable and Linkage Format</h4>
+<p>The Elf (Executable and Linkable Format) is a file format for executable
+programs in Unix-based operating systems.</p>
+<p>The Elf header contains information about the Elf metadata, type of file
+(executable, shared library, object file), the architecture (x86_64, ARM,
+…), the entry point (where execution should begin), and others.
+In summary, Elf header contains the following sections:</p>
+<ul>
+<li>e_type: Type of tile</li>
+<li>e_machine: Set of the machine instrutions (SPARC, x86_64, ARM, MIPS…)</li>
+<li>e_version: Version of the elf (default is 1)</li>
+<li>e_entry: Start entry of the program</li>
+<li>e_phoff: Start p_offsetf the program header table</li>
+<li>e_phnum: Entry size of the program header</li>
+</ul>
+<p>The Elf Program header (PHDR) contains the information about the program’s
+memory segments (sections of memory allocated for different parts of the
+program), including their virtual address, physical address, file p_offset
+sizes, and access permissions. In summary, the Program header contains the
+following sections:</p>
+<ul>
+<li>p_type: Type of the program header</li>
+<li>p_offset: Offset in file</li>
+<li>p_vaddr: Virtual address to be loaded</li>
+<li>p_paddr: Physical address to be loaded</li>
+<li>p_filesz: Size on file</li>
+<li>p_memsz: Size in memory</li>
+<li>p_flags: Flags for Read, Write, Execute</li>
+</ul>
+<p>The operating system (Hypervisor) loads and executes the program (Guest OS)
+by parsing the Elf format reading from a file. The operating system should
+parse the Elf headers to locate and load the program’s memory, setup the
+program’s execution environment, and begin executing the program from its
+entry point.</p>
+<h3 id="tasks"><a class="doc-anchor" href="#tasks">§</a>Tasks</h3><h4 id="translate-kernel-entry-into-physical-address"><a class="doc-anchor" href="#translate-kernel-entry-into-physical-address">§</a>Translate kernel entry into Physical Address</h4>
+<p>The initial step to enable the lazy pager is to parse the kernel and
+populate the <a href="struct.KernelVmPager.html" title="struct kev_project2::keos_vm::pager::KernelVmPager"><code>KernelVmPager</code></a> struct. Unlike the user level Elf program,
+kernel loading operates on physical address. In this task, you must have to
+find the entry point of the kernel to be used for initial entry point for
+the guest kernel. The physical address of the kernel entry point can be
+obtained by subtracting the virtual address of the <a href="../elf/struct.Phdr.html" title="struct kev_project2::keos_vm::elf::Phdr"><code>Phdr</code></a> from the kernel
+entry address <a href="crate::keos_vm::elf::Elf::entry"><code>Elf::entry()</code></a>.</p>
+<h4 id="load-phdr-to-loader"><a class="doc-anchor" href="#load-phdr-to-loader">§</a>Load phdr to loader</h4>
+<p>The next step to have to implement is the <code>load_phdr</code> to enable the
+registeration of loaders that map physicall address in the <a href="../elf/struct.Phdr.html" title="struct kev_project2::keos_vm::elf::Phdr"><code>Phdr</code></a> to the
+pager. The implementation requires reading from the kernel image file
+through <code>kernel.peeker().file</code> starting from the specified page offset
+to page p_offset size. Page offset and the size can be obtained from the
+<a href="../elf/struct.Phdr.html" title="struct kev_project2::keos_vm::elf::Phdr"><code>Phdr</code></a>. See the <a href="keos::fs::File"><code>File</code></a> for the apis to operate with the file system.</p>
+<h4 id="load-page-to-extended-page-table"><a class="doc-anchor" href="#load-page-to-extended-page-table">§</a>Load page to extended page table</h4>
+<p>Lastly, you have to implement <code>load_page</code> that called on EPT violation.
+<code>load_page</code> maps a page to the extended page table with permission set to
+READ, WRITE, and EXECUTABLE. You MUST consider the case that multiple cores
+trigger EPT violations on the same physical page.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.KernelVmPager.html" title="struct kev_project2::keos_vm::pager::KernelVmPager">Kernel<wbr>VmPager</a></dt><dd>Vm Pager of the kernel.</dd><dt><a class="struct" href="struct.Probe.html" title="struct kev_project2::keos_vm::pager::Probe">Probe</a></dt></dl><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><dl class="item-table"><dt><a class="type" href="type.PageLoader.html" title="type kev_project2::keos_vm::pager::PageLoader">Page<wbr>Loader</a></dt></dl></section></div></main></body></html>

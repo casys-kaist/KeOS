@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PrivilegeLevel","VmexitResult"],"fn":["vmexit","vmlaunch_resume"],"mod":["interrupt","intrinsics","kernel_gs","msr","pio","power_control","segmentation","table","tss"],"struct":["Activated","Cr0","Cr2","Cr3","Cr4","GeneralPurposeRegisters","GenericVCpuState","Rflags","VCpu"],"trait":["VCpuOps","VCpuState"]};

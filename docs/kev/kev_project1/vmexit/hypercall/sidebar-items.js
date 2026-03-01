@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Controller"],"trait":["Hypercall","HypercallAbi"]};

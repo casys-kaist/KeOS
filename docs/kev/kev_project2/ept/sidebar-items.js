@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["EptMappingError"],"struct":["EptPde","EptPdeFlags","EptPdpe","EptPdpeFlags","EptPml4e","EptPml4eFlags","EptPte","EptPteFlags","ExtendedPageTable","Inner","Permission"]};

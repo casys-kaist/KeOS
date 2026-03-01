@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Project 3: Hardware Virtualization."><title>kev_project2 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="kev_project2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../static.files/storage-e2aeef58.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate kev_project2</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../kev_project2/index.html">kev_<wbr>project2</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#background" title="Background">Background</a><ul><li><a href="#hardware-based-virtualization" title="Hardware-based virtualization">Hardware-based virtualization</a></li></ul></li><li><a href="#getting-started" title="Getting started">Getting started</a></li><li><a href="#outline" title="Outline">Outline</a></li></ul><h3><a href="#modules">Crate Items</a></h3><ul class="block"><li><a href="#modules" title="Modules">Modules</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>kev_<wbr>project2</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/kev_project2/lib.rs.html#1-64">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Project 3: Hardware Virtualization.</p>
+<p>In this project, you will implement the hardware-based virtualization and
+run guest KeOS (gKeOS) on KeV hypervisor.
+The term “hardware-based virtualization” refers to the process of
+virtualizing platform hardware to run various operating systems on single
+hardware with hardware supports. Through this, users can run multiple
+operating systems on a single hardware platform as if they were running on
+multiple physical machines with minimal performance degradation.</p>
+<h3 id="background"><a class="doc-anchor" href="#background">§</a>Background</h3><h4 id="hardware-based-virtualization"><a class="doc-anchor" href="#hardware-based-virtualization">§</a>Hardware-based virtualization</h4>
+<p>Hardware-based virtualization refers to the method of providing a virtual
+computing environment through the use of hardware, typically required for
+the operations of the virtual machines. This is accomplished using
+technologies such as Intel-VT or AMD-V, which provide the ability to run
+codes on another privilege level, enabling full virtualization without the
+need for OS modification such as binary translation or para-virtualization,
+with little or minimum performance degradations.</p>
+<p>Although hardware-based virtualization supports many hardware features,
+trap-and-emulate is still required as it is difficult to virtualize all
+instructions through the hardware. Therefore, the hardware assists in
+virtualization by focusing on frequently occurring or performance-critical
+instructions. One such example is page table modifications. In the past,
+shadow page table was used to emulate every memory access permission for
+each page table entry, but with the hardware-based virtualization, extended
+page table is used to reduce MMU overhead by allowing the hardware to
+perform these permission checks on behalf of the software.</p>
+<h3 id="getting-started"><a class="doc-anchor" href="#getting-started">§</a>Getting started</h3>
+<p>When you run the following command lines in the project3 directory, keos
+will panic with “not yet implemented” message.</p>
+<div class="example-wrap"><pre class=""><code>$ cargo run --target ../.cargo/x86_64-unknown-keos.json</code></pre></div><h3 id="outline"><a class="doc-anchor" href="#outline">§</a>Outline</h3>
+<ul>
+<li><a href="ept/index.html" title="mod kev_project2::ept"><code>Extended Page Table</code></a></li>
+<li><a href="mmio/index.html" title="mod kev_project2::mmio"><code>Memory-mapped I/O</code></a></li>
+<li><a href="keos_vm/pager"><code>Lazy paging</code></a></li>
+</ul>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="ept/index.html" title="mod kev_project2::ept">ept</a></dt><dd>Extended Page Table.</dd><dt><a class="mod" href="keos_vm/index.html" title="mod kev_project2::keos_vm">keos_vm</a></dt><dd>Vm to run keos.</dd><dt><a class="mod" href="mmio/index.html" title="mod kev_project2::mmio">mmio</a></dt><dd>MMIO based simple printer device.</dd><dt><a class="mod" href="simple_ept_vm/index.html" title="mod kev_project2::simple_ept_vm">simple_<wbr>ept_<wbr>vm</a></dt><dd>Virtual machine configuration of project3-1.</dd><dt><a class="mod" href="vmexit/index.html" title="mod kev_project2::vmexit">vmexit</a></dt></dl></section></div></main></body></html>

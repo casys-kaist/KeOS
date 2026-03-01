@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="KeOS: KAIST Educational Operating System"><title>keos - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="keos" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../static.files/storage-e2aeef58.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate keos</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../keos/index.html">keos</a><span class="version">1.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#keos-kaist-educational-operating-system" title="KeOS: KAIST Educational Operating System">KeOS: KAIST Educational Operating System</a><ul><li><a href="#project-structure" title="Project Structure">Project Structure</a></li><li><a href="#why-rust" title="Why Rust?">Why Rust?</a></li><li><a href="#getting-started" title="Getting Started">Getting Started</a></li><li><a href="#grading" title="Grading">Grading</a></li><li><a href="#useful-materials" title="Useful Materials">Useful Materials</a></li></ul></li></ul><h3><a href="#modules">Crate Items</a></h3><ul class="block"><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#macros" title="Macros">Macros</a></li><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#constants" title="Constants">Constants</a></li><li><a href="#statics" title="Statics">Statics</a></li><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>keos</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/keos/lib.rs.html#1-488">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="keos-kaist-educational-operating-system"><a class="doc-anchor" href="#keos-kaist-educational-operating-system">§</a>KeOS: KAIST Educational Operating System</h2>
+<p>Welcome to the <strong>KeOS</strong> project!</p>
+<p>Operating systems (OS) form the backbone of modern computing, managing
+hardware resources and providing a foundation for applications to run
+efficiently. Understanding how an OS works is crucial for grasping the inner
+workings of computer systems and software performance.</p>
+<p><strong>KeOS</strong> is designed to offer a hands-on learning experience with core OS
+components. Through this project, you will explore the fundamental
+principles of OS design while building a minimal but functional operating
+system from the ground up.</p>
+<p>We prioritize simplicity, focusing on the most essential aspects of OS
+development. You won’t have to worry about handling obscure edge cases or
+hidden test cases. <strong>The score you receive after running the grading scripts
+is your final score.</strong> Our goal is to make this project as straightforward
+as possible. If you have suggestions on how we can further minimize
+unnecessary complexity and focus on the core concepts, we encourage your
+feedback.</p>
+<h3 id="project-structure"><a class="doc-anchor" href="#project-structure">§</a>Project Structure</h3>
+<p>The KeOS project is divided into five projects:</p>
+<ol>
+<li><strong><a href="../keos_project1"><code>System Call</code></a></strong> – Learn how the OS interacts with user applications.</li>
+<li><strong><a href="../keos_project2"><code>Memory Management</code></a></strong> – Implement basic memory management and
+user-space execution.</li>
+<li><strong><a href="../keos_project3"><code>Advanced Memory Management</code></a></strong> – Expand the KeOS’s memory management
+system with advanced features.</li>
+<li><strong><a href="../keos_project4"><code>Process Management</code></a></strong> – Implement the advanced process management,
+including round robin scheduler and sychronization primitives.</li>
+<li><strong><a href="../keos_project5"><code>File System</code></a></strong> – Develop a simple yet functional filesystem for data
+storage.</li>
+</ol>
+<p>Each project builds upon the previous ones, helping you progressively
+develop a deeper understanding of OS design.</p>
+<h3 id="why-rust"><a class="doc-anchor" href="#why-rust">§</a>Why Rust?</h3>
+<p>We have chosen <strong>Rust</strong> for this project because of its <strong>memory safety</strong>,
+<strong>zero-cost abstractions</strong>, and most importantly, its <strong>concurrency model</strong>.
+These features make Rust an excellent choice for <strong>operating system
+development</strong>.</p>
+<p>In traditional system programming languages, concurrency and memory bugs
+such as data races, use-after-free errors, and null pointer dereferences are
+common. Rust prevents these issues at compile time by enforcing strict
+<strong>ownership, borrowing, and lifetime rules</strong>. This allows you to write
+<strong>safe and efficient concurrent code</strong> without sacrificing performance, and
+<strong>reduces debugging time</strong> for those bugs.</p>
+<p>By using Rust in <strong>KeOS</strong>, you will:</p>
+<ul>
+<li><strong>Develop safe and efficient concurrent programs</strong> without the risk of
+data races.</li>
+<li><strong>Avoid common concurrency pitfalls</strong> such as race conditions.</li>
+</ul>
+<h3 id="getting-started"><a class="doc-anchor" href="#getting-started">§</a>Getting Started</h3>
+<p>To set up your <strong>KeOS</strong> development environment, run the following commands:</p>
+<div class="example-wrap"><pre class="language-bash"><code>$ mkdir keos
+$ cd keos
+$ curl https://raw.githubusercontent.com/casys-kaist/KeOS/refs/heads/main/scripts/install-keos.sh | sh</code></pre></div>
+<p>We recommend using VS Code as the editor, along with <code>rust-analyzer</code> for
+Rust support.</p>
+<ul>
+<li><strong>DO NOT</strong> make public forks of this project.</li>
+<li>The <strong>KeOS license explicitly prohibits</strong> public redistribution of this
+work.</li>
+<li>You <strong>MUST NOT</strong> share or distribute your work based on the provided
+template.</li>
+</ul>
+<p>Failure to comply may result in academic integrity violations.</p>
+<h3 id="grading"><a class="doc-anchor" href="#grading">§</a>Grading</h3>
+<p>During grading, we will <strong>overwrite</strong> all files <strong>except those explicitly
+whitelisted</strong> for each project. Any modifications to non-whitelisted files
+may result in a <strong>zero score</strong>, even if your implementation otherwise works
+correctly.</p>
+<p>You can run the <code>cargo grade</code> command to check your current score locally.
+This reported score will be treated as your <strong>final grade</strong>, as long as your
+submission complies with the whitelist policy.</p>
+<p>Grading rubrics and the list of whitelisted files can be found in each
+grader’s <code>.grade-target</code> file.</p>
+<h4 id="-important-notes-on-grading"><a class="doc-anchor" href="#-important-notes-on-grading">§</a>⚠️ IMPORTANT NOTES on GRADING</h4>
+<ul>
+<li>The <strong>KeOS license explicitly prohibits</strong> sharing or distributing your
+work based on the provided template.</li>
+<li>Please <strong>DO NOT</strong> make public forks of this project.</li>
+<li><strong>Cheating, plagiarism, or uploading your code online is strictly
+prohibited</strong> and will result in <strong>disqualification</strong>.</li>
+</ul>
+<p>Failure to comply may result in academic integrity violations.</p>
+<p>For the grading, please refer to the following policy:</p>
+<ul>
+<li>Your submission <strong>must pass all test cases without modifying the
+non-whitelisted code in each project</strong>.</li>
+<li>Submissions that <strong>fail to compile</strong> will receive <strong>0 points</strong>.</li>
+</ul>
+<h3 id="useful-materials"><a class="doc-anchor" href="#useful-materials">§</a>Useful Materials</h3>
+<p>We strongly recommend reading the following materials to help you
+successfully complete the KeOS project:</p>
+<ul>
+<li><a href="tips/index.html" title="mod keos::tips"><strong>Tips on Implementation</strong></a></li>
+<li><a href="debugging/index.html" title="mod keos::debugging"><strong>Debugging</strong></a></li>
+</ul>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="channel/index.html" title="mod keos::channel">channel</a></dt><dd>Multi-producer, multi-consumer FIFO queue communication primitives.</dd><dt><a class="mod" href="debugging/index.html" title="mod keos::debugging">debugging</a></dt><dd>This modules explains debugging tips for KeOS.</dd><dt><a class="mod" href="fs/index.html" title="mod keos::fs">fs</a></dt><dd>Filesystem abstraction.</dd><dt><a class="mod" href="intrinsics/index.html" title="mod keos::intrinsics">intrinsics</a></dt><dd>Intrinsics of x86_64 not included in <a href="https://doc.rust-lang.org/beta/core/arch/x86_64/index.html"><code>core::arch::x86_64</code></a>.</dd><dt><a class="mod" href="lang/index.html" title="mod keos::lang">lang</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dd>Rust-specific implemenations.</dd><dt><a class="mod" href="mm/index.html" title="mod keos::mm">mm</a></dt><dd>Memory Management.</dd><dt><a class="mod" href="sync/index.html" title="mod keos::sync">sync</a></dt><dd>Synchronization primitives.</dd><dt><a class="mod" href="syscall/index.html" title="mod keos::syscall">syscall</a></dt><dd>System call infrastructure.</dd><dt><a class="mod" href="task/index.html" title="mod keos::task">task</a></dt><dd>Task trait for interact with user process.</dd><dt><a class="mod" href="teletype/index.html" title="mod keos::teletype">teletype</a></dt><dd>A teletype (TTY) interface for character-based I/O.</dd><dt><a class="mod" href="thread/index.html" title="mod keos::thread">thread</a></dt><dd>Thread abstration, an abstraction of a cpu core.</dd><dt><a class="mod" href="tips/index.html" title="mod keos::tips">tips</a></dt><dd>Useful tips for implementing KeOS Projects.</dd><dt><a class="mod" href="util/index.html" title="mod keos::util">util</a></dt><dd>Debugging Utilities.</dd></dl><h2 id="macros" class="section-header">Macros<a href="#macros" class="anchor">§</a></h2><dl class="item-table"><dt><a class="macro" href="macro.debug.html" title="macro keos::debug">debug</a></dt><dd>Display a debug message.</dd><dt><a class="macro" href="macro.info.html" title="macro keos::info">info</a></dt><dd>Display an information message.</dd><dt><a class="macro" href="macro.print.html" title="macro keos::print">print</a></dt><dd>Prints out the message.</dd><dt><a class="macro" href="macro.println.html" title="macro keos::println">println</a></dt><dd>Prints out the message with a newline.</dd><dt><a class="macro" href="macro.warning.html" title="macro keos::warning">warning</a></dt><dd>Display a warning message.</dd></dl><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.SystemConfigurationBuilder.html" title="struct keos::SystemConfigurationBuilder">System<wbr>Configuration<wbr>Builder</a></dt><dd>A builder for system configuration settings.</dd><dt><a class="struct" href="struct.TestDriver.html" title="struct keos::TestDriver">Test<wbr>Driver</a></dt><dd>A driver for running tests.</dd><dt><a class="struct" href="struct.TryFromError.html" title="struct keos::TryFromError">TryFrom<wbr>Error</a></dt><dd>The given <code>isize</code> does not indicate an <a href="enum.KernelError.html" title="enum keos::KernelError"><code>KernelError</code></a>.</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.KernelError.html" title="enum keos::KernelError">Kernel<wbr>Error</a></dt><dd>Enum representing errors that can occur during a kernel operation.</dd></dl><h2 id="constants" class="section-header">Constants<a href="#constants" class="anchor">§</a></h2><dl class="item-table"><dt><a class="constant" href="constant.MAX_CPU.html" title="constant keos::MAX_CPU">MAX_CPU</a></dt><dd>Maximum number of CPU the kernel can support.</dd></dl><h2 id="statics" class="section-header">Statics<a href="#statics" class="anchor">§</a></h2><dl class="item-table"><dt><a class="static" href="static.PANIC_DEPTH.html" title="static keos::PANIC_DEPTH">PANIC_<wbr>DEPTH</a></dt><dd>Panic depth level.</dd></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.rust_ap_main.html" title="fn keos::rust_ap_main">rust_<wbr>ap_<wbr>main</a><sup title="unsafe function">⚠</sup></dt><dd>The entry of the KeOS for application processor.</dd><dt><a class="fn" href="fn.rust_main.html" title="fn keos::rust_main">rust_<wbr>main</a><sup title="unsafe function">⚠</sup></dt><dd>The entry of the KeOS for bootstrap processor.</dd></dl></section></div></main></body></html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="x2APIC Emulation"><title>kev_project3::dev::x2apic - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="kev_project3" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../../../static.files/storage-e2aeef58.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Module x2apic</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../kev_project3/index.html">kev_<wbr>project3</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module x2apic</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#background" title="Background">Background</a><ul><li><a href="#advanced-programmable-interrupt-controller" title="Advanced Programmable Interrupt Controller">Advanced Programmable Interrupt Controller</a></li><li><a href="#apic-timer---tsc-deadline-mode" title="APIC Timer - TSC deadline mode">APIC Timer - TSC deadline mode</a></li></ul></li><li><a href="#tasks" title="Tasks">Tasks</a></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#constants" title="Constants">Constants</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="../index.html">In kev_<wbr>project3::<wbr>dev</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">kev_project3</a>::<wbr><a href="../index.html">dev</a></div><h1>Module <span>x2apic</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../../src/kev_project3/dev/x2apic.rs.html#1-335">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>x2APIC Emulation</p>
+<h3 id="background"><a class="doc-anchor" href="#background">§</a>Background</h3><h4 id="advanced-programmable-interrupt-controller"><a class="doc-anchor" href="#advanced-programmable-interrupt-controller">§</a>Advanced Programmable Interrupt Controller</h4>
+<p>In interrupt handling, the Advanced Programmable Interrupt Controller (APIC)
+represents a significantly improved alternative to the conventional
+Programmable Interrupt Controller (PIC). Originally, the 8235 PIC chip was
+responsible for interrupt processing, but due to speed and functionality
+considerations, interrupt handling routine was refined and integrated into
+the CPU in the cases of the local core interrupts.</p>
+<p>APIC is implemented as separate Local APIC and IOAPIC components.
+The former is embedded within each processor, while the latter is located in
+the system bus. APIC’s primary objective is to process interrupts on
+processors and forward them to designated cores, as well as facilitate
+Inter-Processor Interrupt (IPI) communication in multicore environments.</p>
+<p>Over time, Intel has enhanced the APIC to newer versions such as xAPIC and
+x2APIC. One of the main differences between APIC and xAPIC is their
+functionality (Increased number of interrupt lines and flexibility in
+handling different types of interrupts), while x2APIC offers the ability to
+modify performance behavior through the use of MSR registers.</p>
+<h5 id="lapic"><a class="doc-anchor" href="#lapic">§</a>LAPIC</h5>
+<p>Each core has a dedicated Local APIC assigned to it, which can generate
+interrupts and trigger Inter-Processor Interrupts (IPIs) as well as handle
+up to 0-31 interrupt processing and 32-225 designated interrupt processing.
+Local APIC, which is directly connected to the processor’s cores, performs
+interrupt-related tasks such as handling I/O devices, APIC Timer, IPI,
+Performance Monitoring Counter, and Thermal Sensor. LAPIC supports High
+Precision Event Timer (HPET), which is a high-precision timer that assists
+each core in obtaining accurate current time values without competing for
+one timer. If APIC is enabled and HPET is supported, the 8253 PIC is
+disabled.</p>
+<p>The definition of how each interrupt behaves can be configured via the Local
+Vector Table (LVT). LVT is controlled through memory access via MMIO for
+APIC, xAPIC, and similar devices, and via MSR registers for x2APIC.
+The Local Vector Table determines which hardware interrupt is forwarded to
+the core’s interrupt pin.</p>
+<h5 id="io-apic"><a class="doc-anchor" href="#io-apic">§</a>I/O APIC</h5>
+<p>The I/O APIC is an Interrupt Controller that is responsible for delivering
+external device interrupts to the appropriate cores. Interrupts delivered
+through the I/O APIC are forwarded to the Local APIC based on the LVT
+configuration and ultimately delivered to the core. The I/O APIC is
+connected to the system bus and is responsible for delivering interrupts
+generated by hardware or I/O devices to the core.</p>
+<p>The I/O APIC has a Redirection Table that maps incoming interrupts from each
+device to a designated interrupt number. Unlike the 8253 interrupt
+controller, which supports only 16 external interrupts, the APIC supports up
+to 224 additional interrupts, excluding those assigned to hardware, through
+redirection.</p>
+<h4 id="apic-timer---tsc-deadline-mode"><a class="doc-anchor" href="#apic-timer---tsc-deadline-mode">§</a>APIC Timer - TSC deadline mode</h4>
+<p>APIC Timer modes are separated into three different modes for handling timer
+interrupts.</p>
+<h5 id="periodic-mode-and-one-shot-mode"><a class="doc-anchor" href="#periodic-mode-and-one-shot-mode">§</a>Periodic Mode and One-shot Mode</h5>
+<p>The Periodic Mode is a mode in which software (usually the operating system)
+requests the APIC to generate periodic timer interrupts by setting a
+specific time interval. For example, in the Periodic Mode, software requests
+the APIC to insert a timer interrupt every 1ms.</p>
+<p>The One-shot Mode is similar to the Periodic Mode but requests the timer
+interrupt to occur only once. Software requests the APIC to generate a timer
+interrupt after a certain time interval. For example, software requests the
+APIC to insert a timer interrupt 1ms later.</p>
+<h5 id="tsc-deadline-mode"><a class="doc-anchor" href="#tsc-deadline-mode">§</a>TSC-Deadline Mode</h5>
+<p>The TSC-Deadline Mode has a slightly different characteristic from the other
+two timer modes. Rather than sending a specific timer interval, this mode
+requests a timer interrupt when the value of the Time Stamp Counter (TSC) of
+the core exceeds a specific value. This method uses the TSC timer, which is
+more accurate than the other two methods that use the CPU frequency, and has
+a feature that is easy to avoid race conditions. For example, if the current
+TSC count is 100000, software requests the APIC to generate a timer
+interrupt when it becomes 100050, which is 100000 + α. Like one-shot mode,
+software should reprogram the next timer manually to re-trigger the next
+timer interrupt.</p>
+<p>Note that, the TSC deadline setting and initiate interrupts are separated.
+Initiate x2APIC timer interrupts are done by setting Model Specific Register
+(MSR register) with 0x832 to 0x10 (TSC-Deadline Mode). However, setting a
+deadline for Local APIC’s TSC Deadline Mode is done by setting MSR with
+0x6e0 to a timestamp for the next deadline.</p>
+<h3 id="tasks"><a class="doc-anchor" href="#tasks">§</a>Tasks</h3>
+<p>In this project, you are requested to implement timer interrupt
+virtualization for guest operating system. You need to implement timer
+interrupt virtualization for the guest by ensuring that a timer interrupt
+occurs every tick to schedule threads in the guest operating system.</p>
+<p>As the guest is unable to use the APIC timer in the host,
+the host must handle the initialization of the timer and setting of the
+deadline from the guest. If the TSC value exceeds the guest deadline, a
+virtual interrupt should be injected into the guest by a separate thread
+that runs in the hypervisor. This thread is spawned when the guest requests
+to set the timer as TSC deadline mode and tries to write the timer mode and
+interrupt vector into the MSR 0x832 (the MSR write is trapped to guest).</p>
+<p>After the thread is spawned,
+a deadline setting request via 0x6e0 MSR can be sent to the thread to inject
+interrupts when the TSC value is more than the set deadline. To share the
+deadline value between the created thread and the handler for 0x6e0 MSR, the
+<a href="keos::thread::channel::channel"><code>channel</code></a> API provided by KeV is used. Injection of the interrupt into the
+VM should only be done when the VM is not running, as the injected interrupt
+is handled when VmEntry occurs. To inject the timer interrupt into the
+running vCPU, the VMM must 1) <a href="../../../kev/vm/trait.VmOps.html#tymethod.kick_vcpu" title="method kev::vm::VmOps::kick_vcpu"><code>kick</code></a> the vCPU, 2) <a href="../../../kev/vcpu/trait.VCpuOps.html#tymethod.inject_interrupt" title="method kev::vcpu::VCpuOps::inject_interrupt"><code>inject</code></a> the
+interrupt, and then 3) <a href="../../../kev/vm/trait.VmOps.html#tymethod.resume_vcpu" title="method kev::vm::VmOps::resume_vcpu"><code>resume</code></a> the vCPU to execute the timer interrupt in
+the guest.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.ICR.html" title="struct kev_project3::dev::x2apic::ICR">ICR</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dt><a class="struct" href="struct.X2Apic.html" title="struct kev_project3::dev::x2apic::X2Apic">X2Apic</a></dt><dd>X2Apic</dd><dt><a class="struct" href="struct.X2ApicInner.html" title="struct kev_project3::dev::x2apic::X2ApicInner">X2Apic<wbr>Inner</a></dt><dd>X2Apic internal state</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.ICRMode.html" title="enum kev_project3::dev::x2apic::ICRMode">ICRMode</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt></dl><h2 id="constants" class="section-header">Constants<a href="#constants" class="anchor">§</a></h2><dl class="item-table"><dt><a class="constant" href="constant.APIC_BASE.html" title="constant kev_project3::dev::x2apic::APIC_BASE">APIC_<wbr>BASE</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt></dl></section></div></main></body></html>

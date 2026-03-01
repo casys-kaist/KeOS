@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["power_off","restart"]};

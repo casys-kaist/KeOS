@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Welcome to the KeV project."><title>kev - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="kev" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../static.files/storage-e2aeef58.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate kev</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../kev/index.html">kev</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#projects" title="Projects">Projects</a><ul><li><a href="#rust" title="Rust">Rust</a></li></ul></li><li><a href="#getting-started" title="Getting Started">Getting Started</a><ul><li><a href="#enable-nested-virtualization" title="Enable nested virtualization">Enable nested virtualization</a></li><li><a href="#additional-resources" title="Additional Resources">Additional Resources</a></li></ul></li></ul><h3><a href="#modules">Crate Items</a></h3><ul class="block"><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#traits" title="Traits">Traits</a></li><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>kev</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/kev/lib.rs.html#1-210">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Welcome to the KeV project.</p>
+<p>Virtualization is an increasingly ubiquitous feature of modern computer
+systems, and a rapidly evolving part of the system stack. Hardware vendors
+are adding new features to support more efficient virtualization, OS designs
+are adapting to perform better in VMs, and VMs are an essential component in
+cloud computing. Thus, understanding how VMs work is essential to a complete
+education in computer systems.</p>
+<p>In this project, you will skim through the basic components that runs on
+real virtual machine monitor like KVM. From what you learn, you will build
+your own type 2 hypervisor and finally extend the hypervisor
+as an open-ended course project.</p>
+<p>In KeV project, we will not bother you from the time-consuming edge case
+handling and the hidden test cases. The score that you see when run the
+grading scripts is your final score. We want to keep this project as easy as
+possible. If you have suggestions on how we can reduce the unnecessary
+overhead of assignments, cutting them down to the important underlying
+issues, please let us know.</p>
+<h3 id="projects"><a class="doc-anchor" href="#projects">§</a>Projects</h3>
+<p>The KeV project consists of 5 projects.</p>
+<ol>
+<li><a href="../kev_project0">KeOS</a></li>
+<li><a href="../kev_project1">VMCS and VMexits</a></li>
+<li><a href="../kev_project2">Hardware virtualization</a></li>
+<li><a href="../kev_project3">Interrupt and I/O virtualization</a></li>
+<li><a href="../kev_project4">Final project</a></li>
+</ol>
+<h4 id="rust"><a class="doc-anchor" href="#rust">§</a>Rust</h4>
+<p>We pick the Rust as a language for project. This is because we believe that
+after overcome the barriers to learn, memory safety and ownership rule of
+Rust could significantly reduce the debugging time while implement an
+operating system.</p>
+<h3 id="getting-started"><a class="doc-anchor" href="#getting-started">§</a>Getting Started</h3>
+<p>You can bootstrap your KeV project with following command lines:</p>
+<div class="example-wrap"><pre class="language-bash"><code>$ mkdir keos
+$ cd keos
+$ curl https://raw.githubusercontent.com/casys-kaist/KeOS/refs/heads/main/scripts/install-kev.sh | sh</code></pre></div>
+<p><strong>PLEASE DO NOT MAKE ANY PUBLIC FORK OF THIS PROJECT.</strong>
+This is strongly denied from the license of the KeV Project. You <strong>MUST</strong>
+not redistribute the your works based on the given template.</p>
+<h4 id="enable-nested-virtualization"><a class="doc-anchor" href="#enable-nested-virtualization">§</a>Enable nested virtualization</h4>
+<p>See the following docs: <a href="https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/">https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/</a></p>
+<h4 id="additional-resources"><a class="doc-anchor" href="#additional-resources">§</a>Additional Resources</h4>
+<p>Refer to the main <a href="../../keos">KeOS documentation</a> for more details on general workflow
+of KeV projects, including grading, implementation tips and debugging.</p>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="probe/index.html" title="mod kev::probe">probe</a><span title="Restricted Visibility">&nbsp;🔒</span> </dt><dt><a class="mod" href="vcpu/index.html" title="mod kev::vcpu">vcpu</a></dt><dd>Virtual CPU implementation.</dd><dt><a class="mod" href="vm/index.html" title="mod kev::vm">vm</a></dt><dd>Virtual machine interface.</dd><dt><a class="mod" href="vm_control/index.html" title="mod kev::vm_control">vm_<wbr>control</a></dt><dd>Flags and MSRs for VMX capabilities.</dd><dt><a class="mod" href="vmcs/index.html" title="mod kev::vmcs">vmcs</a></dt><dd>Virtual-Machine Control State (VMCS) related apis.</dd><dt><a class="mod" href="vmexits/index.html" title="mod kev::vmexits">vmexits</a></dt><dd>Interface to play with vmexits.</dd></dl><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.Thread.html" title="struct kev::Thread">Thread</a></dt><dd>A Thread for KeV projects.</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.VmError.html" title="enum kev::VmError">VmError</a></dt><dd>Possible errorkind for Vm.</dd><dt><a class="enum" href="enum.VmxError.html" title="enum kev::VmxError">VmxError</a></dt><dd>Possible errorkind for Vmx.</dd></dl><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><dl class="item-table"><dt><a class="trait" href="trait.Probe.html" title="trait kev::Probe">Probe</a></dt><dd>Traits to probe vcpu internal state.</dd></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.start_vmx_on_cpu.html" title="fn kev::start_vmx_on_cpu">start_<wbr>vmx_<wbr>on_<wbr>cpu</a><sup title="unsafe function">⚠</sup></dt><dd>Enable the VM-eXtension on this cpu.</dd></dl></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Segment","SegmentRegister"],"static":["SEGMENT_TABLE"],"struct":["SegmentAccess","SegmentAccess64","SegmentDescriptor","SegmentDescriptor64","SegmentSelector","SegmentTable"]};

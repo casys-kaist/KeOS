@@ -1,0 +1,529 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Exception vector enumeration of the x86_64."><title>ExceptionVector in kev::vcpu::interrupt - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-e56847b5.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="kev" data-themes="" data-resource-suffix="" data-rustdoc-version="1.91.0-nightly (07d246fc6 2025-08-31)" data-channel="nightly" data-search-js="search-449aa9bf.js" data-stringdex-js="stringdex-0e748618.js" data-settings-js="settings-c38705f0.js" ><script src="../../../static.files/storage-e2aeef58.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../../static.files/main-6dc2a7f3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc enum"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">ExceptionVector</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../kev/index.html">kev</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Exception<wbr>Vector</a></h2><h3><a href="#variants">Variants</a></h3><ul class="block variant"><li><a href="#variant.AlignmentCheckException" title="AlignmentCheckException">AlignmentCheckException</a></li><li><a href="#variant.BoundRangeExceeded" title="BoundRangeExceeded">BoundRangeExceeded</a></li><li><a href="#variant.Breakpoint" title="Breakpoint">Breakpoint</a></li><li><a href="#variant.CoprocessorSegmentOverrun" title="CoprocessorSegmentOverrun">CoprocessorSegmentOverrun</a></li><li><a href="#variant.Debug" title="Debug">Debug</a></li><li><a href="#variant.DeviceNotAvailable" title="DeviceNotAvailable">DeviceNotAvailable</a></li><li><a href="#variant.DivideError" title="DivideError">DivideError</a></li><li><a href="#variant.DoubleFault" title="DoubleFault">DoubleFault</a></li><li><a href="#variant.GeneralProtection" title="GeneralProtection">GeneralProtection</a></li><li><a href="#variant.InvalidOpcode" title="InvalidOpcode">InvalidOpcode</a></li><li><a href="#variant.InvalidTss" title="InvalidTss">InvalidTss</a></li><li><a href="#variant.MachineCheckException" title="MachineCheckException">MachineCheckException</a></li><li><a href="#variant.NonMaskableInterrupt" title="NonMaskableInterrupt">NonMaskableInterrupt</a></li><li><a href="#variant.OverflowException" title="OverflowException">OverflowException</a></li><li><a href="#variant.PageFault" title="PageFault">PageFault</a></li><li><a href="#variant.SegmentNotPresent" title="SegmentNotPresent">SegmentNotPresent</a></li><li><a href="#variant.SimdFloatingPointException" title="SimdFloatingPointException">SimdFloatingPointException</a></li><li><a href="#variant.StackFault" title="StackFault">StackFault</a></li><li><a href="#variant.UserDefined0" title="UserDefined0">UserDefined0</a></li><li><a href="#variant.UserDefined1" title="UserDefined1">UserDefined1</a></li><li><a href="#variant.UserDefined2" title="UserDefined2">UserDefined2</a></li><li><a href="#variant.UserDefined3" title="UserDefined3">UserDefined3</a></li><li><a href="#variant.UserDefined4" title="UserDefined4">UserDefined4</a></li><li><a href="#variant.UserDefined5" title="UserDefined5">UserDefined5</a></li><li><a href="#variant.UserDefined6" title="UserDefined6">UserDefined6</a></li><li><a href="#variant.UserDefined7" title="UserDefined7">UserDefined7</a></li><li><a href="#variant.UserDefined8" title="UserDefined8">UserDefined8</a></li><li><a href="#variant.UserDefined9" title="UserDefined9">UserDefined9</a></li><li><a href="#variant.UserDefined10" title="UserDefined10">UserDefined10</a></li><li><a href="#variant.UserDefined11" title="UserDefined11">UserDefined11</a></li><li><a href="#variant.UserDefined12" title="UserDefined12">UserDefined12</a></li><li><a href="#variant.UserDefined13" title="UserDefined13">UserDefined13</a></li><li><a href="#variant.UserDefined14" title="UserDefined14">UserDefined14</a></li><li><a href="#variant.UserDefined15" title="UserDefined15">UserDefined15</a></li><li><a href="#variant.UserDefined16" title="UserDefined16">UserDefined16</a></li><li><a href="#variant.UserDefined17" title="UserDefined17">UserDefined17</a></li><li><a href="#variant.UserDefined18" title="UserDefined18">UserDefined18</a></li><li><a href="#variant.UserDefined19" title="UserDefined19">UserDefined19</a></li><li><a href="#variant.UserDefined20" title="UserDefined20">UserDefined20</a></li><li><a href="#variant.UserDefined21" title="UserDefined21">UserDefined21</a></li><li><a href="#variant.UserDefined22" title="UserDefined22">UserDefined22</a></li><li><a href="#variant.UserDefined23" title="UserDefined23">UserDefined23</a></li><li><a href="#variant.UserDefined24" title="UserDefined24">UserDefined24</a></li><li><a href="#variant.UserDefined25" title="UserDefined25">UserDefined25</a></li><li><a href="#variant.UserDefined26" title="UserDefined26">UserDefined26</a></li><li><a href="#variant.UserDefined27" title="UserDefined27">UserDefined27</a></li><li><a href="#variant.UserDefined28" title="UserDefined28">UserDefined28</a></li><li><a href="#variant.UserDefined29" title="UserDefined29">UserDefined29</a></li><li><a href="#variant.UserDefined30" title="UserDefined30">UserDefined30</a></li><li><a href="#variant.UserDefined31" title="UserDefined31">UserDefined31</a></li><li><a href="#variant.UserDefined32" title="UserDefined32">UserDefined32</a></li><li><a href="#variant.UserDefined33" title="UserDefined33">UserDefined33</a></li><li><a href="#variant.UserDefined34" title="UserDefined34">UserDefined34</a></li><li><a href="#variant.UserDefined35" title="UserDefined35">UserDefined35</a></li><li><a href="#variant.UserDefined36" title="UserDefined36">UserDefined36</a></li><li><a href="#variant.UserDefined37" title="UserDefined37">UserDefined37</a></li><li><a href="#variant.UserDefined38" title="UserDefined38">UserDefined38</a></li><li><a href="#variant.UserDefined39" title="UserDefined39">UserDefined39</a></li><li><a href="#variant.UserDefined40" title="UserDefined40">UserDefined40</a></li><li><a href="#variant.UserDefined41" title="UserDefined41">UserDefined41</a></li><li><a href="#variant.UserDefined42" title="UserDefined42">UserDefined42</a></li><li><a href="#variant.UserDefined43" title="UserDefined43">UserDefined43</a></li><li><a href="#variant.UserDefined44" title="UserDefined44">UserDefined44</a></li><li><a href="#variant.UserDefined45" title="UserDefined45">UserDefined45</a></li><li><a href="#variant.UserDefined46" title="UserDefined46">UserDefined46</a></li><li><a href="#variant.UserDefined47" title="UserDefined47">UserDefined47</a></li><li><a href="#variant.UserDefined48" title="UserDefined48">UserDefined48</a></li><li><a href="#variant.UserDefined49" title="UserDefined49">UserDefined49</a></li><li><a href="#variant.UserDefined50" title="UserDefined50">UserDefined50</a></li><li><a href="#variant.UserDefined51" title="UserDefined51">UserDefined51</a></li><li><a href="#variant.UserDefined52" title="UserDefined52">UserDefined52</a></li><li><a href="#variant.UserDefined53" title="UserDefined53">UserDefined53</a></li><li><a href="#variant.UserDefined54" title="UserDefined54">UserDefined54</a></li><li><a href="#variant.UserDefined55" title="UserDefined55">UserDefined55</a></li><li><a href="#variant.UserDefined56" title="UserDefined56">UserDefined56</a></li><li><a href="#variant.UserDefined57" title="UserDefined57">UserDefined57</a></li><li><a href="#variant.UserDefined58" title="UserDefined58">UserDefined58</a></li><li><a href="#variant.UserDefined59" title="UserDefined59">UserDefined59</a></li><li><a href="#variant.UserDefined60" title="UserDefined60">UserDefined60</a></li><li><a href="#variant.UserDefined61" title="UserDefined61">UserDefined61</a></li><li><a href="#variant.UserDefined62" title="UserDefined62">UserDefined62</a></li><li><a href="#variant.UserDefined63" title="UserDefined63">UserDefined63</a></li><li><a href="#variant.UserDefined64" title="UserDefined64">UserDefined64</a></li><li><a href="#variant.UserDefined65" title="UserDefined65">UserDefined65</a></li><li><a href="#variant.UserDefined66" title="UserDefined66">UserDefined66</a></li><li><a href="#variant.UserDefined67" title="UserDefined67">UserDefined67</a></li><li><a href="#variant.UserDefined68" title="UserDefined68">UserDefined68</a></li><li><a href="#variant.UserDefined69" title="UserDefined69">UserDefined69</a></li><li><a href="#variant.UserDefined70" title="UserDefined70">UserDefined70</a></li><li><a href="#variant.UserDefined71" title="UserDefined71">UserDefined71</a></li><li><a href="#variant.UserDefined72" title="UserDefined72">UserDefined72</a></li><li><a href="#variant.UserDefined73" title="UserDefined73">UserDefined73</a></li><li><a href="#variant.UserDefined74" title="UserDefined74">UserDefined74</a></li><li><a href="#variant.UserDefined75" title="UserDefined75">UserDefined75</a></li><li><a href="#variant.UserDefined76" title="UserDefined76">UserDefined76</a></li><li><a href="#variant.UserDefined77" title="UserDefined77">UserDefined77</a></li><li><a href="#variant.UserDefined78" title="UserDefined78">UserDefined78</a></li><li><a href="#variant.UserDefined79" title="UserDefined79">UserDefined79</a></li><li><a href="#variant.UserDefined80" title="UserDefined80">UserDefined80</a></li><li><a href="#variant.UserDefined81" title="UserDefined81">UserDefined81</a></li><li><a href="#variant.UserDefined82" title="UserDefined82">UserDefined82</a></li><li><a href="#variant.UserDefined83" title="UserDefined83">UserDefined83</a></li><li><a href="#variant.UserDefined84" title="UserDefined84">UserDefined84</a></li><li><a href="#variant.UserDefined85" title="UserDefined85">UserDefined85</a></li><li><a href="#variant.UserDefined86" title="UserDefined86">UserDefined86</a></li><li><a href="#variant.UserDefined87" title="UserDefined87">UserDefined87</a></li><li><a href="#variant.UserDefined88" title="UserDefined88">UserDefined88</a></li><li><a href="#variant.UserDefined89" title="UserDefined89">UserDefined89</a></li><li><a href="#variant.UserDefined90" title="UserDefined90">UserDefined90</a></li><li><a href="#variant.UserDefined91" title="UserDefined91">UserDefined91</a></li><li><a href="#variant.UserDefined92" title="UserDefined92">UserDefined92</a></li><li><a href="#variant.UserDefined93" title="UserDefined93">UserDefined93</a></li><li><a href="#variant.UserDefined94" title="UserDefined94">UserDefined94</a></li><li><a href="#variant.UserDefined95" title="UserDefined95">UserDefined95</a></li><li><a href="#variant.UserDefined96" title="UserDefined96">UserDefined96</a></li><li><a href="#variant.UserDefined97" title="UserDefined97">UserDefined97</a></li><li><a href="#variant.UserDefined98" title="UserDefined98">UserDefined98</a></li><li><a href="#variant.UserDefined99" title="UserDefined99">UserDefined99</a></li><li><a href="#variant.UserDefined100" title="UserDefined100">UserDefined100</a></li><li><a href="#variant.UserDefined101" title="UserDefined101">UserDefined101</a></li><li><a href="#variant.UserDefined102" title="UserDefined102">UserDefined102</a></li><li><a href="#variant.UserDefined103" title="UserDefined103">UserDefined103</a></li><li><a href="#variant.UserDefined104" title="UserDefined104">UserDefined104</a></li><li><a href="#variant.UserDefined105" title="UserDefined105">UserDefined105</a></li><li><a href="#variant.UserDefined106" title="UserDefined106">UserDefined106</a></li><li><a href="#variant.UserDefined107" title="UserDefined107">UserDefined107</a></li><li><a href="#variant.UserDefined108" title="UserDefined108">UserDefined108</a></li><li><a href="#variant.UserDefined109" title="UserDefined109">UserDefined109</a></li><li><a href="#variant.UserDefined110" title="UserDefined110">UserDefined110</a></li><li><a href="#variant.UserDefined111" title="UserDefined111">UserDefined111</a></li><li><a href="#variant.UserDefined112" title="UserDefined112">UserDefined112</a></li><li><a href="#variant.UserDefined113" title="UserDefined113">UserDefined113</a></li><li><a href="#variant.UserDefined114" title="UserDefined114">UserDefined114</a></li><li><a href="#variant.UserDefined115" title="UserDefined115">UserDefined115</a></li><li><a href="#variant.UserDefined116" title="UserDefined116">UserDefined116</a></li><li><a href="#variant.UserDefined117" title="UserDefined117">UserDefined117</a></li><li><a href="#variant.UserDefined118" title="UserDefined118">UserDefined118</a></li><li><a href="#variant.UserDefined119" title="UserDefined119">UserDefined119</a></li><li><a href="#variant.UserDefined120" title="UserDefined120">UserDefined120</a></li><li><a href="#variant.UserDefined121" title="UserDefined121">UserDefined121</a></li><li><a href="#variant.UserDefined122" title="UserDefined122">UserDefined122</a></li><li><a href="#variant.UserDefined123" title="UserDefined123">UserDefined123</a></li><li><a href="#variant.UserDefined124" title="UserDefined124">UserDefined124</a></li><li><a href="#variant.UserDefined125" title="UserDefined125">UserDefined125</a></li><li><a href="#variant.UserDefined126" title="UserDefined126">UserDefined126</a></li><li><a href="#variant.UserDefined127" title="UserDefined127">UserDefined127</a></li><li><a href="#variant.UserDefined128" title="UserDefined128">UserDefined128</a></li><li><a href="#variant.UserDefined129" title="UserDefined129">UserDefined129</a></li><li><a href="#variant.UserDefined130" title="UserDefined130">UserDefined130</a></li><li><a href="#variant.UserDefined131" title="UserDefined131">UserDefined131</a></li><li><a href="#variant.UserDefined132" title="UserDefined132">UserDefined132</a></li><li><a href="#variant.UserDefined133" title="UserDefined133">UserDefined133</a></li><li><a href="#variant.UserDefined134" title="UserDefined134">UserDefined134</a></li><li><a href="#variant.UserDefined135" title="UserDefined135">UserDefined135</a></li><li><a href="#variant.UserDefined136" title="UserDefined136">UserDefined136</a></li><li><a href="#variant.UserDefined137" title="UserDefined137">UserDefined137</a></li><li><a href="#variant.UserDefined138" title="UserDefined138">UserDefined138</a></li><li><a href="#variant.UserDefined139" title="UserDefined139">UserDefined139</a></li><li><a href="#variant.UserDefined140" title="UserDefined140">UserDefined140</a></li><li><a href="#variant.UserDefined141" title="UserDefined141">UserDefined141</a></li><li><a href="#variant.UserDefined142" title="UserDefined142">UserDefined142</a></li><li><a href="#variant.UserDefined143" title="UserDefined143">UserDefined143</a></li><li><a href="#variant.UserDefined144" title="UserDefined144">UserDefined144</a></li><li><a href="#variant.UserDefined145" title="UserDefined145">UserDefined145</a></li><li><a href="#variant.UserDefined146" title="UserDefined146">UserDefined146</a></li><li><a href="#variant.UserDefined147" title="UserDefined147">UserDefined147</a></li><li><a href="#variant.UserDefined148" title="UserDefined148">UserDefined148</a></li><li><a href="#variant.UserDefined149" title="UserDefined149">UserDefined149</a></li><li><a href="#variant.UserDefined150" title="UserDefined150">UserDefined150</a></li><li><a href="#variant.UserDefined151" title="UserDefined151">UserDefined151</a></li><li><a href="#variant.UserDefined152" title="UserDefined152">UserDefined152</a></li><li><a href="#variant.UserDefined153" title="UserDefined153">UserDefined153</a></li><li><a href="#variant.UserDefined154" title="UserDefined154">UserDefined154</a></li><li><a href="#variant.UserDefined155" title="UserDefined155">UserDefined155</a></li><li><a href="#variant.UserDefined156" title="UserDefined156">UserDefined156</a></li><li><a href="#variant.UserDefined157" title="UserDefined157">UserDefined157</a></li><li><a href="#variant.UserDefined158" title="UserDefined158">UserDefined158</a></li><li><a href="#variant.UserDefined159" title="UserDefined159">UserDefined159</a></li><li><a href="#variant.UserDefined160" title="UserDefined160">UserDefined160</a></li><li><a href="#variant.UserDefined161" title="UserDefined161">UserDefined161</a></li><li><a href="#variant.UserDefined162" title="UserDefined162">UserDefined162</a></li><li><a href="#variant.UserDefined163" title="UserDefined163">UserDefined163</a></li><li><a href="#variant.UserDefined164" title="UserDefined164">UserDefined164</a></li><li><a href="#variant.UserDefined165" title="UserDefined165">UserDefined165</a></li><li><a href="#variant.UserDefined166" title="UserDefined166">UserDefined166</a></li><li><a href="#variant.UserDefined167" title="UserDefined167">UserDefined167</a></li><li><a href="#variant.UserDefined168" title="UserDefined168">UserDefined168</a></li><li><a href="#variant.UserDefined169" title="UserDefined169">UserDefined169</a></li><li><a href="#variant.UserDefined170" title="UserDefined170">UserDefined170</a></li><li><a href="#variant.UserDefined171" title="UserDefined171">UserDefined171</a></li><li><a href="#variant.UserDefined172" title="UserDefined172">UserDefined172</a></li><li><a href="#variant.UserDefined173" title="UserDefined173">UserDefined173</a></li><li><a href="#variant.UserDefined174" title="UserDefined174">UserDefined174</a></li><li><a href="#variant.UserDefined175" title="UserDefined175">UserDefined175</a></li><li><a href="#variant.UserDefined176" title="UserDefined176">UserDefined176</a></li><li><a href="#variant.UserDefined177" title="UserDefined177">UserDefined177</a></li><li><a href="#variant.UserDefined178" title="UserDefined178">UserDefined178</a></li><li><a href="#variant.UserDefined179" title="UserDefined179">UserDefined179</a></li><li><a href="#variant.UserDefined180" title="UserDefined180">UserDefined180</a></li><li><a href="#variant.UserDefined181" title="UserDefined181">UserDefined181</a></li><li><a href="#variant.UserDefined182" title="UserDefined182">UserDefined182</a></li><li><a href="#variant.UserDefined183" title="UserDefined183">UserDefined183</a></li><li><a href="#variant.UserDefined184" title="UserDefined184">UserDefined184</a></li><li><a href="#variant.UserDefined185" title="UserDefined185">UserDefined185</a></li><li><a href="#variant.UserDefined186" title="UserDefined186">UserDefined186</a></li><li><a href="#variant.UserDefined187" title="UserDefined187">UserDefined187</a></li><li><a href="#variant.UserDefined188" title="UserDefined188">UserDefined188</a></li><li><a href="#variant.UserDefined189" title="UserDefined189">UserDefined189</a></li><li><a href="#variant.UserDefined190" title="UserDefined190">UserDefined190</a></li><li><a href="#variant.UserDefined191" title="UserDefined191">UserDefined191</a></li><li><a href="#variant.UserDefined192" title="UserDefined192">UserDefined192</a></li><li><a href="#variant.UserDefined193" title="UserDefined193">UserDefined193</a></li><li><a href="#variant.UserDefined194" title="UserDefined194">UserDefined194</a></li><li><a href="#variant.UserDefined195" title="UserDefined195">UserDefined195</a></li><li><a href="#variant.UserDefined196" title="UserDefined196">UserDefined196</a></li><li><a href="#variant.UserDefined197" title="UserDefined197">UserDefined197</a></li><li><a href="#variant.UserDefined198" title="UserDefined198">UserDefined198</a></li><li><a href="#variant.UserDefined199" title="UserDefined199">UserDefined199</a></li><li><a href="#variant.UserDefined200" title="UserDefined200">UserDefined200</a></li><li><a href="#variant.UserDefined201" title="UserDefined201">UserDefined201</a></li><li><a href="#variant.UserDefined202" title="UserDefined202">UserDefined202</a></li><li><a href="#variant.UserDefined203" title="UserDefined203">UserDefined203</a></li><li><a href="#variant.UserDefined204" title="UserDefined204">UserDefined204</a></li><li><a href="#variant.UserDefined205" title="UserDefined205">UserDefined205</a></li><li><a href="#variant.UserDefined206" title="UserDefined206">UserDefined206</a></li><li><a href="#variant.UserDefined207" title="UserDefined207">UserDefined207</a></li><li><a href="#variant.UserDefined208" title="UserDefined208">UserDefined208</a></li><li><a href="#variant.UserDefined209" title="UserDefined209">UserDefined209</a></li><li><a href="#variant.UserDefined210" title="UserDefined210">UserDefined210</a></li><li><a href="#variant.UserDefined211" title="UserDefined211">UserDefined211</a></li><li><a href="#variant.UserDefined212" title="UserDefined212">UserDefined212</a></li><li><a href="#variant.UserDefined213" title="UserDefined213">UserDefined213</a></li><li><a href="#variant.UserDefined214" title="UserDefined214">UserDefined214</a></li><li><a href="#variant.UserDefined215" title="UserDefined215">UserDefined215</a></li><li><a href="#variant.UserDefined216" title="UserDefined216">UserDefined216</a></li><li><a href="#variant.UserDefined217" title="UserDefined217">UserDefined217</a></li><li><a href="#variant.UserDefined218" title="UserDefined218">UserDefined218</a></li><li><a href="#variant.UserDefined219" title="UserDefined219">UserDefined219</a></li><li><a href="#variant.UserDefined220" title="UserDefined220">UserDefined220</a></li><li><a href="#variant.UserDefined221" title="UserDefined221">UserDefined221</a></li><li><a href="#variant.UserDefined222" title="UserDefined222">UserDefined222</a></li><li><a href="#variant.UserDefined223" title="UserDefined223">UserDefined223</a></li><li><a href="#variant.VirtualizationException" title="VirtualizationException">VirtualizationException</a></li><li><a href="#variant.X87FpuFloatingPointError" title="X87FpuFloatingPointError">X87FpuFloatingPointError</a></li><li><a href="#variant._Reserved0" title="_Reserved0">_Reserved0</a></li><li><a href="#variant._Reserved1" title="_Reserved1">_Reserved1</a></li><li><a href="#variant._Reserved2" title="_Reserved2">_Reserved2</a></li><li><a href="#variant._Reserved3" title="_Reserved3">_Reserved3</a></li><li><a href="#variant._Reserved4" title="_Reserved4">_Reserved4</a></li><li><a href="#variant._Reserved5" title="_Reserved5">_Reserved5</a></li><li><a href="#variant._Reserved6" title="_Reserved6">_Reserved6</a></li><li><a href="#variant._Reserved7" title="_Reserved7">_Reserved7</a></li><li><a href="#variant._Reserved8" title="_Reserved8">_Reserved8</a></li><li><a href="#variant._Reserved9" title="_Reserved9">_Reserved9</a></li><li><a href="#variant._Reserved10" title="_Reserved10">_Reserved10</a></li><li><a href="#variant._Reserved11" title="_Reserved11">_Reserved11</a></li></ul><h3><a href="#synthetic-implementations">Auto Trait Implementations</a></h3><ul class="block synthetic-implementation"><li><a href="#impl-Freeze-for-ExceptionVector" title="Freeze">Freeze</a></li><li><a href="#impl-RefUnwindSafe-for-ExceptionVector" title="RefUnwindSafe">RefUnwindSafe</a></li><li><a href="#impl-Send-for-ExceptionVector" title="Send">Send</a></li><li><a href="#impl-Sync-for-ExceptionVector" title="Sync">Sync</a></li><li><a href="#impl-Unpin-for-ExceptionVector" title="Unpin">Unpin</a></li><li><a href="#impl-UnwindSafe-for-ExceptionVector" title="UnwindSafe">UnwindSafe</a></li></ul><h3><a href="#blanket-implementations">Blanket Implementations</a></h3><ul class="block blanket-implementation"><li><a href="#impl-Any-for-T" title="Any">Any</a></li><li><a href="#impl-Borrow%3CT%3E-for-T" title="Borrow&#60;T&#62;">Borrow&#60;T&#62;</a></li><li><a href="#impl-BorrowMut%3CT%3E-for-T" title="BorrowMut&#60;T&#62;">BorrowMut&#60;T&#62;</a></li><li><a href="#impl-CloneToUninit-for-T" title="CloneToUninit">CloneToUninit</a></li><li><a href="#impl-From%3CT%3E-for-T" title="From&#60;T&#62;">From&#60;T&#62;</a></li><li><a href="#impl-Into%3CU%3E-for-T" title="Into&#60;U&#62;">Into&#60;U&#62;</a></li><li><a href="#impl-ToOwned-for-T" title="ToOwned">ToOwned</a></li><li><a href="#impl-TryFrom%3CU%3E-for-T" title="TryFrom&#60;U&#62;">TryFrom&#60;U&#62;</a></li><li><a href="#impl-TryInto%3CU%3E-for-T" title="TryInto&#60;U&#62;">TryInto&#60;U&#62;</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="index.html">In kev::<wbr>vcpu::<wbr>interrupt</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../../index.html">kev</a>::<wbr><a href="../index.html">vcpu</a>::<wbr><a href="index.html">interrupt</a></div><h1>Enum <span class="enum">Exception<wbr>Vector</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"></span></div><pre class="rust item-decl"><code><div class="code-attribute">#[repr(u8)]</div>pub enum ExceptionVector {
+<details class="toggle type-contents-toggle"><summary class="hideme"><span>Show 256 variants</span></summary>    DivideError = 0,
+    Debug = 1,
+    NonMaskableInterrupt = 2,
+    Breakpoint = 3,
+    OverflowException = 4,
+    BoundRangeExceeded = 5,
+    InvalidOpcode = 6,
+    DeviceNotAvailable = 7,
+    DoubleFault = 8,
+    CoprocessorSegmentOverrun = 9,
+    InvalidTss = 10,
+    SegmentNotPresent = 11,
+    StackFault = 12,
+    GeneralProtection = 13,
+    PageFault = 14,
+    _Reserved0 = 15,
+    X87FpuFloatingPointError = 16,
+    AlignmentCheckException = 17,
+    MachineCheckException = 18,
+    SimdFloatingPointException = 19,
+    VirtualizationException = 20,
+    _Reserved1 = 21,
+    _Reserved2 = 22,
+    _Reserved3 = 23,
+    _Reserved4 = 24,
+    _Reserved5 = 25,
+    _Reserved6 = 26,
+    _Reserved7 = 27,
+    _Reserved8 = 28,
+    _Reserved9 = 29,
+    _Reserved10 = 30,
+    _Reserved11 = 31,
+    UserDefined0 = 32,
+    UserDefined1 = 33,
+    UserDefined2 = 34,
+    UserDefined3 = 35,
+    UserDefined4 = 36,
+    UserDefined5 = 37,
+    UserDefined6 = 38,
+    UserDefined7 = 39,
+    UserDefined8 = 40,
+    UserDefined9 = 41,
+    UserDefined10 = 42,
+    UserDefined11 = 43,
+    UserDefined12 = 44,
+    UserDefined13 = 45,
+    UserDefined14 = 46,
+    UserDefined15 = 47,
+    UserDefined16 = 48,
+    UserDefined17 = 49,
+    UserDefined18 = 50,
+    UserDefined19 = 51,
+    UserDefined20 = 52,
+    UserDefined21 = 53,
+    UserDefined22 = 54,
+    UserDefined23 = 55,
+    UserDefined24 = 56,
+    UserDefined25 = 57,
+    UserDefined26 = 58,
+    UserDefined27 = 59,
+    UserDefined28 = 60,
+    UserDefined29 = 61,
+    UserDefined30 = 62,
+    UserDefined31 = 63,
+    UserDefined32 = 64,
+    UserDefined33 = 65,
+    UserDefined34 = 66,
+    UserDefined35 = 67,
+    UserDefined36 = 68,
+    UserDefined37 = 69,
+    UserDefined38 = 70,
+    UserDefined39 = 71,
+    UserDefined40 = 72,
+    UserDefined41 = 73,
+    UserDefined42 = 74,
+    UserDefined43 = 75,
+    UserDefined44 = 76,
+    UserDefined45 = 77,
+    UserDefined46 = 78,
+    UserDefined47 = 79,
+    UserDefined48 = 80,
+    UserDefined49 = 81,
+    UserDefined50 = 82,
+    UserDefined51 = 83,
+    UserDefined52 = 84,
+    UserDefined53 = 85,
+    UserDefined54 = 86,
+    UserDefined55 = 87,
+    UserDefined56 = 88,
+    UserDefined57 = 89,
+    UserDefined58 = 90,
+    UserDefined59 = 91,
+    UserDefined60 = 92,
+    UserDefined61 = 93,
+    UserDefined62 = 94,
+    UserDefined63 = 95,
+    UserDefined64 = 96,
+    UserDefined65 = 97,
+    UserDefined66 = 98,
+    UserDefined67 = 99,
+    UserDefined68 = 100,
+    UserDefined69 = 101,
+    UserDefined70 = 102,
+    UserDefined71 = 103,
+    UserDefined72 = 104,
+    UserDefined73 = 105,
+    UserDefined74 = 106,
+    UserDefined75 = 107,
+    UserDefined76 = 108,
+    UserDefined77 = 109,
+    UserDefined78 = 110,
+    UserDefined79 = 111,
+    UserDefined80 = 112,
+    UserDefined81 = 113,
+    UserDefined82 = 114,
+    UserDefined83 = 115,
+    UserDefined84 = 116,
+    UserDefined85 = 117,
+    UserDefined86 = 118,
+    UserDefined87 = 119,
+    UserDefined88 = 120,
+    UserDefined89 = 121,
+    UserDefined90 = 122,
+    UserDefined91 = 123,
+    UserDefined92 = 124,
+    UserDefined93 = 125,
+    UserDefined94 = 126,
+    UserDefined95 = 127,
+    UserDefined96 = 128,
+    UserDefined97 = 129,
+    UserDefined98 = 130,
+    UserDefined99 = 131,
+    UserDefined100 = 132,
+    UserDefined101 = 133,
+    UserDefined102 = 134,
+    UserDefined103 = 135,
+    UserDefined104 = 136,
+    UserDefined105 = 137,
+    UserDefined106 = 138,
+    UserDefined107 = 139,
+    UserDefined108 = 140,
+    UserDefined109 = 141,
+    UserDefined110 = 142,
+    UserDefined111 = 143,
+    UserDefined112 = 144,
+    UserDefined113 = 145,
+    UserDefined114 = 146,
+    UserDefined115 = 147,
+    UserDefined116 = 148,
+    UserDefined117 = 149,
+    UserDefined118 = 150,
+    UserDefined119 = 151,
+    UserDefined120 = 152,
+    UserDefined121 = 153,
+    UserDefined122 = 154,
+    UserDefined123 = 155,
+    UserDefined124 = 156,
+    UserDefined125 = 157,
+    UserDefined126 = 158,
+    UserDefined127 = 159,
+    UserDefined128 = 160,
+    UserDefined129 = 161,
+    UserDefined130 = 162,
+    UserDefined131 = 163,
+    UserDefined132 = 164,
+    UserDefined133 = 165,
+    UserDefined134 = 166,
+    UserDefined135 = 167,
+    UserDefined136 = 168,
+    UserDefined137 = 169,
+    UserDefined138 = 170,
+    UserDefined139 = 171,
+    UserDefined140 = 172,
+    UserDefined141 = 173,
+    UserDefined142 = 174,
+    UserDefined143 = 175,
+    UserDefined144 = 176,
+    UserDefined145 = 177,
+    UserDefined146 = 178,
+    UserDefined147 = 179,
+    UserDefined148 = 180,
+    UserDefined149 = 181,
+    UserDefined150 = 182,
+    UserDefined151 = 183,
+    UserDefined152 = 184,
+    UserDefined153 = 185,
+    UserDefined154 = 186,
+    UserDefined155 = 187,
+    UserDefined156 = 188,
+    UserDefined157 = 189,
+    UserDefined158 = 190,
+    UserDefined159 = 191,
+    UserDefined160 = 192,
+    UserDefined161 = 193,
+    UserDefined162 = 194,
+    UserDefined163 = 195,
+    UserDefined164 = 196,
+    UserDefined165 = 197,
+    UserDefined166 = 198,
+    UserDefined167 = 199,
+    UserDefined168 = 200,
+    UserDefined169 = 201,
+    UserDefined170 = 202,
+    UserDefined171 = 203,
+    UserDefined172 = 204,
+    UserDefined173 = 205,
+    UserDefined174 = 206,
+    UserDefined175 = 207,
+    UserDefined176 = 208,
+    UserDefined177 = 209,
+    UserDefined178 = 210,
+    UserDefined179 = 211,
+    UserDefined180 = 212,
+    UserDefined181 = 213,
+    UserDefined182 = 214,
+    UserDefined183 = 215,
+    UserDefined184 = 216,
+    UserDefined185 = 217,
+    UserDefined186 = 218,
+    UserDefined187 = 219,
+    UserDefined188 = 220,
+    UserDefined189 = 221,
+    UserDefined190 = 222,
+    UserDefined191 = 223,
+    UserDefined192 = 224,
+    UserDefined193 = 225,
+    UserDefined194 = 226,
+    UserDefined195 = 227,
+    UserDefined196 = 228,
+    UserDefined197 = 229,
+    UserDefined198 = 230,
+    UserDefined199 = 231,
+    UserDefined200 = 232,
+    UserDefined201 = 233,
+    UserDefined202 = 234,
+    UserDefined203 = 235,
+    UserDefined204 = 236,
+    UserDefined205 = 237,
+    UserDefined206 = 238,
+    UserDefined207 = 239,
+    UserDefined208 = 240,
+    UserDefined209 = 241,
+    UserDefined210 = 242,
+    UserDefined211 = 243,
+    UserDefined212 = 244,
+    UserDefined213 = 245,
+    UserDefined214 = 246,
+    UserDefined215 = 247,
+    UserDefined216 = 248,
+    UserDefined217 = 249,
+    UserDefined218 = 250,
+    UserDefined219 = 251,
+    UserDefined220 = 252,
+    UserDefined221 = 253,
+    UserDefined222 = 254,
+    UserDefined223 = 255,
+</details>}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Exception vector enumeration of the x86_64.</p>
+<p>See Intel 64 and IA-32 Architectures Software Developer’s Manual, Volume
+3A: System Programming Guide, Part 1, Chapter 6.15.</p>
+</div></details><h2 id="variants" class="variants section-header">Variants<a href="#variants" class="anchor">§</a></h2><div class="variants"><section id="variant.DivideError" class="variant"><a href="#variant.DivideError" class="anchor">§</a><h3 class="code-header">DivideError = 0</h3></section><div class="docblock"><p>Interrupt 0 - Divide Error Exception (#DE)</p>
+</div><section id="variant.Debug" class="variant"><a href="#variant.Debug" class="anchor">§</a><h3 class="code-header">Debug = 1</h3></section><div class="docblock"><p>Interrupt 1 - Debug Exception (#DB)</p>
+</div><section id="variant.NonMaskableInterrupt" class="variant"><a href="#variant.NonMaskableInterrupt" class="anchor">§</a><h3 class="code-header">NonMaskableInterrupt = 2</h3></section><div class="docblock"><p>Interrupt 2 - NonMaskableInterrupt Interrupt</p>
+</div><section id="variant.Breakpoint" class="variant"><a href="#variant.Breakpoint" class="anchor">§</a><h3 class="code-header">Breakpoint = 3</h3></section><div class="docblock"><p>Interrupt 3 - Breakpoint Exception (#BP)</p>
+</div><section id="variant.OverflowException" class="variant"><a href="#variant.OverflowException" class="anchor">§</a><h3 class="code-header">OverflowException = 4</h3></section><div class="docblock"><p>Interrupt 4 - Overflow Exception (#OF)</p>
+</div><section id="variant.BoundRangeExceeded" class="variant"><a href="#variant.BoundRangeExceeded" class="anchor">§</a><h3 class="code-header">BoundRangeExceeded = 5</h3></section><div class="docblock"><p>Interrupt 5 - Bound Range Exceeded Exception (#BR)</p>
+</div><section id="variant.InvalidOpcode" class="variant"><a href="#variant.InvalidOpcode" class="anchor">§</a><h3 class="code-header">InvalidOpcode = 6</h3></section><div class="docblock"><p>Interrupt 6 - Invalid Opcode Exception (#UD)</p>
+</div><section id="variant.DeviceNotAvailable" class="variant"><a href="#variant.DeviceNotAvailable" class="anchor">§</a><h3 class="code-header">DeviceNotAvailable = 7</h3></section><div class="docblock"><p>Interrupt 7 - Device Not Available Exception (#NM)</p>
+</div><section id="variant.DoubleFault" class="variant"><a href="#variant.DoubleFault" class="anchor">§</a><h3 class="code-header">DoubleFault = 8</h3></section><div class="docblock"><p>Interrupt 8 - Double Fault Exception (#DF)</p>
+</div><section id="variant.CoprocessorSegmentOverrun" class="variant"><a href="#variant.CoprocessorSegmentOverrun" class="anchor">§</a><h3 class="code-header">CoprocessorSegmentOverrun = 9</h3></section><div class="docblock"><p>Interrupt 9 - Coprocessor Segment Overrun</p>
+</div><section id="variant.InvalidTss" class="variant"><a href="#variant.InvalidTss" class="anchor">§</a><h3 class="code-header">InvalidTss = 10</h3></section><div class="docblock"><p>Interrupt 10 - Invalid TSS Exception (#TS)</p>
+</div><section id="variant.SegmentNotPresent" class="variant"><a href="#variant.SegmentNotPresent" class="anchor">§</a><h3 class="code-header">SegmentNotPresent = 11</h3></section><div class="docblock"><p>Interrupt 11 - Segment Not Present (#NP)</p>
+</div><section id="variant.StackFault" class="variant"><a href="#variant.StackFault" class="anchor">§</a><h3 class="code-header">StackFault = 12</h3></section><div class="docblock"><p>Interrupt 12 - Stack Fault Exception (#SS)</p>
+</div><section id="variant.GeneralProtection" class="variant"><a href="#variant.GeneralProtection" class="anchor">§</a><h3 class="code-header">GeneralProtection = 13</h3></section><div class="docblock"><p>Interrupt 13 - General Protection Exception (#GP)</p>
+</div><section id="variant.PageFault" class="variant"><a href="#variant.PageFault" class="anchor">§</a><h3 class="code-header">PageFault = 14</h3></section><div class="docblock"><p>Interrupt 14 - Page-Fault Exception (#PF)</p>
+</div><section id="variant._Reserved0" class="variant"><a href="#variant._Reserved0" class="anchor">§</a><h3 class="code-header">_Reserved0 = 15</h3></section><div class="docblock"><p>Interrupt 15 - Reserved.</p>
+</div><section id="variant.X87FpuFloatingPointError" class="variant"><a href="#variant.X87FpuFloatingPointError" class="anchor">§</a><h3 class="code-header">X87FpuFloatingPointError = 16</h3></section><div class="docblock"><p>Interrupt 16 - x87 FPU Floating-Point Error (#MF)</p>
+</div><section id="variant.AlignmentCheckException" class="variant"><a href="#variant.AlignmentCheckException" class="anchor">§</a><h3 class="code-header">AlignmentCheckException = 17</h3></section><div class="docblock"><p>Interrupt 17 - Alignment Check Exception (#AC)</p>
+</div><section id="variant.MachineCheckException" class="variant"><a href="#variant.MachineCheckException" class="anchor">§</a><h3 class="code-header">MachineCheckException = 18</h3></section><div class="docblock"><p>Interrupt 18 - Machine-Check Exception (#MC)</p>
+</div><section id="variant.SimdFloatingPointException" class="variant"><a href="#variant.SimdFloatingPointException" class="anchor">§</a><h3 class="code-header">SimdFloatingPointException = 19</h3></section><div class="docblock"><p>Interrupt 19 - SIMD Floating-Point Exception (#XM)</p>
+</div><section id="variant.VirtualizationException" class="variant"><a href="#variant.VirtualizationException" class="anchor">§</a><h3 class="code-header">VirtualizationException = 20</h3></section><div class="docblock"><p>Interrupt 20 - Virtualization Exception (#VE)</p>
+</div><section id="variant._Reserved1" class="variant"><a href="#variant._Reserved1" class="anchor">§</a><h3 class="code-header">_Reserved1 = 21</h3></section><div class="docblock"><p>Interrupt 21 - Reserved1.</p>
+</div><section id="variant._Reserved2" class="variant"><a href="#variant._Reserved2" class="anchor">§</a><h3 class="code-header">_Reserved2 = 22</h3></section><div class="docblock"><p>Interrupt 22 - Reserved2.</p>
+</div><section id="variant._Reserved3" class="variant"><a href="#variant._Reserved3" class="anchor">§</a><h3 class="code-header">_Reserved3 = 23</h3></section><div class="docblock"><p>Interrupt 23 - Reserved3.</p>
+</div><section id="variant._Reserved4" class="variant"><a href="#variant._Reserved4" class="anchor">§</a><h3 class="code-header">_Reserved4 = 24</h3></section><div class="docblock"><p>Interrupt 24 - Reserved4.</p>
+</div><section id="variant._Reserved5" class="variant"><a href="#variant._Reserved5" class="anchor">§</a><h3 class="code-header">_Reserved5 = 25</h3></section><div class="docblock"><p>Interrupt 25 - Reserved5.</p>
+</div><section id="variant._Reserved6" class="variant"><a href="#variant._Reserved6" class="anchor">§</a><h3 class="code-header">_Reserved6 = 26</h3></section><div class="docblock"><p>Interrupt 26 - Reserved6.</p>
+</div><section id="variant._Reserved7" class="variant"><a href="#variant._Reserved7" class="anchor">§</a><h3 class="code-header">_Reserved7 = 27</h3></section><div class="docblock"><p>Interrupt 27 - Reserved7.</p>
+</div><section id="variant._Reserved8" class="variant"><a href="#variant._Reserved8" class="anchor">§</a><h3 class="code-header">_Reserved8 = 28</h3></section><div class="docblock"><p>Interrupt 28 - Reserved8.</p>
+</div><section id="variant._Reserved9" class="variant"><a href="#variant._Reserved9" class="anchor">§</a><h3 class="code-header">_Reserved9 = 29</h3></section><div class="docblock"><p>Interrupt 29 - Reserved9.</p>
+</div><section id="variant._Reserved10" class="variant"><a href="#variant._Reserved10" class="anchor">§</a><h3 class="code-header">_Reserved10 = 30</h3></section><div class="docblock"><p>Interrupt 30 - Reserved10.</p>
+</div><section id="variant._Reserved11" class="variant"><a href="#variant._Reserved11" class="anchor">§</a><h3 class="code-header">_Reserved11 = 31</h3></section><div class="docblock"><p>Interrupt 31 - Reserved11.</p>
+</div><section id="variant.UserDefined0" class="variant"><a href="#variant.UserDefined0" class="anchor">§</a><h3 class="code-header">UserDefined0 = 32</h3></section><div class="docblock"><p>Interrupt 32 - User Defined Interrupt0</p>
+</div><section id="variant.UserDefined1" class="variant"><a href="#variant.UserDefined1" class="anchor">§</a><h3 class="code-header">UserDefined1 = 33</h3></section><div class="docblock"><p>Interrupt 33 - User Defined Interrupt1</p>
+</div><section id="variant.UserDefined2" class="variant"><a href="#variant.UserDefined2" class="anchor">§</a><h3 class="code-header">UserDefined2 = 34</h3></section><div class="docblock"><p>Interrupt 34 - User Defined Interrupt2</p>
+</div><section id="variant.UserDefined3" class="variant"><a href="#variant.UserDefined3" class="anchor">§</a><h3 class="code-header">UserDefined3 = 35</h3></section><div class="docblock"><p>Interrupt 35 - User Defined Interrupt3</p>
+</div><section id="variant.UserDefined4" class="variant"><a href="#variant.UserDefined4" class="anchor">§</a><h3 class="code-header">UserDefined4 = 36</h3></section><div class="docblock"><p>Interrupt 36 - User Defined Interrupt4</p>
+</div><section id="variant.UserDefined5" class="variant"><a href="#variant.UserDefined5" class="anchor">§</a><h3 class="code-header">UserDefined5 = 37</h3></section><div class="docblock"><p>Interrupt 37 - User Defined Interrupt5</p>
+</div><section id="variant.UserDefined6" class="variant"><a href="#variant.UserDefined6" class="anchor">§</a><h3 class="code-header">UserDefined6 = 38</h3></section><div class="docblock"><p>Interrupt 38 - User Defined Interrupt6</p>
+</div><section id="variant.UserDefined7" class="variant"><a href="#variant.UserDefined7" class="anchor">§</a><h3 class="code-header">UserDefined7 = 39</h3></section><div class="docblock"><p>Interrupt 39 - User Defined Interrupt7</p>
+</div><section id="variant.UserDefined8" class="variant"><a href="#variant.UserDefined8" class="anchor">§</a><h3 class="code-header">UserDefined8 = 40</h3></section><div class="docblock"><p>Interrupt 40 - User Defined Interrupt8</p>
+</div><section id="variant.UserDefined9" class="variant"><a href="#variant.UserDefined9" class="anchor">§</a><h3 class="code-header">UserDefined9 = 41</h3></section><div class="docblock"><p>Interrupt 41 - User Defined Interrupt9</p>
+</div><section id="variant.UserDefined10" class="variant"><a href="#variant.UserDefined10" class="anchor">§</a><h3 class="code-header">UserDefined10 = 42</h3></section><div class="docblock"><p>Interrupt 42 - User Defined Interrupt10</p>
+</div><section id="variant.UserDefined11" class="variant"><a href="#variant.UserDefined11" class="anchor">§</a><h3 class="code-header">UserDefined11 = 43</h3></section><div class="docblock"><p>Interrupt 43 - User Defined Interrupt11</p>
+</div><section id="variant.UserDefined12" class="variant"><a href="#variant.UserDefined12" class="anchor">§</a><h3 class="code-header">UserDefined12 = 44</h3></section><div class="docblock"><p>Interrupt 44 - User Defined Interrupt12</p>
+</div><section id="variant.UserDefined13" class="variant"><a href="#variant.UserDefined13" class="anchor">§</a><h3 class="code-header">UserDefined13 = 45</h3></section><div class="docblock"><p>Interrupt 45 - User Defined Interrupt13</p>
+</div><section id="variant.UserDefined14" class="variant"><a href="#variant.UserDefined14" class="anchor">§</a><h3 class="code-header">UserDefined14 = 46</h3></section><div class="docblock"><p>Interrupt 46 - User Defined Interrupt14</p>
+</div><section id="variant.UserDefined15" class="variant"><a href="#variant.UserDefined15" class="anchor">§</a><h3 class="code-header">UserDefined15 = 47</h3></section><div class="docblock"><p>Interrupt 47 - User Defined Interrupt15</p>
+</div><section id="variant.UserDefined16" class="variant"><a href="#variant.UserDefined16" class="anchor">§</a><h3 class="code-header">UserDefined16 = 48</h3></section><div class="docblock"><p>Interrupt 48 - User Defined Interrupt16</p>
+</div><section id="variant.UserDefined17" class="variant"><a href="#variant.UserDefined17" class="anchor">§</a><h3 class="code-header">UserDefined17 = 49</h3></section><div class="docblock"><p>Interrupt 49 - User Defined Interrupt17</p>
+</div><section id="variant.UserDefined18" class="variant"><a href="#variant.UserDefined18" class="anchor">§</a><h3 class="code-header">UserDefined18 = 50</h3></section><div class="docblock"><p>Interrupt 50 - User Defined Interrupt18</p>
+</div><section id="variant.UserDefined19" class="variant"><a href="#variant.UserDefined19" class="anchor">§</a><h3 class="code-header">UserDefined19 = 51</h3></section><div class="docblock"><p>Interrupt 51 - User Defined Interrupt19</p>
+</div><section id="variant.UserDefined20" class="variant"><a href="#variant.UserDefined20" class="anchor">§</a><h3 class="code-header">UserDefined20 = 52</h3></section><div class="docblock"><p>Interrupt 52 - User Defined Interrupt20</p>
+</div><section id="variant.UserDefined21" class="variant"><a href="#variant.UserDefined21" class="anchor">§</a><h3 class="code-header">UserDefined21 = 53</h3></section><div class="docblock"><p>Interrupt 53 - User Defined Interrupt21</p>
+</div><section id="variant.UserDefined22" class="variant"><a href="#variant.UserDefined22" class="anchor">§</a><h3 class="code-header">UserDefined22 = 54</h3></section><div class="docblock"><p>Interrupt 54 - User Defined Interrupt22</p>
+</div><section id="variant.UserDefined23" class="variant"><a href="#variant.UserDefined23" class="anchor">§</a><h3 class="code-header">UserDefined23 = 55</h3></section><div class="docblock"><p>Interrupt 55 - User Defined Interrupt23</p>
+</div><section id="variant.UserDefined24" class="variant"><a href="#variant.UserDefined24" class="anchor">§</a><h3 class="code-header">UserDefined24 = 56</h3></section><div class="docblock"><p>Interrupt 56 - User Defined Interrupt24</p>
+</div><section id="variant.UserDefined25" class="variant"><a href="#variant.UserDefined25" class="anchor">§</a><h3 class="code-header">UserDefined25 = 57</h3></section><div class="docblock"><p>Interrupt 57 - User Defined Interrupt25</p>
+</div><section id="variant.UserDefined26" class="variant"><a href="#variant.UserDefined26" class="anchor">§</a><h3 class="code-header">UserDefined26 = 58</h3></section><div class="docblock"><p>Interrupt 58 - User Defined Interrupt26</p>
+</div><section id="variant.UserDefined27" class="variant"><a href="#variant.UserDefined27" class="anchor">§</a><h3 class="code-header">UserDefined27 = 59</h3></section><div class="docblock"><p>Interrupt 59 - User Defined Interrupt27</p>
+</div><section id="variant.UserDefined28" class="variant"><a href="#variant.UserDefined28" class="anchor">§</a><h3 class="code-header">UserDefined28 = 60</h3></section><div class="docblock"><p>Interrupt 60 - User Defined Interrupt28</p>
+</div><section id="variant.UserDefined29" class="variant"><a href="#variant.UserDefined29" class="anchor">§</a><h3 class="code-header">UserDefined29 = 61</h3></section><div class="docblock"><p>Interrupt 61 - User Defined Interrupt29</p>
+</div><section id="variant.UserDefined30" class="variant"><a href="#variant.UserDefined30" class="anchor">§</a><h3 class="code-header">UserDefined30 = 62</h3></section><div class="docblock"><p>Interrupt 62 - User Defined Interrupt30</p>
+</div><section id="variant.UserDefined31" class="variant"><a href="#variant.UserDefined31" class="anchor">§</a><h3 class="code-header">UserDefined31 = 63</h3></section><div class="docblock"><p>Interrupt 63 - User Defined Interrupt31</p>
+</div><section id="variant.UserDefined32" class="variant"><a href="#variant.UserDefined32" class="anchor">§</a><h3 class="code-header">UserDefined32 = 64</h3></section><div class="docblock"><p>Interrupt 64 - User Defined Interrupt32</p>
+</div><section id="variant.UserDefined33" class="variant"><a href="#variant.UserDefined33" class="anchor">§</a><h3 class="code-header">UserDefined33 = 65</h3></section><div class="docblock"><p>Interrupt 65 - User Defined Interrupt33</p>
+</div><section id="variant.UserDefined34" class="variant"><a href="#variant.UserDefined34" class="anchor">§</a><h3 class="code-header">UserDefined34 = 66</h3></section><div class="docblock"><p>Interrupt 66 - User Defined Interrupt34</p>
+</div><section id="variant.UserDefined35" class="variant"><a href="#variant.UserDefined35" class="anchor">§</a><h3 class="code-header">UserDefined35 = 67</h3></section><div class="docblock"><p>Interrupt 67 - User Defined Interrupt35</p>
+</div><section id="variant.UserDefined36" class="variant"><a href="#variant.UserDefined36" class="anchor">§</a><h3 class="code-header">UserDefined36 = 68</h3></section><div class="docblock"><p>Interrupt 68 - User Defined Interrupt36</p>
+</div><section id="variant.UserDefined37" class="variant"><a href="#variant.UserDefined37" class="anchor">§</a><h3 class="code-header">UserDefined37 = 69</h3></section><div class="docblock"><p>Interrupt 69 - User Defined Interrupt37</p>
+</div><section id="variant.UserDefined38" class="variant"><a href="#variant.UserDefined38" class="anchor">§</a><h3 class="code-header">UserDefined38 = 70</h3></section><div class="docblock"><p>Interrupt 70 - User Defined Interrupt38</p>
+</div><section id="variant.UserDefined39" class="variant"><a href="#variant.UserDefined39" class="anchor">§</a><h3 class="code-header">UserDefined39 = 71</h3></section><div class="docblock"><p>Interrupt 71 - User Defined Interrupt39</p>
+</div><section id="variant.UserDefined40" class="variant"><a href="#variant.UserDefined40" class="anchor">§</a><h3 class="code-header">UserDefined40 = 72</h3></section><div class="docblock"><p>Interrupt 72 - User Defined Interrupt40</p>
+</div><section id="variant.UserDefined41" class="variant"><a href="#variant.UserDefined41" class="anchor">§</a><h3 class="code-header">UserDefined41 = 73</h3></section><div class="docblock"><p>Interrupt 73 - User Defined Interrupt41</p>
+</div><section id="variant.UserDefined42" class="variant"><a href="#variant.UserDefined42" class="anchor">§</a><h3 class="code-header">UserDefined42 = 74</h3></section><div class="docblock"><p>Interrupt 74 - User Defined Interrupt42</p>
+</div><section id="variant.UserDefined43" class="variant"><a href="#variant.UserDefined43" class="anchor">§</a><h3 class="code-header">UserDefined43 = 75</h3></section><div class="docblock"><p>Interrupt 75 - User Defined Interrupt43</p>
+</div><section id="variant.UserDefined44" class="variant"><a href="#variant.UserDefined44" class="anchor">§</a><h3 class="code-header">UserDefined44 = 76</h3></section><div class="docblock"><p>Interrupt 76 - User Defined Interrupt44</p>
+</div><section id="variant.UserDefined45" class="variant"><a href="#variant.UserDefined45" class="anchor">§</a><h3 class="code-header">UserDefined45 = 77</h3></section><div class="docblock"><p>Interrupt 77 - User Defined Interrupt45</p>
+</div><section id="variant.UserDefined46" class="variant"><a href="#variant.UserDefined46" class="anchor">§</a><h3 class="code-header">UserDefined46 = 78</h3></section><div class="docblock"><p>Interrupt 78 - User Defined Interrupt46</p>
+</div><section id="variant.UserDefined47" class="variant"><a href="#variant.UserDefined47" class="anchor">§</a><h3 class="code-header">UserDefined47 = 79</h3></section><div class="docblock"><p>Interrupt 79 - User Defined Interrupt47</p>
+</div><section id="variant.UserDefined48" class="variant"><a href="#variant.UserDefined48" class="anchor">§</a><h3 class="code-header">UserDefined48 = 80</h3></section><div class="docblock"><p>Interrupt 80 - User Defined Interrupt48</p>
+</div><section id="variant.UserDefined49" class="variant"><a href="#variant.UserDefined49" class="anchor">§</a><h3 class="code-header">UserDefined49 = 81</h3></section><div class="docblock"><p>Interrupt 81 - User Defined Interrupt49</p>
+</div><section id="variant.UserDefined50" class="variant"><a href="#variant.UserDefined50" class="anchor">§</a><h3 class="code-header">UserDefined50 = 82</h3></section><div class="docblock"><p>Interrupt 82 - User Defined Interrupt50</p>
+</div><section id="variant.UserDefined51" class="variant"><a href="#variant.UserDefined51" class="anchor">§</a><h3 class="code-header">UserDefined51 = 83</h3></section><div class="docblock"><p>Interrupt 83 - User Defined Interrupt51</p>
+</div><section id="variant.UserDefined52" class="variant"><a href="#variant.UserDefined52" class="anchor">§</a><h3 class="code-header">UserDefined52 = 84</h3></section><div class="docblock"><p>Interrupt 84 - User Defined Interrupt52</p>
+</div><section id="variant.UserDefined53" class="variant"><a href="#variant.UserDefined53" class="anchor">§</a><h3 class="code-header">UserDefined53 = 85</h3></section><div class="docblock"><p>Interrupt 85 - User Defined Interrupt53</p>
+</div><section id="variant.UserDefined54" class="variant"><a href="#variant.UserDefined54" class="anchor">§</a><h3 class="code-header">UserDefined54 = 86</h3></section><div class="docblock"><p>Interrupt 86 - User Defined Interrupt54</p>
+</div><section id="variant.UserDefined55" class="variant"><a href="#variant.UserDefined55" class="anchor">§</a><h3 class="code-header">UserDefined55 = 87</h3></section><div class="docblock"><p>Interrupt 87 - User Defined Interrupt55</p>
+</div><section id="variant.UserDefined56" class="variant"><a href="#variant.UserDefined56" class="anchor">§</a><h3 class="code-header">UserDefined56 = 88</h3></section><div class="docblock"><p>Interrupt 88 - User Defined Interrupt56</p>
+</div><section id="variant.UserDefined57" class="variant"><a href="#variant.UserDefined57" class="anchor">§</a><h3 class="code-header">UserDefined57 = 89</h3></section><div class="docblock"><p>Interrupt 89 - User Defined Interrupt57</p>
+</div><section id="variant.UserDefined58" class="variant"><a href="#variant.UserDefined58" class="anchor">§</a><h3 class="code-header">UserDefined58 = 90</h3></section><div class="docblock"><p>Interrupt 90 - User Defined Interrupt58</p>
+</div><section id="variant.UserDefined59" class="variant"><a href="#variant.UserDefined59" class="anchor">§</a><h3 class="code-header">UserDefined59 = 91</h3></section><div class="docblock"><p>Interrupt 91 - User Defined Interrupt59</p>
+</div><section id="variant.UserDefined60" class="variant"><a href="#variant.UserDefined60" class="anchor">§</a><h3 class="code-header">UserDefined60 = 92</h3></section><div class="docblock"><p>Interrupt 92 - User Defined Interrupt60</p>
+</div><section id="variant.UserDefined61" class="variant"><a href="#variant.UserDefined61" class="anchor">§</a><h3 class="code-header">UserDefined61 = 93</h3></section><div class="docblock"><p>Interrupt 93 - User Defined Interrupt61</p>
+</div><section id="variant.UserDefined62" class="variant"><a href="#variant.UserDefined62" class="anchor">§</a><h3 class="code-header">UserDefined62 = 94</h3></section><div class="docblock"><p>Interrupt 94 - User Defined Interrupt62</p>
+</div><section id="variant.UserDefined63" class="variant"><a href="#variant.UserDefined63" class="anchor">§</a><h3 class="code-header">UserDefined63 = 95</h3></section><div class="docblock"><p>Interrupt 95 - User Defined Interrupt63</p>
+</div><section id="variant.UserDefined64" class="variant"><a href="#variant.UserDefined64" class="anchor">§</a><h3 class="code-header">UserDefined64 = 96</h3></section><div class="docblock"><p>Interrupt 96 - User Defined Interrupt64</p>
+</div><section id="variant.UserDefined65" class="variant"><a href="#variant.UserDefined65" class="anchor">§</a><h3 class="code-header">UserDefined65 = 97</h3></section><div class="docblock"><p>Interrupt 97 - User Defined Interrupt65</p>
+</div><section id="variant.UserDefined66" class="variant"><a href="#variant.UserDefined66" class="anchor">§</a><h3 class="code-header">UserDefined66 = 98</h3></section><div class="docblock"><p>Interrupt 98 - User Defined Interrupt66</p>
+</div><section id="variant.UserDefined67" class="variant"><a href="#variant.UserDefined67" class="anchor">§</a><h3 class="code-header">UserDefined67 = 99</h3></section><div class="docblock"><p>Interrupt 99 - User Defined Interrupt67</p>
+</div><section id="variant.UserDefined68" class="variant"><a href="#variant.UserDefined68" class="anchor">§</a><h3 class="code-header">UserDefined68 = 100</h3></section><div class="docblock"><p>Interrupt 100 - User Defined Interrupt68</p>
+</div><section id="variant.UserDefined69" class="variant"><a href="#variant.UserDefined69" class="anchor">§</a><h3 class="code-header">UserDefined69 = 101</h3></section><div class="docblock"><p>Interrupt 101 - User Defined Interrupt69</p>
+</div><section id="variant.UserDefined70" class="variant"><a href="#variant.UserDefined70" class="anchor">§</a><h3 class="code-header">UserDefined70 = 102</h3></section><div class="docblock"><p>Interrupt 102 - User Defined Interrupt70</p>
+</div><section id="variant.UserDefined71" class="variant"><a href="#variant.UserDefined71" class="anchor">§</a><h3 class="code-header">UserDefined71 = 103</h3></section><div class="docblock"><p>Interrupt 103 - User Defined Interrupt71</p>
+</div><section id="variant.UserDefined72" class="variant"><a href="#variant.UserDefined72" class="anchor">§</a><h3 class="code-header">UserDefined72 = 104</h3></section><div class="docblock"><p>Interrupt 104 - User Defined Interrupt72</p>
+</div><section id="variant.UserDefined73" class="variant"><a href="#variant.UserDefined73" class="anchor">§</a><h3 class="code-header">UserDefined73 = 105</h3></section><div class="docblock"><p>Interrupt 105 - User Defined Interrupt73</p>
+</div><section id="variant.UserDefined74" class="variant"><a href="#variant.UserDefined74" class="anchor">§</a><h3 class="code-header">UserDefined74 = 106</h3></section><div class="docblock"><p>Interrupt 106 - User Defined Interrupt74</p>
+</div><section id="variant.UserDefined75" class="variant"><a href="#variant.UserDefined75" class="anchor">§</a><h3 class="code-header">UserDefined75 = 107</h3></section><div class="docblock"><p>Interrupt 107 - User Defined Interrupt75</p>
+</div><section id="variant.UserDefined76" class="variant"><a href="#variant.UserDefined76" class="anchor">§</a><h3 class="code-header">UserDefined76 = 108</h3></section><div class="docblock"><p>Interrupt 108 - User Defined Interrupt76</p>
+</div><section id="variant.UserDefined77" class="variant"><a href="#variant.UserDefined77" class="anchor">§</a><h3 class="code-header">UserDefined77 = 109</h3></section><div class="docblock"><p>Interrupt 109 - User Defined Interrupt77</p>
+</div><section id="variant.UserDefined78" class="variant"><a href="#variant.UserDefined78" class="anchor">§</a><h3 class="code-header">UserDefined78 = 110</h3></section><div class="docblock"><p>Interrupt 110 - User Defined Interrupt78</p>
+</div><section id="variant.UserDefined79" class="variant"><a href="#variant.UserDefined79" class="anchor">§</a><h3 class="code-header">UserDefined79 = 111</h3></section><div class="docblock"><p>Interrupt 111 - User Defined Interrupt79</p>
+</div><section id="variant.UserDefined80" class="variant"><a href="#variant.UserDefined80" class="anchor">§</a><h3 class="code-header">UserDefined80 = 112</h3></section><div class="docblock"><p>Interrupt 112 - User Defined Interrupt80</p>
+</div><section id="variant.UserDefined81" class="variant"><a href="#variant.UserDefined81" class="anchor">§</a><h3 class="code-header">UserDefined81 = 113</h3></section><div class="docblock"><p>Interrupt 113 - User Defined Interrupt81</p>
+</div><section id="variant.UserDefined82" class="variant"><a href="#variant.UserDefined82" class="anchor">§</a><h3 class="code-header">UserDefined82 = 114</h3></section><div class="docblock"><p>Interrupt 114 - User Defined Interrupt82</p>
+</div><section id="variant.UserDefined83" class="variant"><a href="#variant.UserDefined83" class="anchor">§</a><h3 class="code-header">UserDefined83 = 115</h3></section><div class="docblock"><p>Interrupt 115 - User Defined Interrupt83</p>
+</div><section id="variant.UserDefined84" class="variant"><a href="#variant.UserDefined84" class="anchor">§</a><h3 class="code-header">UserDefined84 = 116</h3></section><div class="docblock"><p>Interrupt 116 - User Defined Interrupt84</p>
+</div><section id="variant.UserDefined85" class="variant"><a href="#variant.UserDefined85" class="anchor">§</a><h3 class="code-header">UserDefined85 = 117</h3></section><div class="docblock"><p>Interrupt 117 - User Defined Interrupt85</p>
+</div><section id="variant.UserDefined86" class="variant"><a href="#variant.UserDefined86" class="anchor">§</a><h3 class="code-header">UserDefined86 = 118</h3></section><div class="docblock"><p>Interrupt 118 - User Defined Interrupt86</p>
+</div><section id="variant.UserDefined87" class="variant"><a href="#variant.UserDefined87" class="anchor">§</a><h3 class="code-header">UserDefined87 = 119</h3></section><div class="docblock"><p>Interrupt 119 - User Defined Interrupt87</p>
+</div><section id="variant.UserDefined88" class="variant"><a href="#variant.UserDefined88" class="anchor">§</a><h3 class="code-header">UserDefined88 = 120</h3></section><div class="docblock"><p>Interrupt 120 - User Defined Interrupt88</p>
+</div><section id="variant.UserDefined89" class="variant"><a href="#variant.UserDefined89" class="anchor">§</a><h3 class="code-header">UserDefined89 = 121</h3></section><div class="docblock"><p>Interrupt 121 - User Defined Interrupt89</p>
+</div><section id="variant.UserDefined90" class="variant"><a href="#variant.UserDefined90" class="anchor">§</a><h3 class="code-header">UserDefined90 = 122</h3></section><div class="docblock"><p>Interrupt 122 - User Defined Interrupt90</p>
+</div><section id="variant.UserDefined91" class="variant"><a href="#variant.UserDefined91" class="anchor">§</a><h3 class="code-header">UserDefined91 = 123</h3></section><div class="docblock"><p>Interrupt 123 - User Defined Interrupt91</p>
+</div><section id="variant.UserDefined92" class="variant"><a href="#variant.UserDefined92" class="anchor">§</a><h3 class="code-header">UserDefined92 = 124</h3></section><div class="docblock"><p>Interrupt 124 - User Defined Interrupt92</p>
+</div><section id="variant.UserDefined93" class="variant"><a href="#variant.UserDefined93" class="anchor">§</a><h3 class="code-header">UserDefined93 = 125</h3></section><div class="docblock"><p>Interrupt 125 - User Defined Interrupt93</p>
+</div><section id="variant.UserDefined94" class="variant"><a href="#variant.UserDefined94" class="anchor">§</a><h3 class="code-header">UserDefined94 = 126</h3></section><div class="docblock"><p>Interrupt 126 - User Defined Interrupt94</p>
+</div><section id="variant.UserDefined95" class="variant"><a href="#variant.UserDefined95" class="anchor">§</a><h3 class="code-header">UserDefined95 = 127</h3></section><div class="docblock"><p>Interrupt 127 - User Defined Interrupt95</p>
+</div><section id="variant.UserDefined96" class="variant"><a href="#variant.UserDefined96" class="anchor">§</a><h3 class="code-header">UserDefined96 = 128</h3></section><div class="docblock"><p>Interrupt 128 - User Defined Interrupt96</p>
+</div><section id="variant.UserDefined97" class="variant"><a href="#variant.UserDefined97" class="anchor">§</a><h3 class="code-header">UserDefined97 = 129</h3></section><div class="docblock"><p>Interrupt 129 - User Defined Interrupt97</p>
+</div><section id="variant.UserDefined98" class="variant"><a href="#variant.UserDefined98" class="anchor">§</a><h3 class="code-header">UserDefined98 = 130</h3></section><div class="docblock"><p>Interrupt 130 - User Defined Interrupt98</p>
+</div><section id="variant.UserDefined99" class="variant"><a href="#variant.UserDefined99" class="anchor">§</a><h3 class="code-header">UserDefined99 = 131</h3></section><div class="docblock"><p>Interrupt 131 - User Defined Interrupt99</p>
+</div><section id="variant.UserDefined100" class="variant"><a href="#variant.UserDefined100" class="anchor">§</a><h3 class="code-header">UserDefined100 = 132</h3></section><div class="docblock"><p>Interrupt 132 - User Defined Interrupt100</p>
+</div><section id="variant.UserDefined101" class="variant"><a href="#variant.UserDefined101" class="anchor">§</a><h3 class="code-header">UserDefined101 = 133</h3></section><div class="docblock"><p>Interrupt 133 - User Defined Interrupt101</p>
+</div><section id="variant.UserDefined102" class="variant"><a href="#variant.UserDefined102" class="anchor">§</a><h3 class="code-header">UserDefined102 = 134</h3></section><div class="docblock"><p>Interrupt 134 - User Defined Interrupt102</p>
+</div><section id="variant.UserDefined103" class="variant"><a href="#variant.UserDefined103" class="anchor">§</a><h3 class="code-header">UserDefined103 = 135</h3></section><div class="docblock"><p>Interrupt 135 - User Defined Interrupt103</p>
+</div><section id="variant.UserDefined104" class="variant"><a href="#variant.UserDefined104" class="anchor">§</a><h3 class="code-header">UserDefined104 = 136</h3></section><div class="docblock"><p>Interrupt 136 - User Defined Interrupt104</p>
+</div><section id="variant.UserDefined105" class="variant"><a href="#variant.UserDefined105" class="anchor">§</a><h3 class="code-header">UserDefined105 = 137</h3></section><div class="docblock"><p>Interrupt 137 - User Defined Interrupt105</p>
+</div><section id="variant.UserDefined106" class="variant"><a href="#variant.UserDefined106" class="anchor">§</a><h3 class="code-header">UserDefined106 = 138</h3></section><div class="docblock"><p>Interrupt 138 - User Defined Interrupt106</p>
+</div><section id="variant.UserDefined107" class="variant"><a href="#variant.UserDefined107" class="anchor">§</a><h3 class="code-header">UserDefined107 = 139</h3></section><div class="docblock"><p>Interrupt 139 - User Defined Interrupt107</p>
+</div><section id="variant.UserDefined108" class="variant"><a href="#variant.UserDefined108" class="anchor">§</a><h3 class="code-header">UserDefined108 = 140</h3></section><div class="docblock"><p>Interrupt 140 - User Defined Interrupt108</p>
+</div><section id="variant.UserDefined109" class="variant"><a href="#variant.UserDefined109" class="anchor">§</a><h3 class="code-header">UserDefined109 = 141</h3></section><div class="docblock"><p>Interrupt 141 - User Defined Interrupt109</p>
+</div><section id="variant.UserDefined110" class="variant"><a href="#variant.UserDefined110" class="anchor">§</a><h3 class="code-header">UserDefined110 = 142</h3></section><div class="docblock"><p>Interrupt 142 - User Defined Interrupt110</p>
+</div><section id="variant.UserDefined111" class="variant"><a href="#variant.UserDefined111" class="anchor">§</a><h3 class="code-header">UserDefined111 = 143</h3></section><div class="docblock"><p>Interrupt 143 - User Defined Interrupt111</p>
+</div><section id="variant.UserDefined112" class="variant"><a href="#variant.UserDefined112" class="anchor">§</a><h3 class="code-header">UserDefined112 = 144</h3></section><div class="docblock"><p>Interrupt 144 - User Defined Interrupt112</p>
+</div><section id="variant.UserDefined113" class="variant"><a href="#variant.UserDefined113" class="anchor">§</a><h3 class="code-header">UserDefined113 = 145</h3></section><div class="docblock"><p>Interrupt 145 - User Defined Interrupt113</p>
+</div><section id="variant.UserDefined114" class="variant"><a href="#variant.UserDefined114" class="anchor">§</a><h3 class="code-header">UserDefined114 = 146</h3></section><div class="docblock"><p>Interrupt 146 - User Defined Interrupt114</p>
+</div><section id="variant.UserDefined115" class="variant"><a href="#variant.UserDefined115" class="anchor">§</a><h3 class="code-header">UserDefined115 = 147</h3></section><div class="docblock"><p>Interrupt 147 - User Defined Interrupt115</p>
+</div><section id="variant.UserDefined116" class="variant"><a href="#variant.UserDefined116" class="anchor">§</a><h3 class="code-header">UserDefined116 = 148</h3></section><div class="docblock"><p>Interrupt 148 - User Defined Interrupt116</p>
+</div><section id="variant.UserDefined117" class="variant"><a href="#variant.UserDefined117" class="anchor">§</a><h3 class="code-header">UserDefined117 = 149</h3></section><div class="docblock"><p>Interrupt 149 - User Defined Interrupt117</p>
+</div><section id="variant.UserDefined118" class="variant"><a href="#variant.UserDefined118" class="anchor">§</a><h3 class="code-header">UserDefined118 = 150</h3></section><div class="docblock"><p>Interrupt 150 - User Defined Interrupt118</p>
+</div><section id="variant.UserDefined119" class="variant"><a href="#variant.UserDefined119" class="anchor">§</a><h3 class="code-header">UserDefined119 = 151</h3></section><div class="docblock"><p>Interrupt 151 - User Defined Interrupt119</p>
+</div><section id="variant.UserDefined120" class="variant"><a href="#variant.UserDefined120" class="anchor">§</a><h3 class="code-header">UserDefined120 = 152</h3></section><div class="docblock"><p>Interrupt 152 - User Defined Interrupt120</p>
+</div><section id="variant.UserDefined121" class="variant"><a href="#variant.UserDefined121" class="anchor">§</a><h3 class="code-header">UserDefined121 = 153</h3></section><div class="docblock"><p>Interrupt 153 - User Defined Interrupt121</p>
+</div><section id="variant.UserDefined122" class="variant"><a href="#variant.UserDefined122" class="anchor">§</a><h3 class="code-header">UserDefined122 = 154</h3></section><div class="docblock"><p>Interrupt 154 - User Defined Interrupt122</p>
+</div><section id="variant.UserDefined123" class="variant"><a href="#variant.UserDefined123" class="anchor">§</a><h3 class="code-header">UserDefined123 = 155</h3></section><div class="docblock"><p>Interrupt 155 - User Defined Interrupt123</p>
+</div><section id="variant.UserDefined124" class="variant"><a href="#variant.UserDefined124" class="anchor">§</a><h3 class="code-header">UserDefined124 = 156</h3></section><div class="docblock"><p>Interrupt 156 - User Defined Interrupt124</p>
+</div><section id="variant.UserDefined125" class="variant"><a href="#variant.UserDefined125" class="anchor">§</a><h3 class="code-header">UserDefined125 = 157</h3></section><div class="docblock"><p>Interrupt 157 - User Defined Interrupt125</p>
+</div><section id="variant.UserDefined126" class="variant"><a href="#variant.UserDefined126" class="anchor">§</a><h3 class="code-header">UserDefined126 = 158</h3></section><div class="docblock"><p>Interrupt 158 - User Defined Interrupt126</p>
+</div><section id="variant.UserDefined127" class="variant"><a href="#variant.UserDefined127" class="anchor">§</a><h3 class="code-header">UserDefined127 = 159</h3></section><div class="docblock"><p>Interrupt 159 - User Defined Interrupt127</p>
+</div><section id="variant.UserDefined128" class="variant"><a href="#variant.UserDefined128" class="anchor">§</a><h3 class="code-header">UserDefined128 = 160</h3></section><div class="docblock"><p>Interrupt 160 - User Defined Interrupt128</p>
+</div><section id="variant.UserDefined129" class="variant"><a href="#variant.UserDefined129" class="anchor">§</a><h3 class="code-header">UserDefined129 = 161</h3></section><div class="docblock"><p>Interrupt 161 - User Defined Interrupt129</p>
+</div><section id="variant.UserDefined130" class="variant"><a href="#variant.UserDefined130" class="anchor">§</a><h3 class="code-header">UserDefined130 = 162</h3></section><div class="docblock"><p>Interrupt 162 - User Defined Interrupt130</p>
+</div><section id="variant.UserDefined131" class="variant"><a href="#variant.UserDefined131" class="anchor">§</a><h3 class="code-header">UserDefined131 = 163</h3></section><div class="docblock"><p>Interrupt 163 - User Defined Interrupt131</p>
+</div><section id="variant.UserDefined132" class="variant"><a href="#variant.UserDefined132" class="anchor">§</a><h3 class="code-header">UserDefined132 = 164</h3></section><div class="docblock"><p>Interrupt 164 - User Defined Interrupt132</p>
+</div><section id="variant.UserDefined133" class="variant"><a href="#variant.UserDefined133" class="anchor">§</a><h3 class="code-header">UserDefined133 = 165</h3></section><div class="docblock"><p>Interrupt 165 - User Defined Interrupt133</p>
+</div><section id="variant.UserDefined134" class="variant"><a href="#variant.UserDefined134" class="anchor">§</a><h3 class="code-header">UserDefined134 = 166</h3></section><div class="docblock"><p>Interrupt 166 - User Defined Interrupt134</p>
+</div><section id="variant.UserDefined135" class="variant"><a href="#variant.UserDefined135" class="anchor">§</a><h3 class="code-header">UserDefined135 = 167</h3></section><div class="docblock"><p>Interrupt 167 - User Defined Interrupt135</p>
+</div><section id="variant.UserDefined136" class="variant"><a href="#variant.UserDefined136" class="anchor">§</a><h3 class="code-header">UserDefined136 = 168</h3></section><div class="docblock"><p>Interrupt 168 - User Defined Interrupt136</p>
+</div><section id="variant.UserDefined137" class="variant"><a href="#variant.UserDefined137" class="anchor">§</a><h3 class="code-header">UserDefined137 = 169</h3></section><div class="docblock"><p>Interrupt 169 - User Defined Interrupt137</p>
+</div><section id="variant.UserDefined138" class="variant"><a href="#variant.UserDefined138" class="anchor">§</a><h3 class="code-header">UserDefined138 = 170</h3></section><div class="docblock"><p>Interrupt 170 - User Defined Interrupt138</p>
+</div><section id="variant.UserDefined139" class="variant"><a href="#variant.UserDefined139" class="anchor">§</a><h3 class="code-header">UserDefined139 = 171</h3></section><div class="docblock"><p>Interrupt 171 - User Defined Interrupt139</p>
+</div><section id="variant.UserDefined140" class="variant"><a href="#variant.UserDefined140" class="anchor">§</a><h3 class="code-header">UserDefined140 = 172</h3></section><div class="docblock"><p>Interrupt 172 - User Defined Interrupt140</p>
+</div><section id="variant.UserDefined141" class="variant"><a href="#variant.UserDefined141" class="anchor">§</a><h3 class="code-header">UserDefined141 = 173</h3></section><div class="docblock"><p>Interrupt 173 - User Defined Interrupt141</p>
+</div><section id="variant.UserDefined142" class="variant"><a href="#variant.UserDefined142" class="anchor">§</a><h3 class="code-header">UserDefined142 = 174</h3></section><div class="docblock"><p>Interrupt 174 - User Defined Interrupt142</p>
+</div><section id="variant.UserDefined143" class="variant"><a href="#variant.UserDefined143" class="anchor">§</a><h3 class="code-header">UserDefined143 = 175</h3></section><div class="docblock"><p>Interrupt 175 - User Defined Interrupt143</p>
+</div><section id="variant.UserDefined144" class="variant"><a href="#variant.UserDefined144" class="anchor">§</a><h3 class="code-header">UserDefined144 = 176</h3></section><div class="docblock"><p>Interrupt 176 - User Defined Interrupt144</p>
+</div><section id="variant.UserDefined145" class="variant"><a href="#variant.UserDefined145" class="anchor">§</a><h3 class="code-header">UserDefined145 = 177</h3></section><div class="docblock"><p>Interrupt 177 - User Defined Interrupt145</p>
+</div><section id="variant.UserDefined146" class="variant"><a href="#variant.UserDefined146" class="anchor">§</a><h3 class="code-header">UserDefined146 = 178</h3></section><div class="docblock"><p>Interrupt 178 - User Defined Interrupt146</p>
+</div><section id="variant.UserDefined147" class="variant"><a href="#variant.UserDefined147" class="anchor">§</a><h3 class="code-header">UserDefined147 = 179</h3></section><div class="docblock"><p>Interrupt 179 - User Defined Interrupt147</p>
+</div><section id="variant.UserDefined148" class="variant"><a href="#variant.UserDefined148" class="anchor">§</a><h3 class="code-header">UserDefined148 = 180</h3></section><div class="docblock"><p>Interrupt 180 - User Defined Interrupt148</p>
+</div><section id="variant.UserDefined149" class="variant"><a href="#variant.UserDefined149" class="anchor">§</a><h3 class="code-header">UserDefined149 = 181</h3></section><div class="docblock"><p>Interrupt 181 - User Defined Interrupt149</p>
+</div><section id="variant.UserDefined150" class="variant"><a href="#variant.UserDefined150" class="anchor">§</a><h3 class="code-header">UserDefined150 = 182</h3></section><div class="docblock"><p>Interrupt 182 - User Defined Interrupt150</p>
+</div><section id="variant.UserDefined151" class="variant"><a href="#variant.UserDefined151" class="anchor">§</a><h3 class="code-header">UserDefined151 = 183</h3></section><div class="docblock"><p>Interrupt 183 - User Defined Interrupt151</p>
+</div><section id="variant.UserDefined152" class="variant"><a href="#variant.UserDefined152" class="anchor">§</a><h3 class="code-header">UserDefined152 = 184</h3></section><div class="docblock"><p>Interrupt 184 - User Defined Interrupt152</p>
+</div><section id="variant.UserDefined153" class="variant"><a href="#variant.UserDefined153" class="anchor">§</a><h3 class="code-header">UserDefined153 = 185</h3></section><div class="docblock"><p>Interrupt 185 - User Defined Interrupt153</p>
+</div><section id="variant.UserDefined154" class="variant"><a href="#variant.UserDefined154" class="anchor">§</a><h3 class="code-header">UserDefined154 = 186</h3></section><div class="docblock"><p>Interrupt 186 - User Defined Interrupt154</p>
+</div><section id="variant.UserDefined155" class="variant"><a href="#variant.UserDefined155" class="anchor">§</a><h3 class="code-header">UserDefined155 = 187</h3></section><div class="docblock"><p>Interrupt 187 - User Defined Interrupt155</p>
+</div><section id="variant.UserDefined156" class="variant"><a href="#variant.UserDefined156" class="anchor">§</a><h3 class="code-header">UserDefined156 = 188</h3></section><div class="docblock"><p>Interrupt 188 - User Defined Interrupt156</p>
+</div><section id="variant.UserDefined157" class="variant"><a href="#variant.UserDefined157" class="anchor">§</a><h3 class="code-header">UserDefined157 = 189</h3></section><div class="docblock"><p>Interrupt 189 - User Defined Interrupt157</p>
+</div><section id="variant.UserDefined158" class="variant"><a href="#variant.UserDefined158" class="anchor">§</a><h3 class="code-header">UserDefined158 = 190</h3></section><div class="docblock"><p>Interrupt 190 - User Defined Interrupt158</p>
+</div><section id="variant.UserDefined159" class="variant"><a href="#variant.UserDefined159" class="anchor">§</a><h3 class="code-header">UserDefined159 = 191</h3></section><div class="docblock"><p>Interrupt 191 - User Defined Interrupt159</p>
+</div><section id="variant.UserDefined160" class="variant"><a href="#variant.UserDefined160" class="anchor">§</a><h3 class="code-header">UserDefined160 = 192</h3></section><div class="docblock"><p>Interrupt 192 - User Defined Interrupt160</p>
+</div><section id="variant.UserDefined161" class="variant"><a href="#variant.UserDefined161" class="anchor">§</a><h3 class="code-header">UserDefined161 = 193</h3></section><div class="docblock"><p>Interrupt 193 - User Defined Interrupt161</p>
+</div><section id="variant.UserDefined162" class="variant"><a href="#variant.UserDefined162" class="anchor">§</a><h3 class="code-header">UserDefined162 = 194</h3></section><div class="docblock"><p>Interrupt 194 - User Defined Interrupt162</p>
+</div><section id="variant.UserDefined163" class="variant"><a href="#variant.UserDefined163" class="anchor">§</a><h3 class="code-header">UserDefined163 = 195</h3></section><div class="docblock"><p>Interrupt 195 - User Defined Interrupt163</p>
+</div><section id="variant.UserDefined164" class="variant"><a href="#variant.UserDefined164" class="anchor">§</a><h3 class="code-header">UserDefined164 = 196</h3></section><div class="docblock"><p>Interrupt 196 - User Defined Interrupt164</p>
+</div><section id="variant.UserDefined165" class="variant"><a href="#variant.UserDefined165" class="anchor">§</a><h3 class="code-header">UserDefined165 = 197</h3></section><div class="docblock"><p>Interrupt 197 - User Defined Interrupt165</p>
+</div><section id="variant.UserDefined166" class="variant"><a href="#variant.UserDefined166" class="anchor">§</a><h3 class="code-header">UserDefined166 = 198</h3></section><div class="docblock"><p>Interrupt 198 - User Defined Interrupt166</p>
+</div><section id="variant.UserDefined167" class="variant"><a href="#variant.UserDefined167" class="anchor">§</a><h3 class="code-header">UserDefined167 = 199</h3></section><div class="docblock"><p>Interrupt 199 - User Defined Interrupt167</p>
+</div><section id="variant.UserDefined168" class="variant"><a href="#variant.UserDefined168" class="anchor">§</a><h3 class="code-header">UserDefined168 = 200</h3></section><div class="docblock"><p>Interrupt 200 - User Defined Interrupt168</p>
+</div><section id="variant.UserDefined169" class="variant"><a href="#variant.UserDefined169" class="anchor">§</a><h3 class="code-header">UserDefined169 = 201</h3></section><div class="docblock"><p>Interrupt 201 - User Defined Interrupt169</p>
+</div><section id="variant.UserDefined170" class="variant"><a href="#variant.UserDefined170" class="anchor">§</a><h3 class="code-header">UserDefined170 = 202</h3></section><div class="docblock"><p>Interrupt 202 - User Defined Interrupt170</p>
+</div><section id="variant.UserDefined171" class="variant"><a href="#variant.UserDefined171" class="anchor">§</a><h3 class="code-header">UserDefined171 = 203</h3></section><div class="docblock"><p>Interrupt 203 - User Defined Interrupt171</p>
+</div><section id="variant.UserDefined172" class="variant"><a href="#variant.UserDefined172" class="anchor">§</a><h3 class="code-header">UserDefined172 = 204</h3></section><div class="docblock"><p>Interrupt 204 - User Defined Interrupt172</p>
+</div><section id="variant.UserDefined173" class="variant"><a href="#variant.UserDefined173" class="anchor">§</a><h3 class="code-header">UserDefined173 = 205</h3></section><div class="docblock"><p>Interrupt 205 - User Defined Interrupt173</p>
+</div><section id="variant.UserDefined174" class="variant"><a href="#variant.UserDefined174" class="anchor">§</a><h3 class="code-header">UserDefined174 = 206</h3></section><div class="docblock"><p>Interrupt 206 - User Defined Interrupt174</p>
+</div><section id="variant.UserDefined175" class="variant"><a href="#variant.UserDefined175" class="anchor">§</a><h3 class="code-header">UserDefined175 = 207</h3></section><div class="docblock"><p>Interrupt 207 - User Defined Interrupt175</p>
+</div><section id="variant.UserDefined176" class="variant"><a href="#variant.UserDefined176" class="anchor">§</a><h3 class="code-header">UserDefined176 = 208</h3></section><div class="docblock"><p>Interrupt 208 - User Defined Interrupt176</p>
+</div><section id="variant.UserDefined177" class="variant"><a href="#variant.UserDefined177" class="anchor">§</a><h3 class="code-header">UserDefined177 = 209</h3></section><div class="docblock"><p>Interrupt 209 - User Defined Interrupt177</p>
+</div><section id="variant.UserDefined178" class="variant"><a href="#variant.UserDefined178" class="anchor">§</a><h3 class="code-header">UserDefined178 = 210</h3></section><div class="docblock"><p>Interrupt 210 - User Defined Interrupt178</p>
+</div><section id="variant.UserDefined179" class="variant"><a href="#variant.UserDefined179" class="anchor">§</a><h3 class="code-header">UserDefined179 = 211</h3></section><div class="docblock"><p>Interrupt 211 - User Defined Interrupt179</p>
+</div><section id="variant.UserDefined180" class="variant"><a href="#variant.UserDefined180" class="anchor">§</a><h3 class="code-header">UserDefined180 = 212</h3></section><div class="docblock"><p>Interrupt 212 - User Defined Interrupt180</p>
+</div><section id="variant.UserDefined181" class="variant"><a href="#variant.UserDefined181" class="anchor">§</a><h3 class="code-header">UserDefined181 = 213</h3></section><div class="docblock"><p>Interrupt 213 - User Defined Interrupt181</p>
+</div><section id="variant.UserDefined182" class="variant"><a href="#variant.UserDefined182" class="anchor">§</a><h3 class="code-header">UserDefined182 = 214</h3></section><div class="docblock"><p>Interrupt 214 - User Defined Interrupt182</p>
+</div><section id="variant.UserDefined183" class="variant"><a href="#variant.UserDefined183" class="anchor">§</a><h3 class="code-header">UserDefined183 = 215</h3></section><div class="docblock"><p>Interrupt 215 - User Defined Interrupt183</p>
+</div><section id="variant.UserDefined184" class="variant"><a href="#variant.UserDefined184" class="anchor">§</a><h3 class="code-header">UserDefined184 = 216</h3></section><div class="docblock"><p>Interrupt 216 - User Defined Interrupt184</p>
+</div><section id="variant.UserDefined185" class="variant"><a href="#variant.UserDefined185" class="anchor">§</a><h3 class="code-header">UserDefined185 = 217</h3></section><div class="docblock"><p>Interrupt 217 - User Defined Interrupt185</p>
+</div><section id="variant.UserDefined186" class="variant"><a href="#variant.UserDefined186" class="anchor">§</a><h3 class="code-header">UserDefined186 = 218</h3></section><div class="docblock"><p>Interrupt 218 - User Defined Interrupt186</p>
+</div><section id="variant.UserDefined187" class="variant"><a href="#variant.UserDefined187" class="anchor">§</a><h3 class="code-header">UserDefined187 = 219</h3></section><div class="docblock"><p>Interrupt 219 - User Defined Interrupt187</p>
+</div><section id="variant.UserDefined188" class="variant"><a href="#variant.UserDefined188" class="anchor">§</a><h3 class="code-header">UserDefined188 = 220</h3></section><div class="docblock"><p>Interrupt 220 - User Defined Interrupt188</p>
+</div><section id="variant.UserDefined189" class="variant"><a href="#variant.UserDefined189" class="anchor">§</a><h3 class="code-header">UserDefined189 = 221</h3></section><div class="docblock"><p>Interrupt 221 - User Defined Interrupt189</p>
+</div><section id="variant.UserDefined190" class="variant"><a href="#variant.UserDefined190" class="anchor">§</a><h3 class="code-header">UserDefined190 = 222</h3></section><div class="docblock"><p>Interrupt 222 - User Defined Interrupt190</p>
+</div><section id="variant.UserDefined191" class="variant"><a href="#variant.UserDefined191" class="anchor">§</a><h3 class="code-header">UserDefined191 = 223</h3></section><div class="docblock"><p>Interrupt 223 - User Defined Interrupt191</p>
+</div><section id="variant.UserDefined192" class="variant"><a href="#variant.UserDefined192" class="anchor">§</a><h3 class="code-header">UserDefined192 = 224</h3></section><div class="docblock"><p>Interrupt 224 - User Defined Interrupt192</p>
+</div><section id="variant.UserDefined193" class="variant"><a href="#variant.UserDefined193" class="anchor">§</a><h3 class="code-header">UserDefined193 = 225</h3></section><div class="docblock"><p>Interrupt 225 - User Defined Interrupt193</p>
+</div><section id="variant.UserDefined194" class="variant"><a href="#variant.UserDefined194" class="anchor">§</a><h3 class="code-header">UserDefined194 = 226</h3></section><div class="docblock"><p>Interrupt 226 - User Defined Interrupt194</p>
+</div><section id="variant.UserDefined195" class="variant"><a href="#variant.UserDefined195" class="anchor">§</a><h3 class="code-header">UserDefined195 = 227</h3></section><div class="docblock"><p>Interrupt 227 - User Defined Interrupt195</p>
+</div><section id="variant.UserDefined196" class="variant"><a href="#variant.UserDefined196" class="anchor">§</a><h3 class="code-header">UserDefined196 = 228</h3></section><div class="docblock"><p>Interrupt 228 - User Defined Interrupt196</p>
+</div><section id="variant.UserDefined197" class="variant"><a href="#variant.UserDefined197" class="anchor">§</a><h3 class="code-header">UserDefined197 = 229</h3></section><div class="docblock"><p>Interrupt 229 - User Defined Interrupt197</p>
+</div><section id="variant.UserDefined198" class="variant"><a href="#variant.UserDefined198" class="anchor">§</a><h3 class="code-header">UserDefined198 = 230</h3></section><div class="docblock"><p>Interrupt 230 - User Defined Interrupt198</p>
+</div><section id="variant.UserDefined199" class="variant"><a href="#variant.UserDefined199" class="anchor">§</a><h3 class="code-header">UserDefined199 = 231</h3></section><div class="docblock"><p>Interrupt 231 - User Defined Interrupt199</p>
+</div><section id="variant.UserDefined200" class="variant"><a href="#variant.UserDefined200" class="anchor">§</a><h3 class="code-header">UserDefined200 = 232</h3></section><div class="docblock"><p>Interrupt 232 - User Defined Interrupt200</p>
+</div><section id="variant.UserDefined201" class="variant"><a href="#variant.UserDefined201" class="anchor">§</a><h3 class="code-header">UserDefined201 = 233</h3></section><div class="docblock"><p>Interrupt 233 - User Defined Interrupt201</p>
+</div><section id="variant.UserDefined202" class="variant"><a href="#variant.UserDefined202" class="anchor">§</a><h3 class="code-header">UserDefined202 = 234</h3></section><div class="docblock"><p>Interrupt 234 - User Defined Interrupt202</p>
+</div><section id="variant.UserDefined203" class="variant"><a href="#variant.UserDefined203" class="anchor">§</a><h3 class="code-header">UserDefined203 = 235</h3></section><div class="docblock"><p>Interrupt 235 - User Defined Interrupt203</p>
+</div><section id="variant.UserDefined204" class="variant"><a href="#variant.UserDefined204" class="anchor">§</a><h3 class="code-header">UserDefined204 = 236</h3></section><div class="docblock"><p>Interrupt 236 - User Defined Interrupt204</p>
+</div><section id="variant.UserDefined205" class="variant"><a href="#variant.UserDefined205" class="anchor">§</a><h3 class="code-header">UserDefined205 = 237</h3></section><div class="docblock"><p>Interrupt 237 - User Defined Interrupt205</p>
+</div><section id="variant.UserDefined206" class="variant"><a href="#variant.UserDefined206" class="anchor">§</a><h3 class="code-header">UserDefined206 = 238</h3></section><div class="docblock"><p>Interrupt 238 - User Defined Interrupt206</p>
+</div><section id="variant.UserDefined207" class="variant"><a href="#variant.UserDefined207" class="anchor">§</a><h3 class="code-header">UserDefined207 = 239</h3></section><div class="docblock"><p>Interrupt 239 - User Defined Interrupt207</p>
+</div><section id="variant.UserDefined208" class="variant"><a href="#variant.UserDefined208" class="anchor">§</a><h3 class="code-header">UserDefined208 = 240</h3></section><div class="docblock"><p>Interrupt 240 - User Defined Interrupt208</p>
+</div><section id="variant.UserDefined209" class="variant"><a href="#variant.UserDefined209" class="anchor">§</a><h3 class="code-header">UserDefined209 = 241</h3></section><div class="docblock"><p>Interrupt 241 - User Defined Interrupt209</p>
+</div><section id="variant.UserDefined210" class="variant"><a href="#variant.UserDefined210" class="anchor">§</a><h3 class="code-header">UserDefined210 = 242</h3></section><div class="docblock"><p>Interrupt 242 - User Defined Interrupt210</p>
+</div><section id="variant.UserDefined211" class="variant"><a href="#variant.UserDefined211" class="anchor">§</a><h3 class="code-header">UserDefined211 = 243</h3></section><div class="docblock"><p>Interrupt 243 - User Defined Interrupt211</p>
+</div><section id="variant.UserDefined212" class="variant"><a href="#variant.UserDefined212" class="anchor">§</a><h3 class="code-header">UserDefined212 = 244</h3></section><div class="docblock"><p>Interrupt 244 - User Defined Interrupt212</p>
+</div><section id="variant.UserDefined213" class="variant"><a href="#variant.UserDefined213" class="anchor">§</a><h3 class="code-header">UserDefined213 = 245</h3></section><div class="docblock"><p>Interrupt 245 - User Defined Interrupt213</p>
+</div><section id="variant.UserDefined214" class="variant"><a href="#variant.UserDefined214" class="anchor">§</a><h3 class="code-header">UserDefined214 = 246</h3></section><div class="docblock"><p>Interrupt 246 - User Defined Interrupt214</p>
+</div><section id="variant.UserDefined215" class="variant"><a href="#variant.UserDefined215" class="anchor">§</a><h3 class="code-header">UserDefined215 = 247</h3></section><div class="docblock"><p>Interrupt 247 - User Defined Interrupt215</p>
+</div><section id="variant.UserDefined216" class="variant"><a href="#variant.UserDefined216" class="anchor">§</a><h3 class="code-header">UserDefined216 = 248</h3></section><div class="docblock"><p>Interrupt 248 - User Defined Interrupt216</p>
+</div><section id="variant.UserDefined217" class="variant"><a href="#variant.UserDefined217" class="anchor">§</a><h3 class="code-header">UserDefined217 = 249</h3></section><div class="docblock"><p>Interrupt 249 - User Defined Interrupt217</p>
+</div><section id="variant.UserDefined218" class="variant"><a href="#variant.UserDefined218" class="anchor">§</a><h3 class="code-header">UserDefined218 = 250</h3></section><div class="docblock"><p>Interrupt 250 - User Defined Interrupt218</p>
+</div><section id="variant.UserDefined219" class="variant"><a href="#variant.UserDefined219" class="anchor">§</a><h3 class="code-header">UserDefined219 = 251</h3></section><div class="docblock"><p>Interrupt 251 - User Defined Interrupt219</p>
+</div><section id="variant.UserDefined220" class="variant"><a href="#variant.UserDefined220" class="anchor">§</a><h3 class="code-header">UserDefined220 = 252</h3></section><div class="docblock"><p>Interrupt 252 - User Defined Interrupt220</p>
+</div><section id="variant.UserDefined221" class="variant"><a href="#variant.UserDefined221" class="anchor">§</a><h3 class="code-header">UserDefined221 = 253</h3></section><div class="docblock"><p>Interrupt 253 - User Defined Interrupt221</p>
+</div><section id="variant.UserDefined222" class="variant"><a href="#variant.UserDefined222" class="anchor">§</a><h3 class="code-header">UserDefined222 = 254</h3></section><div class="docblock"><p>Interrupt 254 - User Defined Interrupt222</p>
+</div><section id="variant.UserDefined223" class="variant"><a href="#variant.UserDefined223" class="anchor">§</a><h3 class="code-header">UserDefined223 = 255</h3></section><div class="docblock"><p>Interrupt 255 - User Defined Interrupt223</p>
+</div></div><h2 id="synthetic-implementations" class="section-header">Auto Trait Implementations<a href="#synthetic-implementations" class="anchor">§</a></h2><div id="synthetic-implementations-list"><section id="impl-Freeze-for-ExceptionVector" class="impl"><a href="#impl-Freeze-for-ExceptionVector" class="anchor">§</a><h3 class="code-header">impl Freeze for <a class="enum" href="enum.ExceptionVector.html" title="enum kev::vcpu::interrupt::ExceptionVector">ExceptionVector</a></h3></section><section id="impl-RefUnwindSafe-for-ExceptionVector" class="impl"><a href="#impl-RefUnwindSafe-for-ExceptionVector" class="anchor">§</a><h3 class="code-header">impl RefUnwindSafe for <a class="enum" href="enum.ExceptionVector.html" title="enum kev::vcpu::interrupt::ExceptionVector">ExceptionVector</a></h3></section><section id="impl-Send-for-ExceptionVector" class="impl"><a href="#impl-Send-for-ExceptionVector" class="anchor">§</a><h3 class="code-header">impl Send for <a class="enum" href="enum.ExceptionVector.html" title="enum kev::vcpu::interrupt::ExceptionVector">ExceptionVector</a></h3></section><section id="impl-Sync-for-ExceptionVector" class="impl"><a href="#impl-Sync-for-ExceptionVector" class="anchor">§</a><h3 class="code-header">impl Sync for <a class="enum" href="enum.ExceptionVector.html" title="enum kev::vcpu::interrupt::ExceptionVector">ExceptionVector</a></h3></section><section id="impl-Unpin-for-ExceptionVector" class="impl"><a href="#impl-Unpin-for-ExceptionVector" class="anchor">§</a><h3 class="code-header">impl Unpin for <a class="enum" href="enum.ExceptionVector.html" title="enum kev::vcpu::interrupt::ExceptionVector">ExceptionVector</a></h3></section><section id="impl-UnwindSafe-for-ExceptionVector" class="impl"><a href="#impl-UnwindSafe-for-ExceptionVector" class="anchor">§</a><h3 class="code-header">impl UnwindSafe for <a class="enum" href="enum.ExceptionVector.html" title="enum kev::vcpu::interrupt::ExceptionVector">ExceptionVector</a></h3></section></div><h2 id="blanket-implementations" class="section-header">Blanket Implementations<a href="#blanket-implementations" class="anchor">§</a></h2><div id="blanket-implementations-list"><details class="toggle implementors-toggle"><summary><section id="impl-Any-for-T" class="impl"><a href="#impl-Any-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; Any for T<div class="where">where
+    T: 'static + ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.type_id" class="method trait-impl"><a href="#method.type_id" class="anchor">§</a><h4 class="code-header">fn <a class="fn">type_id</a>(&amp;self) -&gt; TypeId</h4></section></summary><div class='docblock'>Gets the <code>TypeId</code> of <code>self</code>. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-Borrow%3CT%3E-for-T" class="impl"><a href="#impl-Borrow%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; Borrow&lt;T&gt; for T<div class="where">where
+    T: ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.borrow" class="method trait-impl"><a href="#method.borrow" class="anchor">§</a><h4 class="code-header">fn <a class="fn">borrow</a>(&amp;self) -&gt; &amp;T</h4></section></summary><div class='docblock'>Immutably borrows from an owned value. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-BorrowMut%3CT%3E-for-T" class="impl"><a href="#impl-BorrowMut%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; BorrowMut&lt;T&gt; for T<div class="where">where
+    T: ?Sized,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.borrow_mut" class="method trait-impl"><a href="#method.borrow_mut" class="anchor">§</a><h4 class="code-header">fn <a class="fn">borrow_mut</a>(&amp;mut self) -&gt; &amp;mut T</h4></section></summary><div class='docblock'>Mutably borrows from an owned value. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-CloneToUninit-for-T" class="impl"><a href="#impl-CloneToUninit-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; CloneToUninit for T<div class="where">where
+    T: Clone,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.clone_to_uninit" class="method trait-impl"><a href="#method.clone_to_uninit" class="anchor">§</a><h4 class="code-header">unsafe fn <a class="fn">clone_to_uninit</a>(&amp;self, dest: *mut u8)</h4></section></summary><span class="item-info"><div class="stab unstable"><span class="emoji">🔬</span><span>This is a nightly-only experimental API. (<code>clone_to_uninit</code>)</span></div></span><div class='docblock'>Performs copy-assignment from <code>self</code> to <code>dest</code>. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-From%3CT%3E-for-T" class="impl"><a href="#impl-From%3CT%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; From&lt;T&gt; for T</h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.from" class="method trait-impl"><a href="#method.from" class="anchor">§</a><h4 class="code-header">fn <a class="fn">from</a>(t: T) -&gt; T</h4></section></summary><div class="docblock"><p>Returns the argument unchanged.</p>
+</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-Into%3CU%3E-for-T" class="impl"><a href="#impl-Into%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; Into&lt;U&gt; for T<div class="where">where
+    U: From&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.into" class="method trait-impl"><a href="#method.into" class="anchor">§</a><h4 class="code-header">fn <a class="fn">into</a>(self) -&gt; U</h4></section></summary><div class="docblock"><p>Calls <code>U::from(self)</code>.</p>
+<p>That is, this conversion is whatever the implementation of
+<code>[From]&lt;T&gt; for U</code> chooses to do.</p>
+</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-ToOwned-for-T" class="impl"><a href="#impl-ToOwned-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T&gt; ToOwned for T<div class="where">where
+    T: Clone,</div></h3></section></summary><div class="impl-items"><details class="toggle" open><summary><section id="associatedtype.Owned" class="associatedtype trait-impl"><a href="#associatedtype.Owned" class="anchor">§</a><h4 class="code-header">type <a class="associatedtype">Owned</a> = T</h4></section></summary><div class='docblock'>The resulting type after obtaining ownership.</div></details><details class="toggle method-toggle" open><summary><section id="method.to_owned" class="method trait-impl"><a href="#method.to_owned" class="anchor">§</a><h4 class="code-header">fn <a class="fn">to_owned</a>(&amp;self) -&gt; T</h4></section></summary><div class='docblock'>Creates owned data from borrowed data, usually by cloning. <a>Read more</a></div></details><details class="toggle method-toggle" open><summary><section id="method.clone_into" class="method trait-impl"><a href="#method.clone_into" class="anchor">§</a><h4 class="code-header">fn <a class="fn">clone_into</a>(&amp;self, target: &amp;mut T)</h4></section></summary><div class='docblock'>Uses borrowed data to replace owned data, usually by cloning. <a>Read more</a></div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-TryFrom%3CU%3E-for-T" class="impl"><a href="#impl-TryFrom%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; TryFrom&lt;U&gt; for T<div class="where">where
+    U: Into&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle" open><summary><section id="associatedtype.Error-1" class="associatedtype trait-impl"><a href="#associatedtype.Error-1" class="anchor">§</a><h4 class="code-header">type <a class="associatedtype">Error</a> = Infallible</h4></section></summary><div class='docblock'>The type returned in the event of a conversion error.</div></details><details class="toggle method-toggle" open><summary><section id="method.try_from" class="method trait-impl"><a href="#method.try_from" class="anchor">§</a><h4 class="code-header">fn <a class="fn">try_from</a>(value: U) -&gt; Result&lt;T, &lt;T as TryFrom&lt;U&gt;&gt;::Error&gt;</h4></section></summary><div class='docblock'>Performs the conversion.</div></details></div></details><details class="toggle implementors-toggle"><summary><section id="impl-TryInto%3CU%3E-for-T" class="impl"><a href="#impl-TryInto%3CU%3E-for-T" class="anchor">§</a><h3 class="code-header">impl&lt;T, U&gt; TryInto&lt;U&gt; for T<div class="where">where
+    U: TryFrom&lt;T&gt;,</div></h3></section></summary><div class="impl-items"><details class="toggle" open><summary><section id="associatedtype.Error" class="associatedtype trait-impl"><a href="#associatedtype.Error" class="anchor">§</a><h4 class="code-header">type <a class="associatedtype">Error</a> = &lt;U as TryFrom&lt;T&gt;&gt;::Error</h4></section></summary><div class='docblock'>The type returned in the event of a conversion error.</div></details><details class="toggle method-toggle" open><summary><section id="method.try_into" class="method trait-impl"><a href="#method.try_into" class="anchor">§</a><h4 class="code-header">fn <a class="fn">try_into</a>(self) -&gt; Result&lt;U, &lt;U as TryFrom&lt;T&gt;&gt;::Error&gt;</h4></section></summary><div class='docblock'>Performs the conversion.</div></details></div></details></div></section></div></main></body></html>
