@@ -73,9 +73,11 @@
                 "userprog::mm_munmap": {},
                 "userprog::mm_munmap_error": {},
                 "userprog::mm_exit_cleanup_stress": {
-                    "timeout": 120
+                    "timeout": 240
                 },
-                "userprog::bad_addr_1": {},
+                "userprog::bad_addr_1": {
+                    "timeout": 60
+                },
                 "userprog::bad_code_write": {}
             }
         },

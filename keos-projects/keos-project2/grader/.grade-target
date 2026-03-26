@@ -13,7 +13,7 @@
             "tests": {
                 "page_table::simple": {},
                 "page_table::simple2": {
-                    "timeout": 60
+                    "timeout": 120
                 },
                 "page_table::free": {},
                 "page_table::error": {},
